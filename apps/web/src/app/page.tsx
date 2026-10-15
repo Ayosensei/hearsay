@@ -9,11 +9,13 @@ import { GraphPanel } from "../components/GraphPanel";
 import { DialoguePanel } from "../components/DialoguePanel";
 import { TracePanel } from "../components/TracePanel";
 import { WhyCard } from "../components/WhyCard";
+import { ControlVsHearsayModal } from "../components/ControlVsHearsayModal";
 
 export default function TownApp() {
   const [townState, setTownState] = useState<TownState | null>(null);
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [isComparisonOpen, setIsComparisonOpen] = useState(false);
 
   // Initialize Town State on Mount
   useEffect(() => {
@@ -127,6 +129,13 @@ export default function TownApp() {
         isAdvancing={isAdvancing}
         onAdvanceTime={handleAdvanceTime}
         onResetWorld={handleResetWorld}
+        onOpenComparison={() => setIsComparisonOpen(true)}
+      />
+
+      {/* Control vs Hearsay Comparison Modal */}
+      <ControlVsHearsayModal
+        isOpen={isComparisonOpen}
+        onClose={() => setIsComparisonOpen(false)}
       />
 
       {/* Main 3-Panel Workplace */}

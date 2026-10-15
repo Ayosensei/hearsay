@@ -18,6 +18,8 @@ export function GraphPanel({
   activeWitnessId,
   onSelectNode,
 }: GraphPanelProps) {
+  const isHighlightMode = activePathEdgeIds.length > 0;
+
   return (
     <section className="flex-1 bg-surface-1 flex flex-col relative overflow-hidden">
       {/* Panel Top Bar / Graph Status */}
@@ -32,10 +34,10 @@ export function GraphPanel({
           </span>
         </div>
 
-        {activePathEdgeIds.length > 0 && (
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-2 border border-signal/40 signal-glow text-xs font-mono text-signal">
+        {isHighlightMode && (
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-2 border border-signal/40 signal-glow text-xs font-mono text-signal animate-pulse">
             <Sparkles className="h-3 w-3" />
-            <span>Rumor Path Active</span>
+            <span>Rumor Propagation Active</span>
           </div>
         )}
       </div>
@@ -82,9 +84,15 @@ export function GraphPanel({
             const y1 = sourceNode.y || 0;
             const x2 = targetNode.x || 0;
             const y2 = targetNode.y || 0;
+            const pathD = `M ${x1} ${y1} L ${x2} ${y2}`;
 
             return (
-              <g key={edge.id}>
+              <g
+                key={edge.id}
+                className={`transition-opacity duration-320 ${
+                  isHighlightMode && !isPathActive ? "opacity-25" : "opacity-100"
+                }`}
+              >
                 {/* Edge Line */}
                 <line
                   x1={x1}
@@ -92,10 +100,39 @@ export function GraphPanel({
                   x2={x2}
                   y2={y2}
                   stroke={isPathActive ? "var(--color-signal)" : "var(--color-border-strong)"}
-                  strokeWidth={isPathActive ? 3 : 1.5}
+                  strokeWidth={isPathActive ? 3.5 : 1.5}
                   strokeDasharray={edge.type === "WITNESSED" ? "4 4" : undefined}
-                  className={isPathActive ? "filter drop-shadow-[0_0_8px_rgba(143,162,255,0.7)]" : undefined}
+                  className={isPathActive ? "filter drop-shadow-[0_0_8px_rgba(143,162,255,0.85)]" : undefined}
                 />
+
+                {/* Animated Particles flowing along active rumor edges */}
+                {isPathActive && (
+                  <>
+                    <circle
+                      r="3.5"
+                      fill="var(--color-signal)"
+                      className="filter drop-shadow-[0_0_6px_var(--color-signal)]"
+                    >
+                      <animateMotion
+                        dur="1.6s"
+                        repeatCount="indefinite"
+                        path={pathD}
+                      />
+                    </circle>
+                    <circle
+                      r="2.5"
+                      fill="var(--color-gold)"
+                      className="filter drop-shadow-[0_0_4px_var(--color-gold)]"
+                    >
+                      <animateMotion
+                        dur="1.6s"
+                        begin="0.8s"
+                        repeatCount="indefinite"
+                        path={pathD}
+                      />
+                    </circle>
+                  </>
+                )}
 
                 {/* Weight / Type label on edge center */}
                 {edge.weight && (
@@ -123,6 +160,18 @@ export function GraphPanel({
             const y = node.y || 0;
             const isEvent = node.type === "event";
 
+            // If highlight mode is active, dim nodes that are not in the path
+            const isInActivePath =
+              isSelected ||
+              isWitness ||
+              edges.some(
+                (e) =>
+                  activePathEdgeIds.includes(e.id) &&
+                  (e.source === node.id || e.target === node.id)
+              );
+
+            const nodeOpacity = isHighlightMode && !isInActivePath ? "opacity-30" : "opacity-100";
+
             if (isEvent) {
               const isHelp = node.eventType === "help";
               return (
@@ -130,7 +179,7 @@ export function GraphPanel({
                   key={node.id}
                   transform={`translate(${x}, ${y})`}
                   onClick={() => onSelectNode(node.id)}
-                  className="cursor-pointer group"
+                  className={`cursor-pointer group transition-opacity duration-320 ${nodeOpacity}`}
                 >
                   {/* Diamond shape for Event */}
                   <rect
@@ -178,7 +227,7 @@ export function GraphPanel({
                 key={node.id}
                 transform={`translate(${x}, ${y})`}
                 onClick={() => onSelectNode(node.id)}
-                className="cursor-pointer group"
+                className={`cursor-pointer group transition-opacity duration-320 ${nodeOpacity}`}
               >
                 {/* Selected glow ring */}
                 {isSelected && (
@@ -200,6 +249,8 @@ export function GraphPanel({
                     stroke="var(--color-gold)"
                     strokeWidth="2.5"
                     strokeDasharray="4 2"
+                    className="animate-spin"
+                    style={{ animationDuration: "12s" }}
                   />
                 )}
 

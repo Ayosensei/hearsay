@@ -6,6 +6,7 @@ interface TopNavProps {
   isAdvancing: boolean;
   onAdvanceTime: () => void;
   onResetWorld: () => void;
+  onOpenComparison: () => void;
 }
 
 export function TopNav({
@@ -13,6 +14,7 @@ export function TopNav({
   isAdvancing,
   onAdvanceTime,
   onResetWorld,
+  onOpenComparison,
 }: TopNavProps) {
   return (
     <header className="h-14 border-b border-border bg-surface-1 px-4 flex items-center justify-between shrink-0">
@@ -52,8 +54,17 @@ export function TopNav({
         </button>
       </div>
 
-      {/* Right Actions: Mode, Reset & Styleguide */}
-      <div className="flex items-center gap-2.5">
+      {/* Right Actions: Mode, Comparison, Reset & Styleguide */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onOpenComparison}
+          className="h-9 px-3 rounded-md bg-surface-2 text-signal hover:text-text-primary text-xs font-mono font-medium border border-signal/40 flex items-center gap-1.5 hover:bg-surface-3 transition-colors"
+          title="Open Control vs Hearsay comparison"
+        >
+          <Sparkles className="h-3 w-3" />
+          <span>Control vs Hearsay</span>
+        </button>
+
         <div className="flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-1 text-xs font-mono text-text-secondary border border-border">
           <span className="h-2 w-2 rounded-full bg-success" />
           <Database className="h-3 w-3 text-text-tertiary" />
