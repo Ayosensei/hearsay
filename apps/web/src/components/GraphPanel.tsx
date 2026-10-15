@@ -35,9 +35,9 @@ export function GraphPanel({
         </div>
 
         {isHighlightMode && (
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-2 border border-signal/40 signal-glow text-xs font-mono text-signal animate-pulse">
-            <Sparkles className="h-3 w-3" />
-            <span>Rumor Propagation Active</span>
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-2 border border-signal/50 signal-glow text-xs font-mono text-signal">
+            <span className="h-2 w-2 rounded-full bg-signal animate-ping" />
+            <span>Rumor Propagation Active (Streaming Flow)</span>
           </div>
         )}
       </div>
@@ -71,6 +71,24 @@ export function GraphPanel({
             >
               <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-signal)" />
             </marker>
+
+            {/* Path definitions for animation mpath */}
+            {edges.map((edge) => {
+              const sourceNode = nodes.find((n) => n.id === edge.source);
+              const targetNode = nodes.find((n) => n.id === edge.target);
+              if (!sourceNode || !targetNode) return null;
+              const x1 = sourceNode.x || 0;
+              const y1 = sourceNode.y || 0;
+              const x2 = targetNode.x || 0;
+              const y2 = targetNode.y || 0;
+              return (
+                <path
+                  key={`def-${edge.id}`}
+                  id={`edge-path-${edge.id}`}
+                  d={`M ${x1} ${y1} L ${x2} ${y2}`}
+                />
+              );
+            })}
           </defs>
 
           {/* Edges */}
@@ -84,7 +102,6 @@ export function GraphPanel({
             const y1 = sourceNode.y || 0;
             const x2 = targetNode.x || 0;
             const y2 = targetNode.y || 0;
-            const pathD = `M ${x1} ${y1} L ${x2} ${y2}`;
 
             return (
               <g
@@ -93,43 +110,66 @@ export function GraphPanel({
                   isHighlightMode && !isPathActive ? "opacity-25" : "opacity-100"
                 }`}
               >
-                {/* Edge Line */}
-                <line
-                  x1={x1}
-                  y1={y1}
-                  x2={x2}
-                  y2={y2}
-                  stroke={isPathActive ? "var(--color-signal)" : "var(--color-border-strong)"}
-                  strokeWidth={isPathActive ? 3.5 : 1.5}
-                  strokeDasharray={edge.type === "WITNESSED" ? "4 4" : undefined}
-                  className={isPathActive ? "filter drop-shadow-[0_0_8px_rgba(143,162,255,0.85)]" : undefined}
-                />
+                {/* Regular Edge Line */}
+                {!isPathActive && (
+                  <line
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    stroke="var(--color-border-strong)"
+                    strokeWidth={1.5}
+                    strokeDasharray={edge.type === "WITNESSED" ? "4 4" : undefined}
+                  />
+                )}
 
-                {/* Animated Particles flowing along active rumor edges */}
+                {/* Active Glowing Flow Line */}
                 {isPathActive && (
                   <>
-                    <circle
-                      r="3.5"
-                      fill="var(--color-signal)"
-                      className="filter drop-shadow-[0_0_6px_var(--color-signal)]"
-                    >
-                      <animateMotion
-                        dur="1.6s"
-                        repeatCount="indefinite"
-                        path={pathD}
-                      />
+                    {/* Background glow halo */}
+                    <line
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="var(--color-signal)"
+                      strokeWidth={8}
+                      opacity={0.35}
+                    />
+
+                    {/* Core solid signal line */}
+                    <line
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="var(--color-signal)"
+                      strokeWidth={3}
+                    />
+
+                    {/* Laser Dash Flow Animation */}
+                    <line
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="var(--color-text-primary)"
+                      strokeWidth={2.5}
+                      className="rumor-flow-line"
+                    />
+
+                    {/* Moving Particle 1 (Gold Eyewitness Beacon) */}
+                    <circle r={5} fill="var(--color-gold)">
+                      <animateMotion dur="1.5s" repeatCount="indefinite">
+                        <mpath href={`#edge-path-${edge.id}`} />
+                      </animateMotion>
                     </circle>
-                    <circle
-                      r="2.5"
-                      fill="var(--color-gold)"
-                      className="filter drop-shadow-[0_0_4px_var(--color-gold)]"
-                    >
-                      <animateMotion
-                        dur="1.6s"
-                        begin="0.8s"
-                        repeatCount="indefinite"
-                        path={pathD}
-                      />
+
+                    {/* Moving Particle 2 (Signal Blue Hop Pulse) */}
+                    <circle r={4} fill="var(--color-signal)">
+                      <animateMotion dur="1.5s" begin="0.75s" repeatCount="indefinite">
+                        <mpath href={`#edge-path-${edge.id}`} />
+                      </animateMotion>
                     </circle>
                   </>
                 )}
@@ -138,9 +178,10 @@ export function GraphPanel({
                 {edge.weight && (
                   <text
                     x={(x1 + x2) / 2}
-                    y={(y1 + y2) / 2 - 6}
+                    y={(y1 + y2) / 2 - 8}
                     fill={isPathActive ? "var(--color-signal)" : "var(--color-text-tertiary)"}
-                    fontSize="10"
+                    fontSize={isPathActive ? "11" : "10"}
+                    fontWeight={isPathActive ? "600" : "400"}
                     fontFamily="monospace"
                     textAnchor="middle"
                     className="select-none pointer-events-none"
@@ -259,7 +300,7 @@ export function GraphPanel({
                   r="20"
                   fill="var(--color-surface-1)"
                   stroke={isWitness ? "var(--color-gold)" : factionVar}
-                  strokeWidth="2.5"
+                  strokeWidth={2.5}
                   className="transition-transform group-hover:scale-110"
                 />
 

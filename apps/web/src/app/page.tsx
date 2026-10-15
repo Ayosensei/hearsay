@@ -159,9 +159,9 @@ export default function TownApp() {
             onSelectNode={handleSelectNpc}
           />
 
-          {/* Floating Hero Why? Card when active */}
+          {/* Floating Hero Why? Card when active - docked at bottom-left so the graph flow is fully visible */}
           {townState.activeProvenance && (
-            <div className="absolute top-16 left-6 right-6 z-20 max-w-2xl mx-auto shadow-2xl">
+            <div className="absolute bottom-4 left-4 z-20 max-w-lg shadow-2xl">
               <WhyCard
                 provenance={townState.activeProvenance}
                 targetNpcName={selectedNpc.name}

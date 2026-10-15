@@ -88,3 +88,17 @@ body {
 .chrome-ring {
   background: conic-gradient(from 210deg, #5B6478, #E6EAF2, #6B7388, #C9D0DF, #5B6478);
 }
+
+@keyframes flowDash {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.rumor-flow-line {
+  stroke-dasharray: 8 6;
+  animation: flowDash 0.75s linear infinite;
+}
