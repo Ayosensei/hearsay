@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #05070B;
+  --color-surface-1: #0A0E15;
+  --color-surface-2: #0F141D;
+  --color-surface-3: #151B27;
+  --color-border: #1A2030;
+  --color-border-strong: #262E42;
+  --color-text-primary: #F2F4F8;
+  --color-text-secondary: #A6AEC0;
+  --color-text-tertiary: #7D869A;
+  
+  --color-primary: #3150E9;
+  --color-primary-hover: #4562F0;
+  --color-primary-pressed: #2A44CC;
+  --color-on-primary: #FFFFFF;
+  
+  --color-signal: #8FA2FF;
+  --color-gold: #E8C46A;
+  --color-on-gold: #1A1405;
+  
+  --color-danger: #FF5C6C;
+  --color-success: #4ADE9A;
+  
+  --color-attitude-hostile: #FF5C6C;
+  --color-attitude-wary: #FFA35C;
+  --color-attitude-neutral: #8C96A8;
+  --color-attitude-friendly: #4ADE9A;
+  --color-attitude-devoted: #3DD6EB;
+  
+  --color-event-harm: #FF5C6C;
+  --color-event-help: #4ADE9A;
+  
+  --color-agent-scribe: #7DD3FC;
+  --color-agent-gossip: #8FA2FF;
+  --color-agent-npc: #F0ABFC;
+  --color-agent-system: #8C96A8;
+  
+  --color-faction-townsfolk: #7DD3FC;
+  --color-faction-guard: #B79CFF;
+  --color-faction-merchants: #5EEAD4;
+
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  background-image: radial-gradient(circle at top left, rgba(49, 80, 233, 0.06) 0%, transparent 40%);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.card-elevation {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 1px 1px rgba(0,0,0,0.40), 0 12px 32px -12px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.raised-elevation {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.10), 0 2px 4px rgba(0,0,0,0.45), 0 16px 40px -12px rgba(0,0,0,0.80), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.floating-elevation {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 8px 24px -4px rgba(0,0,0,0.8);
+}
+
+.signal-glow {
+  box-shadow: 0 0 0 1px rgba(143,162,255,0.35), 0 0 48px -8px rgba(143,162,255,0.35);
+}
+
+.chrome-ring {
+  background: conic-gradient(from 210deg, #5B6478, #E6EAF2, #6B7388, #C9D0DF, #5B6478);
+}

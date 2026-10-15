@@ -1,0 +1,15 @@
+{
+  "name": "hearsay",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "typecheck": "pnpm -r typecheck",
+    "check:design": "pnpm --filter web check:design"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.0",
+    "typescript": "^5.8.0"
+  }
+}
