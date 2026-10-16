@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { CodeCard, type CodeLine } from "../../components/CodeCard";
 import {
   Sparkles,
   Play,
@@ -6,14 +8,31 @@ import {
   ShieldCheck,
   Share2,
   HelpCircle,
-  Cpu,
-  Terminal,
-  Database,
-  ExternalLink,
-  Layers,
   Compass,
   CheckCircle2,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Hearsay — Persistent NPC memory with provenance",
+  description:
+    "A FalkorDB-backed memory layer where NPCs only know what they saw or heard, rumors decay along trust edges, and every answer can be traced.",
+};
+
+// Illustrative: final names follow the tool contract (docs/shared/04-tool-contract.md).
+const INTEGRATION_SNIPPET: CodeLine[] = [
+  [["// 1. One isolated graph per player", "cmt"]],
+  [["const ", "kw"], ["hearsay = ", "text"], ["await ", "kw"], ["openWorld({ player: ", "text"], ['"042"', "str"], [" });", "text"]],
+  [],
+  [["// 2. The player does something in front of a witness", "cmt"]],
+  [["await ", "kw"], ["hearsay.recordAction({ witness: ", "text"], ['"bartholomew"', "str"], [", kind: ", "text"], ['"help"', "str"], [" });", "text"]],
+  [],
+  [["// 3. Time passes: rumors travel along TRUSTS edges", "cmt"]],
+  [["await ", "kw"], ["hearsay.advanceTime();", "text"]],
+  [],
+  [["// 4. The NPC answers from what it knows, and can say why", "cmt"]],
+  [["const ", "kw"], ["reply = ", "text"], ["await ", "kw"], ["hearsay.talk({ npc: ", "text"], ['"garrick"', "str"], [" });", "text"]],
+  [["const ", "kw"], ["why = ", "text"], ["await ", "kw"], ["hearsay.explain(reply.id); ", "text"], ["// Martha → Garrick (0.85)", "cmt"]],
+];
 
 export default function LandingPage() {
   return (
@@ -97,23 +116,23 @@ export default function LandingPage() {
           </a>
         </div>
 
-        {/* Real-time Graph Metrics */}
+        {/* Facts that hold by construction (AGENTS.md hard rules), not benchmarks */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl">
           <div className="p-4 rounded-xl bg-surface-1 border border-border/80 flex flex-col items-center">
-            <span className="font-mono text-2xl font-bold text-text-primary tabular-nums">1.4ms</span>
-            <span className="text-xs text-text-tertiary mt-1">Average Cypher Query</span>
+            <span className="font-mono text-2xl font-bold text-text-primary tabular-nums">5</span>
+            <span className="text-xs text-text-tertiary mt-1">NPCs in Hollowbrook</span>
           </div>
           <div className="p-4 rounded-xl bg-surface-1 border border-border/80 flex flex-col items-center">
-            <span className="font-mono text-2xl font-bold text-signal tabular-nums">100%</span>
-            <span className="text-xs text-text-tertiary mt-1">Graph-Grounded Dialogue</span>
+            <span className="font-mono text-2xl font-bold text-signal tabular-nums">0</span>
+            <span className="text-xs text-text-tertiary mt-1">Cypher written by the LLM</span>
           </div>
           <div className="p-4 rounded-xl bg-surface-1 border border-border/80 flex flex-col items-center">
-            <span className="font-mono text-2xl font-bold text-gold tabular-nums">0%</span>
-            <span className="text-xs text-text-tertiary mt-1">Knowledge Leakage</span>
+            <span className="font-mono text-2xl font-bold text-gold tabular-nums">1</span>
+            <span className="text-xs text-text-tertiary mt-1">LLM job: dialogue</span>
           </div>
           <div className="p-4 rounded-xl bg-surface-1 border border-border/80 flex flex-col items-center">
-            <span className="font-mono text-2xl font-bold text-success tabular-nums">MCP Ready</span>
-            <span className="text-xs text-text-tertiary mt-1">Standard Protocol</span>
+            <span className="font-mono text-2xl font-bold text-success">Library + MCP</span>
+            <span className="text-xs text-text-tertiary mt-1">Same tool contract</span>
           </div>
         </div>
 
@@ -128,9 +147,9 @@ export default function LandingPage() {
               <span className="ml-3 text-text-secondary">hearsay-inspector • Hollowbrook (5 NPCs)</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-signal">FalkorDB Active</span>
+              <span className="text-signal">mock engine</span>
               <span className="text-text-primary bg-surface-3 px-2 py-0.5 rounded tabular-nums">
-                Tick: 0004
+                Tick: 0003
               </span>
             </div>
           </div>
@@ -146,11 +165,11 @@ export default function LandingPage() {
               <div className="p-2.5 rounded-md bg-surface-3 border border-signal/40 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-surface-2 flex items-center justify-center font-mono text-xs font-bold text-signal">
-                    MV
+                    MF
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-text-primary">Martha Vane</div>
-                    <div className="text-xs text-text-tertiary">Innkeeper</div>
+                    <div className="text-xs font-semibold text-text-primary">Martha Finch</div>
+                    <div className="text-xs text-text-tertiary">Tavernkeeper</div>
                   </div>
                 </div>
                 <span className="text-xs font-mono text-gold px-1.5 py-0.5 rounded bg-surface-2">
@@ -160,10 +179,10 @@ export default function LandingPage() {
               <div className="p-2.5 rounded-md bg-surface-2 border border-border/40 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-surface-3 flex items-center justify-center font-mono text-xs font-bold text-text-secondary">
-                    GT
+                    GV
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-text-primary">Garrick Thorne</div>
+                    <div className="text-xs font-semibold text-text-primary">Garrick Vance</div>
                     <div className="text-xs text-text-tertiary">Blacksmith</div>
                   </div>
                 </div>
@@ -182,7 +201,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <span className="text-xs font-mono text-text-tertiary px-1.5 py-0.5 rounded bg-surface-3">
-                  Heard (2 hops)
+                  Unaware
                 </span>
               </div>
             </div>
@@ -203,14 +222,14 @@ export default function LandingPage() {
                     <span className="text-text-tertiary">→</span>
                     <span className="text-signal font-bold">Garrick</span>
                   </div>
-                  <span className="text-gold tabular-nums">Conf: 0.72</span>
+                  <span className="text-gold tabular-nums">Conf: 0.85</span>
                 </div>
                 <p className="mt-3 text-xs text-text-secondary leading-relaxed">
-                  Decay applied across TRUSTS edge with 0.85 weight factor. Event: &ldquo;Gold Donated to Guild&rdquo;.
+                  1.00 × 0.85 trust on the TRUSTS edge. Event: &ldquo;Theft of the Sun-Stone Relic&rdquo;.
                 </p>
               </div>
               <div className="pt-3 border-t border-border flex items-center justify-between text-xs font-mono text-text-tertiary">
-                <span>Decay: -28%</span>
+                <span>Decay: -15%</span>
                 <span className="text-success">Verified Graph Path</span>
               </div>
             </div>
@@ -223,10 +242,10 @@ export default function LandingPage() {
                   <span>KNOWLEDGE FIREWALL</span>
                 </div>
                 <div className="p-2.5 rounded bg-surface-3 text-xs text-text-secondary leading-relaxed font-sans italic border-l-2 border-signal">
-                  &ldquo;Martha told me you donated to the guild at the square. We are grateful, traveler.&rdquo;
+                  &ldquo;Martha told me someone slipped out of the vault with the relic. If it was you, keep your hands off my forge tools.&rdquo;
                 </div>
                 <div className="mt-3 text-xs text-text-tertiary font-mono">
-                  <span className="text-text-primary font-semibold">LLM Prompt:</span> Contains only Martha&apos;s rumor. Un-witnessed player deeds are strictly isolated.
+                  <span className="text-text-primary font-semibold">LLM prompt:</span> only what Garrick knows. Captain Vane has heard nothing yet, so he cannot mention it.
                 </div>
               </div>
               <div className="pt-3 border-t border-border">
@@ -275,7 +294,7 @@ export default function LandingPage() {
                 </h3>
                 <p className="text-sm text-text-secondary leading-relaxed">
                   The LLM never writes Cypher and never receives raw game world state. Before an NPC speaks,
-                  parameterized Cypher queries (<code className="text-signal font-mono text-xs">Q10_read_opinion</code>, <code className="text-signal font-mono text-xs">Q30_dialogue_facts</code>) execute with read-only permissions, returning only facts within their personal knowledge horizon.
+                  parameterised, read-only graph queries return only the facts inside that NPC&apos;s own knowledge horizon.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-border flex items-center gap-2 text-xs font-mono text-text-tertiary">
@@ -299,9 +318,9 @@ export default function LandingPage() {
                 <p className="text-sm text-text-secondary leading-relaxed">
                   Information is not instant. When ticks advance, candidate rumors diffuse along <code className="text-signal font-mono text-xs">TRUSTS</code> edges. Each hop decays credibility based on interpersonal trust:
                   <span className="block mt-2 font-mono text-xs text-text-primary bg-surface-3 p-2 rounded">
-                    c_hop = c_prev × w_trust × 0.85
+                    c_hop = c_prev × w_trust
                   </span>
-                  Enemies dismiss true deeds; friends amplify gossip.
+                  Anything that fades below 0.50 stops spreading.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-border flex items-center gap-2 text-xs font-mono text-text-tertiary">
@@ -323,7 +342,7 @@ export default function LandingPage() {
                   Provenance (&ldquo;Why?&rdquo;)
                 </h3>
                 <p className="text-sm text-text-secondary leading-relaxed">
-                  Every statement uttered by an NPC has verifiable cryptographic-like provenance in FalkorDB. Players or game masters can click &ldquo;Why?&rdquo; to traverse the exact graph path from the initial eyewitness to the speaker, observing hop decay and edge weights.
+                  Every statement an NPC makes can be traced in FalkorDB. Players or game masters can click &ldquo;Why?&rdquo; to follow the exact graph path from the original eyewitness to the speaker, with the confidence at each hop.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-border flex items-center gap-2 text-xs font-mono text-gold">
@@ -346,13 +365,13 @@ export default function LandingPage() {
               Drop into your game engine or <span className="italic text-signal">agentic</span> stack.
             </h2>
             <p className="mt-5 text-base text-text-secondary leading-relaxed">
-              Hearsay ships as a lightweight TypeScript library (<code className="text-signal font-mono text-xs">@hearsay/core</code>) and a Model Context Protocol (<code className="text-signal font-mono text-xs">@hearsay/mcp</code>) server. Connect it to Unreal Engine, Unity, Godot, or LLM agent frameworks like Claude Desktop and Cursor.
+              Hearsay ships as a TypeScript library (<code className="text-signal font-mono text-xs">packages/hearsay</code>) and a Model Context Protocol server (<code className="text-signal font-mono text-xs">packages/mcp</code>) exposing the same tools. Connect it to a game engine or to LLM agent frameworks.
             </p>
 
             <ul className="mt-8 space-y-3 font-sans text-sm text-text-secondary">
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="h-4 w-4 text-signal shrink-0 mt-0.5" />
-                <span><strong className="text-text-primary">FalkorDB Subgraph Isolation:</strong> Clones isolated graphs per player (<code className="font-mono text-xs text-text-tertiary">player:{"{id}"}</code>) with near-instant instantiation.</span>
+                <span><strong className="text-text-primary">FalkorDB Graph per Player:</strong> Each player gets their own copy of the world template (<code className="font-mono text-xs text-text-tertiary">player:{"{id}"}</code>), so no two worlds share state.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="h-4 w-4 text-signal shrink-0 mt-0.5" />
@@ -376,55 +395,7 @@ export default function LandingPage() {
           </div>
 
           {/* 10-line Integration Code Card */}
-          <div className="rounded-2xl bg-surface-1 border border-border p-2 card-elevation overflow-hidden">
-            <div className="h-10 px-4 bg-surface-2 rounded-t-xl border-b border-border flex items-center justify-between text-xs font-mono text-text-tertiary">
-              <div className="flex items-center gap-2">
-                <Terminal className="h-3.5 w-3.5 text-signal" />
-                <span className="text-text-secondary font-medium">game-server.ts</span>
-              </div>
-              <span className="text-xs">TypeScript</span>
-            </div>
-
-            <div className="p-5 font-mono text-xs leading-relaxed overflow-x-auto text-text-primary">
-              <div className="text-text-tertiary">// 1. Initialize per-player isolated FalkorDB world</div>
-              <div>
-                <span className="text-signal">import</span> &#123; Hearsay &#125; <span className="text-signal">from</span> <span className="text-gold">&quot;@hearsay/core&quot;</span>;
-              </div>
-              <div className="mt-1">
-                <span className="text-signal">const</span> hearsay = <span className="text-signal">new</span> <span className="text-text-primary">Hearsay</span>(&#123; graph: <span className="text-gold">&quot;player:042&quot;</span> &#125;);
-              </div>
-
-              <div className="text-text-tertiary mt-3">// 2. Player performs an action in the world</div>
-              <div>
-                <span className="text-signal">await</span> hearsay.<span className="text-text-primary">recordAction</span>(&#123;
-              </div>
-              <div className="pl-4">
-                actor: <span className="text-gold">&quot;player&quot;</span>, action: <span className="text-gold">&quot;donated_50_gold&quot;</span>,
-              </div>
-              <div className="pl-4">
-                place: <span className="text-gold">&quot;blacksmith_forge&quot;</span>, witnesses: [<span className="text-gold">&quot;martha&quot;</span>]
-              </div>
-              <div>&#125;);</div>
-
-              <div className="text-text-tertiary mt-3">// 3. Advance tick: rumors spread over trust network</div>
-              <div>
-                <span className="text-signal">const</span> gossip = <span className="text-signal">await</span> hearsay.<span className="text-text-primary">advanceTime</span>();
-              </div>
-
-              <div className="text-text-tertiary mt-3">// 4. Generate dialogue strictly from known facts</div>
-              <div>
-                <span className="text-signal">const</span> reply = <span className="text-signal">await</span> hearsay.<span className="text-text-primary">dialogue</span>(&#123; npcId: <span className="text-gold">&quot;garrick&quot;</span> &#125;);
-              </div>
-
-              <div className="text-text-tertiary mt-3">// 5. Inspect the mathematical provenance chain</div>
-              <div>
-                <span className="text-signal">const</span> why = <span className="text-signal">await</span> hearsay.<span className="text-text-primary">explain</span>(reply.provenanceId);
-              </div>
-              <div>
-                console.log(why.path); <span className="text-text-tertiary">// Martha → Garrick (0.72)</span>
-              </div>
-            </div>
-          </div>
+          <CodeCard filename="game-server.ts" language="TypeScript · illustrative API" lines={INTEGRATION_SNIPPET} />
         </div>
       </section>
 
@@ -499,13 +470,13 @@ export default function LandingPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-success">✓</span>
-                    <span><strong>Verifiable Provenance:</strong> Every single claim is backed by an auditable Cypher path in milliseconds.</span>
+                    <span><strong>Verifiable Provenance:</strong> Every claim is backed by an auditable path through the graph.</span>
                   </li>
                 </ul>
               </div>
               <div className="mt-6 pt-4 border-t border-border text-xs font-mono text-gold flex items-center justify-between">
                 <span>100% Explainable Provenance</span>
-                <span className="text-success">Production Ready</span>
+                <span className="text-success">Auditable</span>
               </div>
             </div>
           </div>

@@ -49,6 +49,7 @@ export function NpcListPanel({
             <button
               key={npc.id}
               onClick={() => onSelectNpc(npc.id)}
+              aria-pressed={isSelected}
               className={`w-full text-left rounded-xl p-3 border transition-all duration-120 flex flex-col gap-2.5 relative ${
                 isSelected
                   ? "bg-surface-3 border-signal/50 shadow-md"

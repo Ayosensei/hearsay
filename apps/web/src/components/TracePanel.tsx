@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TraceStep, AgentType } from "../lib/types";
-import { Terminal, ChevronDown, ChevronRight, Activity, Clock } from "lucide-react";
+import { isLive } from "../lib/engine-mode";
+import { Terminal, ChevronDown, ChevronRight, Clock } from "lucide-react";
 
 interface TracePanelProps {
   traces: TraceStep[];
@@ -8,7 +9,8 @@ interface TracePanelProps {
 
 export function TracePanel({ traces }: TracePanelProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  // Track the trace object, not its index: new traces are prepended, so indexes shift.
+  const [expandedTrace, setExpandedTrace] = useState<TraceStep | null>(null);
 
   const totalMs = traces.reduce((acc, t) => acc + t.ms, 0);
 
@@ -17,11 +19,14 @@ export function TracePanel({ traces }: TracePanelProps) {
       {/* Drawer Toggle Header */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
         className="w-full h-9 px-6 flex items-center justify-between text-xs font-mono text-text-tertiary hover:bg-surface-2/60 transition-colors"
       >
         <div className="flex items-center gap-2">
           <Terminal className="h-3.5 w-3.5 text-signal" />
-          <span className="font-semibold text-text-secondary">FalkorDB Query Traces</span>
+          <span className="font-semibold text-text-secondary">
+            {isLive ? "FalkorDB Query Traces" : "Query Traces (simulated)"}
+          </span>
           <span className="tabular-nums bg-surface-3 px-1.5 py-0.5 rounded text-text-secondary">
             {traces.length} steps
           </span>
@@ -44,14 +49,16 @@ export function TracePanel({ traces }: TracePanelProps) {
             <p className="text-text-tertiary text-center py-2">No queries executed yet in this session.</p>
           ) : (
             traces.map((trace, idx) => {
-              const isExpanded = expandedRow === idx;
+              const isExpanded = expandedTrace === trace;
               const agentDot = getAgentDot(trace.agent);
 
               return (
-                <div key={idx} className="flex flex-col">
-                  <div
-                    onClick={() => setExpandedRow(isExpanded ? null : idx)}
-                    className="flex items-center justify-between p-2 rounded-md bg-surface-2 hover:bg-surface-3 border border-border/40 cursor-pointer transition-colors"
+                <div key={`${trace.queryId}-${idx}`} className="flex flex-col">
+                  <button
+                    type="button"
+                    aria-expanded={isExpanded}
+                    onClick={() => setExpandedTrace(isExpanded ? null : trace)}
+                    className="w-full text-left flex items-center justify-between p-2 rounded-md bg-surface-2 hover:bg-surface-3 border border-border/40 cursor-pointer transition-colors"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <span className={`h-2 w-2 rounded-full shrink-0 ${agentDot}`} />
@@ -67,7 +74,7 @@ export function TracePanel({ traces }: TracePanelProps) {
                       <span className="text-text-tertiary">{trace.rows} rows</span>
                       <span className="text-signal font-medium">{trace.ms.toFixed(1)} ms</span>
                     </div>
-                  </div>
+                  </button>
 
                   {/* Expanded Args JSON preview */}
                   {isExpanded && (

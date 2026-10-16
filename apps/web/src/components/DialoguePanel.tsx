@@ -1,27 +1,47 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NPC, DialogueMessage, ProvenanceChain } from "../lib/types";
 import { MessageSquare, Send, Eye, Sparkles, ShieldAlert } from "lucide-react";
 
 interface DialoguePanelProps {
   selectedNpc: NPC;
   messages: DialogueMessage[];
+  /** A reply from *this* NPC is pending (drives the typing indicator). */
   isSending: boolean;
+  /** Any tool call is in flight, so sending would be ignored. */
+  isBusy: boolean;
   onSendMessage: (text: string) => void;
   onInspectProvenance: (provenance: ProvenanceChain) => void;
 }
+
+const MAX_MESSAGE = 280;
 
 export function DialoguePanel({
   selectedNpc,
   messages,
   isSending,
+  isBusy,
   onSendMessage,
   onInspectProvenance,
 }: DialoguePanelProps) {
   const [inputText, setInputText] = useState("");
+  const endRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const wasSending = useRef(false);
+
+  // Keep the newest message (or typing indicator) in view.
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: "end" });
+  }, [messages.length, isSending, selectedNpc.id]);
+
+  // A disabled input loses focus; hand it back when the reply lands.
+  useEffect(() => {
+    if (wasSending.current && !isSending) inputRef.current?.focus();
+    wasSending.current = isSending;
+  }, [isSending]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputText.trim() || isSending) return;
+    if (!inputText.trim() || isBusy) return;
     onSendMessage(inputText.trim());
     setInputText("");
   };
@@ -59,11 +79,11 @@ export function DialoguePanel({
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
+      <div role="log" aria-live="polite" className="flex-1 overflow-y-auto p-4 space-y-3.5">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6 text-text-tertiary">
             <MessageSquare className="h-8 w-8 stroke-1 text-text-tertiary/60 mb-2" />
-            <p className="text-xs max-w-[220px]">
+            <p className="text-xs max-w-56">
               Speak to {selectedNpc.name}. They will only answer with what they know.
             </p>
           </div>
@@ -78,7 +98,7 @@ export function DialoguePanel({
               >
                 {/* Bubble */}
                 <div
-                  className={`max-w-[85%] rounded-xl p-3 text-xs leading-relaxed ${
+                  className={`max-w-xs rounded-xl p-3 text-xs leading-relaxed ${
                     isPlayer
                       ? "bg-surface-3 text-text-primary rounded-br-xs"
                       : `bg-surface-2 text-text-primary border-l-2 ${factionBorderClass} rounded-bl-xs card-elevation`
@@ -89,7 +109,7 @@ export function DialoguePanel({
                   {/* Why? Provenance Action button under NPC message */}
                   {!isPlayer && msg.provenance && (
                     <button
-                      onClick={() => onInspectProvenance(msg.provenance!)}
+                      onClick={() => msg.provenance && onInspectProvenance(msg.provenance)}
                       className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-3 hover:bg-surface-1 text-xs font-mono text-gold border border-gold/40 transition-all active:scale-96"
                       title="Inspect graph provenance trail"
                     >
@@ -117,10 +137,7 @@ export function DialoguePanel({
 
         {/* Dynamic Typing Indicator */}
         {isSending && (
-          <div
-            aria-live="polite"
-            className="flex items-center gap-2 p-3 rounded-xl rounded-bl-xs bg-surface-2 text-text-tertiary text-xs max-w-[170px] card-elevation border-l-2 border-signal"
-          >
+          <div className="flex items-center gap-2 p-3 rounded-xl rounded-bl-xs bg-surface-2 text-text-tertiary text-xs max-w-48 card-elevation border-l-2 border-signal">
             <div className="flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-signal animate-pulse" />
               <span className="h-1.5 w-1.5 rounded-full bg-signal animate-pulse delay-150" />
@@ -131,6 +148,7 @@ export function DialoguePanel({
             </span>
           </div>
         )}
+        <div ref={endRef} />
       </div>
 
       {/* Input Box Form */}
@@ -140,16 +158,19 @@ export function DialoguePanel({
       >
         <div className="flex items-center gap-2">
           <input
+            ref={inputRef}
             type="text"
             value={inputText}
+            maxLength={MAX_MESSAGE}
+            aria-label={`Message ${selectedNpc.name}`}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={`Ask ${selectedNpc.name.split(" ")[0]} something...`}
-            disabled={isSending}
+            disabled={isBusy}
             className="flex-1 h-10 rounded-md bg-surface-2 px-3 text-xs text-text-primary placeholder:text-text-tertiary border border-border focus:outline-none focus:ring-1 focus:ring-signal transition-all"
           />
           <button
             type="submit"
-            disabled={isSending || !inputText.trim()}
+            disabled={isBusy || !inputText.trim()}
             className="h-10 w-10 rounded-md bg-primary text-on-primary flex items-center justify-center hover:bg-primary-hover active:scale-96 transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             title="Send dialogue"
           >

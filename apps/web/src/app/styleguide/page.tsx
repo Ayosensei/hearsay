@@ -1,11 +1,11 @@
 import Link from "next/link";
+import { CodeCard } from "../../components/CodeCard";
 import {
   ArrowLeft,
   Sparkles,
   Shield,
   Eye,
   Ear,
-  Activity,
   ArrowRight,
   User,
   HeartHandshake,
@@ -13,7 +13,6 @@ import {
   Flame,
   CheckCircle2,
   Clock,
-  Terminal,
 } from "lucide-react";
 
 export default function StyleguidePage() {
@@ -234,7 +233,7 @@ export default function StyleguidePage() {
                   <div className={`h-11 w-11 rounded-full bg-surface-3 border-2 ${f.border} flex items-center justify-center font-serif text-lg text-text-primary relative`}>
                     {i === 0 ? "G" : i === 1 ? "M" : "B"}
                     {i === 0 && (
-                      <div className="absolute -inset-[2px] rounded-full chrome-ring opacity-90 -z-10" />
+                      <div className="absolute -inset-0.5 rounded-full chrome-ring opacity-90 -z-10" />
                     )}
                   </div>
                   <div>
@@ -319,7 +318,7 @@ export default function StyleguidePage() {
             <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-3 border border-gold/50 shadow-sm">
               <div className="h-10 w-10 rounded-full bg-gold text-on-gold flex items-center justify-center font-serif text-sm font-semibold shrink-0 relative">
                 <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-gold text-on-gold flex items-center justify-center">
-                  <Eye className="h-2.5 w-2.5 stroke-[2.5]" />
+                  <Eye className="h-2.5 w-2.5" strokeWidth={2.5} />
                 </div>
                 MF
               </div>
@@ -334,7 +333,7 @@ export default function StyleguidePage() {
             </div>
 
             <div className="flex flex-col items-center gap-0.5 px-1">
-              <span className="font-mono text-xs text-text-tertiary tabular-nums">decay</span>
+              <span className="font-mono text-xs text-text-tertiary tabular-nums">×0.85</span>
               <ArrowRight className="h-4 w-4 text-signal translate-x-px" />
             </div>
 
@@ -371,7 +370,7 @@ export default function StyleguidePage() {
         <div className="rounded-xl bg-surface-1 p-6 border border-border space-y-4 max-w-xl">
           {/* Player message */}
           <div className="flex flex-col items-end">
-            <div className="max-w-[85%] rounded-xl rounded-br-xs p-3 text-xs bg-surface-3 text-text-primary">
+            <div className="max-w-xs rounded-xl rounded-br-xs p-3 text-xs bg-surface-3 text-text-primary">
               What do you know about the stolen relic?
             </div>
             <span className="mt-1 px-1 text-xs font-mono text-text-tertiary">Player · 10:14 PM</span>
@@ -379,7 +378,7 @@ export default function StyleguidePage() {
 
           {/* NPC message with Why trigger */}
           <div className="flex flex-col items-start">
-            <div className="max-w-[85%] rounded-xl rounded-bl-xs p-3 text-xs bg-surface-2 text-text-primary border-l-2 border-l-faction-townsfolk card-elevation">
+            <div className="max-w-xs rounded-xl rounded-bl-xs p-3 text-xs bg-surface-2 text-text-primary border-l-2 border-l-faction-townsfolk card-elevation">
               <p>Martha told me someone was spotted fleeing the vault with the relic. Keep your hands off my forge.</p>
               <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-3 text-xs font-mono text-gold border border-gold/40">
                 <Eye className="h-3 w-3 text-gold" />
@@ -399,24 +398,18 @@ export default function StyleguidePage() {
           <span>Developer Code Card (Obsidian &amp; Signal)</span>
         </div>
 
-        <div className="rounded-2xl bg-surface-1 border border-border p-2 card-elevation max-w-xl">
-          <div className="h-10 px-4 bg-surface-2 rounded-t-xl border-b border-border flex items-center justify-between text-xs font-mono text-text-tertiary">
-            <div className="flex items-center gap-2">
-              <Terminal className="h-3.5 w-3.5 text-signal" />
-              <span className="text-text-secondary font-medium">hearsay-specimen.ts</span>
-            </div>
-            <span className="text-xs">TypeScript</span>
-          </div>
-          <div className="p-4 font-mono text-xs leading-relaxed text-text-primary">
-            <div className="text-text-tertiary">// Query Q12: Explain Provenance Chain</div>
-            <div>
-              <span className="text-signal">const</span> provenance = <span className="text-signal">await</span> hearsay.<span className="text-text-primary">explain</span>(<span className="text-gold">&quot;evt_well_poisoned&quot;</span>);
-            </div>
-            <div className="text-text-tertiary mt-2">// Evaluates trust decay: c = 0.90 × 0.85</div>
-            <div>
-              console.log(provenance.confidence); <span className="text-text-tertiary">// 0.765</span>
-            </div>
-          </div>
+        <div className="max-w-xl">
+          <CodeCard
+            filename="hearsay-specimen.ts"
+            language="TypeScript"
+            lines={[
+              [["// Explain how Garrick learned about the theft", "cmt"]],
+              [["const ", "kw"], ["why = ", "text"], ["await ", "kw"], ["hearsay.explain(", "text"], ['"event_relic_theft"', "str"], [");", "text"]],
+              [],
+              [["// Each hop multiplies confidence by the TRUSTS weight", "cmt"]],
+              [["console.log(why.confidence); ", "text"], ["// 1.00 × 0.85 = 0.85", "cmt"]],
+            ]}
+          />
         </div>
       </section>
     </div>

@@ -1,27 +1,40 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Scans apps/web/src for hard-coded hex colors, arbitrary Tailwind values, or forbidden libraries
+// Scans apps/web/src for hard-coded colours, arbitrary Tailwind values, or forbidden libraries.
+// Comments are stripped first so a "//" in prose can't hide a real violation on the same line.
 const srcDir = path.resolve('src');
 let errors = [];
+
+// Any Tailwind utility using bracket syntax, including variants and prefixes
+// (bg-[#..], text-[13px], max-w-[85%], md:h-[560px], ...).
+const ARBITRARY = /(?:^|[\s"'`:])-?[a-z][a-z0-9]*(?:-[a-z0-9]+)*-\[[^\]\s]+\]/;
+const HEX = /(?<!&)#[0-9a-fA-F]{3,8}\b/;
+const COLOR_FN = /\b(?:rgba?|hsla?)\(/;
+
+function stripComments(line) {
+  return line
+    .replace(/\/\*.*?\*\//g, '')
+    .replace(/(^|\s)\/\/.*$/, '$1');
+}
 
 function scanFile(filePath) {
   if (filePath.endsWith('.css')) return; // css contains theme definitions
   const content = fs.readFileSync(filePath, 'utf-8');
   const lines = content.split('\n');
 
-  lines.forEach((line, idx) => {
-    // Check for hard-coded hex colors like #FF5C6C, #05070B outside comments and HTML entities (&#123;)
-    const hexMatch = line.match(/(?<!&)#([0-9a-fA-F]{3,8})\b/);
-    if (hexMatch && !line.includes('//') && !line.includes('/*')) {
-      errors.push(`${filePath}:${idx + 1}: Found hard-coded hex color "${hexMatch[0]}". Use DESIGN.md semantic tokens.`);
-    }
+  lines.forEach((raw, idx) => {
+    const line = stripComments(raw);
+    const where = `${filePath}:${idx + 1}`;
 
-    // Check for arbitrary Tailwind bracket syntax e.g. bg-[#...], text-[13px]
-    const arbitraryMatch = line.match(/\b(bg|text|border|p|m|gap|rounded)-\[[^\]]+\]/);
-    if (arbitraryMatch) {
-      errors.push(`${filePath}:${idx + 1}: Found arbitrary Tailwind value "${arbitraryMatch[0]}". Use DESIGN.md scale.`);
-    }
+    const hex = line.match(HEX);
+    if (hex) errors.push(`${where}: Found hard-coded hex color "${hex[0]}". Use DESIGN.md semantic tokens.`);
+
+    const fn = line.match(COLOR_FN);
+    if (fn) errors.push(`${where}: Found colour function "${fn[0]}...". Move it to globals.css or use a token.`);
+
+    const arbitrary = line.match(ARBITRARY);
+    if (arbitrary) errors.push(`${where}: Found arbitrary Tailwind value "${arbitrary[0].trim()}". Use DESIGN.md scale.`);
   });
 }
 

@@ -1,4 +1,5 @@
 import { ProvenanceChain } from "../lib/types";
+import { isLive } from "../lib/engine-mode";
 import { Eye, ArrowRight, ShieldCheck, X, Sparkles } from "lucide-react";
 
 interface WhyCardProps {
@@ -18,7 +19,7 @@ export function WhyCard({ provenance, targetNpcName, onClose }: WhyCardProps) {
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-3 text-gold text-xs font-mono border border-gold/30 mb-2">
             <Sparkles className="h-3 w-3" />
-            <span>FalkorDB Provenance Trace</span>
+            <span>{isLive ? "FalkorDB Provenance Trace" : "Provenance Trace (simulated)"}</span>
           </div>
           <h2 className="font-serif text-2xl md:text-3xl text-text-primary tracking-tight">
             How {targetNpcName} <em className="italic text-signal font-serif">learned</em> about it
@@ -30,6 +31,7 @@ export function WhyCard({ provenance, targetNpcName, onClose }: WhyCardProps) {
 
         <button
           onClick={onClose}
+          aria-label="Dismiss provenance card"
           className="h-8 w-8 rounded-full bg-surface-3 text-text-tertiary hover:text-text-primary flex items-center justify-center transition-colors hover:bg-surface-1"
           title="Dismiss provenance card"
         >
@@ -65,7 +67,7 @@ export function WhyCard({ provenance, targetNpcName, onClose }: WhyCardProps) {
                 >
                   {isWitness && (
                     <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-gold text-on-gold flex items-center justify-center">
-                      <Eye className="h-2.5 w-2.5 stroke-[2.5]" />
+                      <Eye className="h-2.5 w-2.5" strokeWidth={2.5} />
                     </div>
                   )}
                   {hop.avatarInitials}
@@ -97,11 +99,13 @@ export function WhyCard({ provenance, targetNpcName, onClose }: WhyCardProps) {
                 </div>
               </div>
 
-              {/* Hop Arrow with decay indicator */}
+              {/* Hop arrow: the trust multiplier applied on this TRUSTS edge */}
               {!isLast && (
                 <div className="flex flex-col items-center gap-0.5 px-1">
                   <span className="font-mono text-xs text-text-tertiary tabular-nums">
-                    decay
+                    {hop.confidence > 0
+                      ? `×${(provenance.hops[index + 1].confidence / hop.confidence).toFixed(2)}`
+                      : "decay"}
                   </span>
                   <ArrowRight className="h-4 w-4 text-signal translate-x-px" />
                 </div>

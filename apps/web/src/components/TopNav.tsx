@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { Sparkles, Play, RotateCcw, Compass, Database, BookOpen } from "lucide-react";
+import { ENGINE_MODE } from "../lib/engine-mode";
 
 interface TopNavProps {
   tick: number;
   isAdvancing: boolean;
+  /** True while any tool call (advance, talk, act) is in flight. */
+  isBusy: boolean;
   onAdvanceTime: () => void;
   onResetWorld: () => void;
   onOpenComparison: () => void;
@@ -13,6 +16,7 @@ interface TopNavProps {
 export function TopNav({
   tick,
   isAdvancing,
+  isBusy,
   onAdvanceTime,
   onResetWorld,
   onOpenComparison,
@@ -47,7 +51,7 @@ export function TopNav({
 
         <button
           onClick={onAdvanceTime}
-          disabled={isAdvancing}
+          disabled={isBusy}
           className="h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-all duration-120 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           title="Simulate 1 world tick (propagate gossip along trust network)"
         >
@@ -57,7 +61,8 @@ export function TopNav({
 
         <button
           onClick={onOpenActionModal}
-          className="h-10 px-3.5 rounded-md bg-surface-2 hover:bg-surface-3 text-text-primary text-sm font-medium border border-border hover:border-signal/40 active:scale-96 transition-all duration-120 flex items-center gap-1.5"
+          disabled={isBusy}
+          className="h-10 px-3.5 rounded-md bg-surface-2 hover:bg-surface-3 text-text-primary text-sm font-medium border border-border hover:border-signal/40 active:scale-96 transition-all duration-120 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Perform a helpful or harmful action in town"
         >
           <Sparkles className="h-3.5 w-3.5 text-signal" />
@@ -79,12 +84,13 @@ export function TopNav({
         <div className="flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-1 text-xs font-mono text-text-secondary border border-border">
           <span className="h-2 w-2 rounded-full bg-success" />
           <Database className="h-3 w-3 text-text-tertiary" />
-          <span>mock-engine</span>
+          <span>{ENGINE_MODE === "live" ? "falkordb" : "mock-engine"}</span>
         </div>
 
         <button
           onClick={onResetWorld}
-          className="h-9 px-3 rounded-md bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-medium border border-border flex items-center gap-1.5 hover:bg-surface-3 transition-colors"
+          disabled={isBusy}
+          className="h-9 px-3 rounded-md bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-medium border border-border flex items-center gap-1.5 hover:bg-surface-3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           title="Reset town simulation to initial state"
         >
           <RotateCcw className="h-3 w-3" />

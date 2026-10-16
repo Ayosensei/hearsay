@@ -1,4 +1,5 @@
 import { X, ShieldAlert, ShieldCheck, Sparkles, Database, Bot } from "lucide-react";
+import { useEscapeKey } from "../lib/use-escape-key";
 
 interface ControlVsHearsayModalProps {
   isOpen: boolean;
@@ -6,11 +7,21 @@ interface ControlVsHearsayModalProps {
 }
 
 export function ControlVsHearsayModal({ isOpen, onClose }: ControlVsHearsayModalProps) {
+  useEscapeKey(isOpen, onClose);
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-4xl rounded-2xl bg-surface-1 border border-border card-elevation overflow-hidden shadow-2xl relative">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-enter"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Control versus Hearsay comparison"
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-4xl rounded-2xl bg-surface-1 border border-border card-elevation overflow-hidden shadow-2xl relative"
+      >
         {/* Chrome metallic accent line */}
         <div className="absolute top-0 left-0 right-0 h-1 chrome-ring opacity-90" />
 
@@ -19,7 +30,7 @@ export function ControlVsHearsayModal({ isOpen, onClose }: ControlVsHearsayModal
           <div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-3 text-signal text-xs font-mono border border-signal/30 mb-2">
               <Sparkles className="h-3 w-3" />
-              <span>Signature Moment #3 · Track 02</span>
+              <span>Same question, two memories</span>
             </div>
             <h2 className="font-serif text-3xl text-text-primary tracking-tight">
               Control <span className="font-sans text-text-tertiary text-xl font-normal">vs</span>{" "}
@@ -34,6 +45,7 @@ export function ControlVsHearsayModal({ isOpen, onClose }: ControlVsHearsayModal
             onClick={onClose}
             className="h-8 w-8 rounded-full bg-surface-2 text-text-tertiary hover:text-text-primary flex items-center justify-center transition-colors hover:bg-surface-3"
             title="Close comparison"
+            aria-label="Close comparison"
           >
             <X className="h-4 w-4" />
           </button>
@@ -140,8 +152,8 @@ export function ControlVsHearsayModal({ isOpen, onClose }: ControlVsHearsayModal
                   <span className="text-signal">Martha → Garrick → Capt. Vane</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>FalkorDB Latency:</span>
-                  <span className="text-text-primary tabular-nums">1.8 ms (Q12)</span>
+                  <span>Explain-path query:</span>
+                  <span className="text-text-primary">Q12_explain_provenance</span>
                 </div>
               </div>
             </div>

@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import { GraphNode, GraphEdge, FactionType } from "../lib/types";
-import { Share2, Sparkles, Layers } from "lucide-react";
+import { ENGINE_MODE } from "../lib/engine-mode";
+import { Share2, Layers } from "lucide-react";
 
 interface GraphPanelProps {
   nodes: GraphNode[];
@@ -20,24 +22,38 @@ export function GraphPanel({
 }: GraphPanelProps) {
   const isHighlightMode = activePathEdgeIds.length > 0;
 
+  // Constant-time lookups: the render below touches every edge and node.
+  const nodeById = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
+  const activeEdgeSet = useMemo(() => new Set(activePathEdgeIds), [activePathEdgeIds]);
+  const activeNodeIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const e of edges) {
+      if (activeEdgeSet.has(e.id)) {
+        ids.add(e.source);
+        ids.add(e.target);
+      }
+    }
+    return ids;
+  }, [edges, activeEdgeSet]);
+
   return (
     <section className="flex-1 bg-surface-1 flex flex-col relative overflow-hidden">
       {/* Panel Top Bar / Graph Status */}
       <div className="h-12 px-4 border-b border-border flex items-center justify-between shrink-0 bg-surface-1/90 backdrop-blur z-10">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 whitespace-nowrap">
           <Share2 className="h-4 w-4 text-signal" />
           <h2 className="text-xs font-semibold uppercase tracking-wider text-text-secondary font-mono">
             Social Trust Network
           </h2>
           <span className="font-mono text-xs text-text-tertiary">
-            (FalkorDB Graph)
+            ({ENGINE_MODE === "live" ? "FalkorDB" : "mock graph"})
           </span>
         </div>
 
         {isHighlightMode && (
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-2 border border-signal/50 signal-glow text-xs font-mono text-signal">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-2 border border-signal/50 signal-glow text-xs font-mono text-signal whitespace-nowrap">
             <span className="h-2 w-2 rounded-full bg-signal animate-ping" />
-            <span>Rumor Propagation Active (Streaming Flow)</span>
+            <span>Rumor flow active</span>
           </div>
         )}
       </div>
@@ -45,37 +61,19 @@ export function GraphPanel({
       {/* Interactive Vector Graph Area */}
       <div className="flex-1 relative flex items-center justify-center p-6 select-none overflow-hidden">
         {/* Subtle grid background pattern */}
-        <div
-          className="absolute inset-0 opacity-15"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(143,162,255,0.4) 1px, transparent 0)",
-            backgroundSize: "28px 28px",
-          }}
-        />
+        <div className="absolute inset-0 opacity-15 graph-dots" />
 
         {/* SVG Graph Viewport */}
         <svg
           viewBox="0 0 640 440"
-          className="w-full h-full max-w-4xl max-h-[560px] relative z-10"
+          className="w-full h-full max-w-4xl max-h-140 relative z-10"
         >
           <defs>
-            <marker
-              id="arrow"
-              viewBox="0 0 10 10"
-              refX="18"
-              refY="5"
-              markerWidth="6"
-              markerHeight="6"
-              orient="auto-start-reverse"
-            >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-signal)" />
-            </marker>
-
-            {/* Path definitions for animation mpath */}
+            {/* Motion paths exist only for the edges a rumor is travelling along */}
             {edges.map((edge) => {
-              const sourceNode = nodes.find((n) => n.id === edge.source);
-              const targetNode = nodes.find((n) => n.id === edge.target);
+              if (!activeEdgeSet.has(edge.id)) return null;
+              const sourceNode = nodeById.get(edge.source);
+              const targetNode = nodeById.get(edge.target);
               if (!sourceNode || !targetNode) return null;
               const x1 = sourceNode.x || 0;
               const y1 = sourceNode.y || 0;
@@ -93,11 +91,11 @@ export function GraphPanel({
 
           {/* Edges */}
           {edges.map((edge) => {
-            const sourceNode = nodes.find((n) => n.id === edge.source);
-            const targetNode = nodes.find((n) => n.id === edge.target);
+            const sourceNode = nodeById.get(edge.source);
+            const targetNode = nodeById.get(edge.target);
             if (!sourceNode || !targetNode) return null;
 
-            const isPathActive = activePathEdgeIds.includes(edge.id);
+            const isPathActive = activeEdgeSet.has(edge.id);
             const x1 = sourceNode.x || 0;
             const y1 = sourceNode.y || 0;
             const x2 = targetNode.x || 0;
@@ -159,14 +157,14 @@ export function GraphPanel({
                     />
 
                     {/* Moving Particle 1 (Gold Eyewitness Beacon) */}
-                    <circle r={5} fill="var(--color-gold)">
+                    <circle r={5} fill="var(--color-gold)" className="rumor-orb">
                       <animateMotion dur="1.5s" repeatCount="indefinite">
                         <mpath href={`#edge-path-${edge.id}`} />
                       </animateMotion>
                     </circle>
 
                     {/* Moving Particle 2 (Signal Blue Hop Pulse) */}
-                    <circle r={4} fill="var(--color-signal)">
+                    <circle r={4} fill="var(--color-signal)" className="rumor-orb">
                       <animateMotion dur="1.5s" begin="0.75s" repeatCount="indefinite">
                         <mpath href={`#edge-path-${edge.id}`} />
                       </animateMotion>
@@ -175,16 +173,15 @@ export function GraphPanel({
                 )}
 
                 {/* Weight / Type label on edge center */}
-                {edge.weight && (
+                {edge.weight !== undefined && (
                   <text
                     x={(x1 + x2) / 2}
                     y={(y1 + y2) / 2 - 8}
                     fill={isPathActive ? "var(--color-signal)" : "var(--color-text-tertiary)"}
                     fontSize={isPathActive ? "11" : "10"}
                     fontWeight={isPathActive ? "600" : "400"}
-                    fontFamily="monospace"
                     textAnchor="middle"
-                    className="select-none pointer-events-none"
+                    className="font-mono select-none pointer-events-none"
                   >
                     {edge.type === "WITNESSED" ? "saw" : `${(edge.weight * 100).toFixed(0)}% trust`}
                   </text>
@@ -202,14 +199,7 @@ export function GraphPanel({
             const isEvent = node.type === "event";
 
             // If highlight mode is active, dim nodes that are not in the path
-            const isInActivePath =
-              isSelected ||
-              isWitness ||
-              edges.some(
-                (e) =>
-                  activePathEdgeIds.includes(e.id) &&
-                  (e.source === node.id || e.target === node.id)
-              );
+            const isInActivePath = isSelected || isWitness || activeNodeIds.has(node.id);
 
             const nodeOpacity = isHighlightMode && !isInActivePath ? "opacity-30" : "opacity-100";
 
@@ -219,9 +209,9 @@ export function GraphPanel({
                 <g
                   key={node.id}
                   transform={`translate(${x}, ${y})`}
-                  onClick={() => onSelectNode(node.id)}
-                  className={`cursor-pointer group transition-opacity duration-320 ${nodeOpacity}`}
+                  className={`group transition-opacity duration-320 ${nodeOpacity}`}
                 >
+                  <title>{`${node.label} (${isHelp ? "help" : "harm"} event)`}</title>
                   {/* Diamond shape for Event */}
                   <rect
                     x="-18"
@@ -239,10 +229,9 @@ export function GraphPanel({
                     y="32"
                     fill="var(--color-text-primary)"
                     fontSize="11"
-                    fontFamily="sans-serif"
                     fontWeight="500"
                     textAnchor="middle"
-                    className="select-none pointer-events-none"
+                    className="font-sans select-none pointer-events-none"
                   >
                     {node.label}
                   </text>
@@ -250,9 +239,8 @@ export function GraphPanel({
                     y="44"
                     fill={isHelp ? "var(--color-success)" : "var(--color-danger)"}
                     fontSize="9"
-                    fontFamily="monospace"
                     textAnchor="middle"
-                    className="select-none pointer-events-none"
+                    className="font-mono select-none pointer-events-none"
                   >
                     [{isHelp ? "HELP" : "HARM"}]
                   </text>
@@ -267,7 +255,17 @@ export function GraphPanel({
               <g
                 key={node.id}
                 transform={`translate(${x}, ${y})`}
+                role="button"
+                tabIndex={0}
+                aria-label={`Select ${node.label}`}
+                aria-pressed={isSelected}
                 onClick={() => onSelectNode(node.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSelectNode(node.id);
+                  }
+                }}
                 className={`cursor-pointer group transition-opacity duration-320 ${nodeOpacity}`}
               >
                 {/* Selected glow ring */}
@@ -288,7 +286,7 @@ export function GraphPanel({
                     r="25"
                     fill="none"
                     stroke="var(--color-gold)"
-                    strokeWidth="2.5"
+                    strokeWidth={2.5}
                     strokeDasharray="4 2"
                     className="animate-spin"
                     style={{ animationDuration: "12s" }}
@@ -309,12 +307,11 @@ export function GraphPanel({
                   y="4"
                   fill="var(--color-text-primary)"
                   fontSize="10"
-                  fontFamily="serif"
                   fontWeight="600"
                   textAnchor="middle"
-                  className="select-none pointer-events-none"
+                  className="font-serif select-none pointer-events-none"
                 >
-                  {node.label.slice(0, 3).toUpperCase()}
+                  {node.avatarInitials ?? node.label.slice(0, 2).toUpperCase()}
                 </text>
 
                 {/* Name beneath */}
@@ -322,10 +319,9 @@ export function GraphPanel({
                   y="34"
                   fill={isSelected ? "var(--color-signal)" : "var(--color-text-primary)"}
                   fontSize="12"
-                  fontFamily="sans-serif"
                   fontWeight={isSelected ? "600" : "400"}
                   textAnchor="middle"
-                  className="select-none pointer-events-none"
+                  className="font-sans select-none pointer-events-none"
                 >
                   {node.label}
                 </text>
