@@ -10,12 +10,15 @@ import { DialoguePanel } from "../components/DialoguePanel";
 import { TracePanel } from "../components/TracePanel";
 import { WhyCard } from "../components/WhyCard";
 import { ControlVsHearsayModal } from "../components/ControlVsHearsayModal";
+import { PlayerActionModal } from "../components/PlayerActionModal";
 
 export default function TownApp() {
   const [townState, setTownState] = useState<TownState | null>(null);
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
+  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
 
   // Initialize Town State on Mount
   useEffect(() => {
@@ -121,6 +124,35 @@ export default function TownApp() {
     });
   };
 
+  // Commit Dynamic World Action
+  const handleCommitAction = async (
+    actionTitle: string,
+    actionType: "harm" | "help",
+    witnessId: string,
+    placeName: string
+  ) => {
+    const res = await hearsayClient.recordAction(
+      actionTitle,
+      actionType,
+      witnessId,
+      placeName,
+      townState
+    );
+    if (res.ok) {
+      const witness = res.data.npcs.find((n) => n.id === witnessId);
+      setTownState({
+        ...res.data,
+        selectedNpcId: witnessId,
+        activePathEdgeIds: [],
+        activeProvenance: undefined,
+      });
+
+      const notice = `Action committed! ${witness?.name} witnessed "${actionTitle}" at ${placeName}. Press 'Advance Time' to watch the rumor propagate!`;
+      setActionNotice(notice);
+      setTimeout(() => setActionNotice(null), 7000);
+    }
+  };
+
   return (
     <div className="h-screen w-screen flex flex-col bg-background text-text-primary overflow-hidden">
       {/* Top Bar */}
@@ -130,6 +162,7 @@ export default function TownApp() {
         onAdvanceTime={handleAdvanceTime}
         onResetWorld={handleResetWorld}
         onOpenComparison={() => setIsComparisonOpen(true)}
+        onOpenActionModal={() => setIsActionModalOpen(true)}
       />
 
       {/* Control vs Hearsay Comparison Modal */}
@@ -137,6 +170,30 @@ export default function TownApp() {
         isOpen={isComparisonOpen}
         onClose={() => setIsComparisonOpen(false)}
       />
+
+      {/* Player Dynamic Action Modal */}
+      <PlayerActionModal
+        isOpen={isActionModalOpen}
+        npcs={townState.npcs}
+        onClose={() => setIsActionModalOpen(false)}
+        onSubmitAction={handleCommitAction}
+      />
+
+      {/* Notice Banner when action committed */}
+      {actionNotice && (
+        <div className="h-8 px-4 bg-surface-2 border-b border-signal/40 flex items-center justify-between text-xs font-mono text-signal signal-glow shrink-0 animate-in fade-in duration-150">
+          <div className="flex items-center gap-2 truncate">
+            <span className="h-2 w-2 rounded-full bg-signal animate-ping" />
+            <span className="truncate">{actionNotice}</span>
+          </div>
+          <button
+            onClick={() => setActionNotice(null)}
+            className="text-text-tertiary hover:text-text-primary text-xs ml-4"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Main 3-Panel Workplace */}
       <div className="flex-1 flex min-h-0 overflow-hidden relative">

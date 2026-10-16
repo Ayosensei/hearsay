@@ -23,6 +23,13 @@ export interface IHearsayClient {
     eventId: string,
     currentState: TownState
   ): Promise<ToolEnvelope<ProvenanceChain | undefined>>;
+  recordAction(
+    actionTitle: string,
+    actionType: "harm" | "help",
+    witnessNpcId: string,
+    placeName: string,
+    currentState: TownState
+  ): Promise<ToolEnvelope<TownState>>;
 }
 
 /**
@@ -83,6 +90,18 @@ export class MockHearsayClient implements IHearsayClient {
         },
       ],
     };
+  }
+
+  async recordAction(
+    actionTitle: string,
+    actionType: "harm" | "help",
+    witnessNpcId: string,
+    placeName: string,
+    currentState: TownState
+  ): Promise<ToolEnvelope<TownState>> {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const { recordPlayerAction } = await import("./mock-data");
+    return recordPlayerAction(actionTitle, actionType, witnessNpcId, placeName, currentState);
   }
 }
 

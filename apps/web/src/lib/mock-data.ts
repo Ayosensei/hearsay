@@ -594,3 +594,100 @@ export function sendMockDialogue(
     trace: traces,
   };
 }
+
+export function recordPlayerAction(
+  actionTitle: string,
+  actionType: "harm" | "help",
+  witnessNpcId: string,
+  placeName: string,
+  state: TownState
+): ToolEnvelope<TownState> {
+  const witness = state.npcs.find((n) => n.id === witnessNpcId);
+  if (!witness) {
+    return {
+      ok: false,
+      error: { code: "UNKNOWN_NPC", message: `Witness NPC "${witnessNpcId}" was not found.` },
+    };
+  }
+
+  const newEventId = `event_${Date.now()}`;
+  const newEvent: TownEvent = {
+    id: newEventId,
+    title: actionTitle,
+    description: `Player performed ${actionType === "help" ? "a helpful" : "a harmful"} deed: "${actionTitle}" at ${placeName}.`,
+    type: actionType,
+    witnessId: witness.id,
+    witnessName: witness.name,
+    placeName,
+    tickOccurred: state.tick,
+  };
+
+  const witnessNode = state.graphNodes.find((n) => n.id === witness.id);
+  const eventNode: GraphNode = {
+    id: newEventId,
+    label: actionTitle.length > 14 ? actionTitle.slice(0, 12) + "..." : actionTitle,
+    type: "event",
+    eventType: actionType,
+    x: witnessNode ? witnessNode.x! + 55 : 300,
+    y: witnessNode ? witnessNode.y! - 55 : 200,
+  };
+
+  const witnessEdge: GraphEdge = {
+    id: `e_wit_${Date.now()}`,
+    source: witness.id,
+    target: newEventId,
+    type: "WITNESSED",
+    weight: 1.0,
+  };
+
+  const updatedNpcs = state.npcs.map((n) => {
+    if (n.id === witness.id) {
+      const scoreShift = actionType === "help" ? 0.35 : -0.35;
+      const newScore = Math.max(-1.0, Math.min(1.0, n.attitudeScore + scoreShift));
+      const newAttitude =
+        newScore > 0.6 ? "devoted" : newScore > 0.2 ? "friendly" : newScore > -0.2 ? "neutral" : newScore > -0.6 ? "wary" : "hostile";
+
+      return {
+        ...n,
+        knowledgeState: "eyewitness" as const,
+        attitudeScore: Number(newScore.toFixed(2)),
+        attitude: newAttitude as any,
+        primaryRumor: {
+          eventId: newEventId,
+          eventTitle: actionTitle,
+          eventType: actionType,
+          confidence: 1.0,
+          hops: 0,
+          eyewitnessId: witness.id,
+          eyewitnessName: witness.name,
+        },
+      };
+    }
+    return n;
+  });
+
+  const traceStep: TraceStep = {
+    agent: "scribe",
+    tool: "record_event",
+    queryId: "Q15_record_witnessed_event",
+    args: { event_id: newEventId, action_type: actionType, witness_id: witness.id, place: placeName },
+    rows: 1,
+    ms: 1.5,
+  };
+
+  const updatedState: TownState = {
+    ...state,
+    events: [newEvent, ...state.events],
+    graphNodes: [...state.graphNodes, eventNode],
+    graphEdges: [...state.graphEdges, witnessEdge],
+    npcs: updatedNpcs,
+    recentTraces: [traceStep, ...state.recentTraces].slice(0, 10),
+  };
+
+  return {
+    ok: true,
+    data: updatedState,
+    trace: [traceStep],
+  };
+}
+

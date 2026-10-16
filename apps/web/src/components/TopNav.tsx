@@ -7,6 +7,7 @@ interface TopNavProps {
   onAdvanceTime: () => void;
   onResetWorld: () => void;
   onOpenComparison: () => void;
+  onOpenActionModal: () => void;
 }
 
 export function TopNav({
@@ -15,6 +16,7 @@ export function TopNav({
   onAdvanceTime,
   onResetWorld,
   onOpenComparison,
+  onOpenActionModal,
 }: TopNavProps) {
   return (
     <header className="h-14 border-b border-border bg-surface-1 px-4 flex items-center justify-between shrink-0">
@@ -51,6 +53,15 @@ export function TopNav({
         >
           <Play className="h-3.5 w-3.5 fill-current" />
           <span>{isAdvancing ? "Propagating..." : "Advance Time"}</span>
+        </button>
+
+        <button
+          onClick={onOpenActionModal}
+          className="h-10 px-3.5 rounded-md bg-surface-2 hover:bg-surface-3 text-text-primary text-sm font-medium border border-border hover:border-signal/40 active:scale-96 transition-all duration-120 flex items-center gap-1.5"
+          title="Perform a helpful or harmful action in town"
+        >
+          <Sparkles className="h-3.5 w-3.5 text-signal" />
+          <span>Act in Town</span>
         </button>
       </div>
 
