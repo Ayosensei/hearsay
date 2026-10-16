@@ -8,6 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "check:design": "node scripts/check-design.mjs",
+    "test": "vitest run",
     "lint": "eslint"
   },
   "dependencies": {
@@ -26,7 +27,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.4"
   },
   "packageManager": "pnpm@12.11.2"
 }

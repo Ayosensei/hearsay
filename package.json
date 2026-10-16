@@ -6,7 +6,9 @@
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
     "typecheck": "pnpm -r typecheck",
-    "check:design": "pnpm --filter web check:design"
+    "check:design": "pnpm --filter web check:design",
+    "test": "pnpm -r --if-present test",
+    "lint": "pnpm -r --if-present lint"
   },
   "devDependencies": {
     "prettier": "^3.5.0",
