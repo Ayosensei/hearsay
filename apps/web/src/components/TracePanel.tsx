@@ -17,7 +17,7 @@ export function TracePanel({ traces }: TracePanelProps) {
       {/* Drawer Toggle Header */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-9 px-4 flex items-center justify-between text-xs font-mono text-text-tertiary hover:bg-surface-2/60 transition-colors"
+        className="w-full h-9 px-6 flex items-center justify-between text-xs font-mono text-text-tertiary hover:bg-surface-2/60 transition-colors"
       >
         <div className="flex items-center gap-2">
           <Terminal className="h-3.5 w-3.5 text-signal" />
@@ -39,7 +39,7 @@ export function TracePanel({ traces }: TracePanelProps) {
 
       {/* Expandable Trace Rows */}
       {isOpen && (
-        <div className="p-3 border-t border-border/60 max-h-48 overflow-y-auto space-y-1.5 font-mono text-xs">
+        <div className="p-3 px-6 border-t border-border/60 max-h-48 overflow-y-auto space-y-1.5 font-mono text-xs">
           {traces.length === 0 ? (
             <p className="text-text-tertiary text-center py-2">No queries executed yet in this session.</p>
           ) : (

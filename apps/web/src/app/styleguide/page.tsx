@@ -50,8 +50,16 @@ export default function StyleguidePage() {
             Visual reference for tokens, typography, and atomic components per DESIGN.md.
           </p>
         </div>
-        <div className="font-mono text-xs text-text-tertiary border border-border px-3 py-1.5 rounded-md bg-surface-1">
-          v0.1.0 · Tailwind v4
+        <div className="flex items-center gap-3">
+          <Link
+            href="/landing"
+            className="text-xs font-mono text-text-tertiary hover:text-signal transition-colors border border-border px-3 py-1.5 rounded-md bg-surface-1"
+          >
+            Product Landing →
+          </Link>
+          <div className="font-mono text-xs text-text-tertiary border border-border px-3 py-1.5 rounded-md bg-surface-1">
+            v0.1.0 · Tailwind v4
+          </div>
         </div>
       </header>
 
@@ -380,6 +388,34 @@ export default function StyleguidePage() {
               </div>
             </div>
             <span className="mt-1 px-1 text-xs font-mono text-text-tertiary">Garrick Vance · Graph-grounded</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 06. Code Card Specimen (DESIGN.md §7) */}
+      <section className="space-y-6">
+        <div className="flex items-center gap-2 font-mono text-xs text-text-tertiary tracking-wider uppercase">
+          <span className="text-signal font-semibold">06</span>
+          <span>Developer Code Card (Obsidian &amp; Signal)</span>
+        </div>
+
+        <div className="rounded-2xl bg-surface-1 border border-border p-2 card-elevation max-w-xl">
+          <div className="h-10 px-4 bg-surface-2 rounded-t-xl border-b border-border flex items-center justify-between text-xs font-mono text-text-tertiary">
+            <div className="flex items-center gap-2">
+              <Terminal className="h-3.5 w-3.5 text-signal" />
+              <span className="text-text-secondary font-medium">hearsay-specimen.ts</span>
+            </div>
+            <span className="text-xs">TypeScript</span>
+          </div>
+          <div className="p-4 font-mono text-xs leading-relaxed text-text-primary">
+            <div className="text-text-tertiary">// Query Q12: Explain Provenance Chain</div>
+            <div>
+              <span className="text-signal">const</span> provenance = <span className="text-signal">await</span> hearsay.<span className="text-text-primary">explain</span>(<span className="text-gold">&quot;evt_well_poisoned&quot;</span>);
+            </div>
+            <div className="text-text-tertiary mt-2">// Evaluates trust decay: c = 0.90 × 0.85</div>
+            <div>
+              console.log(provenance.confidence); <span className="text-text-tertiary">// 0.765</span>
+            </div>
           </div>
         </div>
       </section>

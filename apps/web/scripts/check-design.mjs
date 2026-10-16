@@ -11,8 +11,8 @@ function scanFile(filePath) {
   const lines = content.split('\n');
 
   lines.forEach((line, idx) => {
-    // Check for hard-coded hex colors like #FF5C6C, #05070B outside comments
-    const hexMatch = line.match(/#[0-9a-fA-F]{3,8}\b/);
+    // Check for hard-coded hex colors like #FF5C6C, #05070B outside comments and HTML entities (&#123;)
+    const hexMatch = line.match(/(?<!&)#([0-9a-fA-F]{3,8})\b/);
     if (hexMatch && !line.includes('//') && !line.includes('/*')) {
       errors.push(`${filePath}:${idx + 1}: Found hard-coded hex color "${hexMatch[0]}". Use DESIGN.md semantic tokens.`);
     }

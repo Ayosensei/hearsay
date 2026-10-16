@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Play, RotateCcw, Compass, Database } from "lucide-react";
+import { Sparkles, Play, RotateCcw, Compass, Database, BookOpen } from "lucide-react";
 
 interface TopNavProps {
   tick: number;
@@ -90,6 +90,15 @@ export function TopNav({
           <RotateCcw className="h-3 w-3" />
           <span>Reset</span>
         </button>
+
+        <Link
+          href="/landing"
+          className="h-9 px-3 rounded-md bg-surface-2 text-text-secondary hover:text-text-primary text-xs font-medium border border-border flex items-center gap-1.5 hover:bg-surface-3 transition-colors"
+          title="Product story and developer architecture"
+        >
+          <BookOpen className="h-3.5 w-3.5 text-signal" />
+          <span>Product Overview</span>
+        </Link>
 
         <Link
           href="/styleguide"

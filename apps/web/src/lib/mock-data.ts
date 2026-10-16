@@ -623,9 +623,24 @@ export function recordPlayerAction(
   };
 
   const witnessNode = state.graphNodes.find((n) => n.id === witness.id);
+  const shortLabel =
+    actionTitle.toLowerCase().includes("donate")
+      ? "Gold Donated"
+      : actionTitle.toLowerCase().includes("pickpocket")
+      ? "Pickpocketed"
+      : actionTitle.toLowerCase().includes("poison")
+      ? "Well Poisoned"
+      : actionTitle.toLowerCase().includes("smuggle")
+      ? "Contraband"
+      : actionTitle.toLowerCase().includes("rescue")
+      ? "Courier Rescued"
+      : actionTitle.length > 14
+      ? actionTitle.slice(0, 12)
+      : actionTitle;
+
   const eventNode: GraphNode = {
     id: newEventId,
-    label: actionTitle.length > 14 ? actionTitle.slice(0, 12) + "..." : actionTitle,
+    label: shortLabel,
     type: "event",
     eventType: actionType,
     x: witnessNode ? witnessNode.x! + 55 : 300,
