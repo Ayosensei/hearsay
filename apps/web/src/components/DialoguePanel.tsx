@@ -110,7 +110,7 @@ export function DialoguePanel({
                   {!isPlayer && msg.provenance && (
                     <button
                       onClick={() => msg.provenance && onInspectProvenance(msg.provenance)}
-                      className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-3 hover:bg-surface-1 text-xs font-mono text-gold border border-gold/40 transition-all active:scale-96"
+                      className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-3 hover:bg-surface-1 text-xs font-mono text-gold border border-gold/40 transition-colors active:scale-96"
                       title="Inspect graph provenance trail"
                     >
                       <Eye className="h-3 w-3 text-gold" />
@@ -166,12 +166,12 @@ export function DialoguePanel({
             onChange={(e) => setInputText(e.target.value)}
             placeholder={`Ask ${selectedNpc.name.split(" ")[0]} something...`}
             disabled={isBusy}
-            className="flex-1 h-10 rounded-md bg-surface-2 px-3 text-xs text-text-primary placeholder:text-text-tertiary border border-border focus:outline-none focus:ring-1 focus:ring-signal transition-all"
+            className="flex-1 h-10 rounded-md bg-surface-2 px-3 text-xs text-text-primary placeholder:text-text-tertiary border border-border focus:outline-none focus:ring-1 focus:ring-signal transition-colors"
           />
           <button
             type="submit"
             disabled={isBusy || !inputText.trim()}
-            className="h-10 w-10 rounded-md bg-primary text-on-primary flex items-center justify-center hover:bg-primary-hover active:scale-96 transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            className="h-10 w-10 rounded-md bg-primary text-on-primary flex items-center justify-center hover:bg-primary-hover active:scale-96 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             title="Send dialogue"
           >
             <Send className="h-4 w-4" />

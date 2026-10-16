@@ -67,7 +67,7 @@ export default function LandingPage() {
 
           <Link
             href="/"
-            className="h-9 px-4 rounded-md bg-primary text-on-primary text-xs font-medium hover:bg-primary-hover active:scale-96 transition-all duration-120 flex items-center gap-2 shadow-sm"
+            className="h-9 px-4 rounded-md bg-primary text-on-primary text-xs font-medium hover:bg-primary-hover active:scale-96 transition-colors duration-120 flex items-center gap-2 shadow-sm"
           >
             <Play className="h-3.5 w-3.5 fill-current" />
             <span>Launch Simulation</span>
@@ -101,7 +101,7 @@ export default function LandingPage() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/"
-            className="h-11 px-6 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-all duration-120 flex items-center gap-2.5 shadow-md"
+            className="h-11 px-6 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-colors duration-120 flex items-center gap-2.5 shadow-md"
           >
             <Play className="h-4 w-4 fill-current" />
             <span>Open Hollowbrook Town</span>
@@ -109,7 +109,7 @@ export default function LandingPage() {
 
           <a
             href="#architecture"
-            className="h-11 px-5 rounded-md bg-surface-2 hover:bg-surface-3 text-text-primary text-sm font-medium border border-border active:scale-96 transition-all duration-120 flex items-center gap-2"
+            className="h-11 px-5 rounded-md bg-surface-2 hover:bg-surface-3 text-text-primary text-sm font-medium border border-border active:scale-96 transition-colors duration-120 flex items-center gap-2"
           >
             <span>Explore Architecture</span>
             <ArrowRight className="h-4 w-4 text-signal" />
@@ -386,7 +386,7 @@ export default function LandingPage() {
             <div className="mt-8 flex items-center gap-4">
               <Link
                 href="/"
-                className="h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-all duration-120 flex items-center gap-2"
+                className="h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-colors duration-120 flex items-center gap-2"
               >
                 <span>Launch Demo Town</span>
                 <ArrowRight className="h-4 w-4" />
@@ -498,7 +498,7 @@ export default function LandingPage() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/"
-              className="h-11 px-6 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-all duration-120 flex items-center gap-2.5 shadow-md"
+              className="h-11 px-6 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-colors duration-120 flex items-center gap-2.5 shadow-md"
             >
               <Play className="h-4 w-4 fill-current" />
               <span>Launch Town Simulation</span>
@@ -506,7 +506,7 @@ export default function LandingPage() {
 
             <Link
               href="/styleguide"
-              className="h-11 px-5 rounded-md bg-surface-3 hover:bg-surface-2 text-text-primary text-sm font-medium border border-border active:scale-96 transition-all duration-120 flex items-center gap-2"
+              className="h-11 px-5 rounded-md bg-surface-3 hover:bg-surface-2 text-text-primary text-sm font-medium border border-border active:scale-96 transition-colors duration-120 flex items-center gap-2"
             >
               <Compass className="h-4 w-4 text-signal" />
               <span>Inspect Styleguide</span>

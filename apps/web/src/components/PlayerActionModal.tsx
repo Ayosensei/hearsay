@@ -111,7 +111,7 @@ export function PlayerActionModal({
                   setActionType("help");
                   setSelectedTitle(PRESET_HELPFUL[0]);
                 }}
-                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-colors ${
                   actionType === "help"
                     ? "bg-surface-3 border-success text-success shadow-sm"
                     : "bg-surface-2 border-border text-text-secondary hover:bg-surface-2/80"
@@ -127,7 +127,7 @@ export function PlayerActionModal({
                   setActionType("harm");
                   setSelectedTitle(PRESET_HARMFUL[0]);
                 }}
-                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all ${
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-colors ${
                   actionType === "harm"
                     ? "bg-surface-3 border-danger text-danger shadow-sm"
                     : "bg-surface-2 border-border text-text-secondary hover:bg-surface-2/80"
@@ -153,7 +153,7 @@ export function PlayerActionModal({
                     setSelectedTitle(preset);
                     setCustomTitle("");
                   }}
-                  className={`w-full text-left px-3 py-2 rounded-lg border text-xs transition-all ${
+                  className={`w-full text-left px-3 py-2 rounded-lg border text-xs transition-colors ${
                     selectedTitle === preset && !customTitle
                       ? "bg-surface-3 border-signal/60 text-text-primary font-medium"
                       : "bg-surface-2 border-border/60 text-text-secondary hover:bg-surface-3/50"
@@ -196,7 +196,7 @@ export function PlayerActionModal({
                     key={npc.id}
                     type="button"
                     onClick={() => setSelectedWitnessId(npc.id)}
-                    className={`p-2.5 rounded-xl border text-left flex items-center gap-2.5 transition-all ${
+                    className={`p-2.5 rounded-xl border text-left flex items-center gap-2.5 transition-colors ${
                       isSelected
                         ? "bg-surface-3 border-gold text-text-primary shadow-sm"
                         : "bg-surface-2 border-border text-text-secondary hover:bg-surface-3/60"
@@ -251,7 +251,7 @@ export function PlayerActionModal({
             </button>
             <button
               type="submit"
-              className="h-10 px-5 rounded-md bg-primary text-on-primary text-xs font-medium hover:bg-primary-hover active:scale-96 transition-all shadow-sm flex items-center gap-2"
+              className="h-10 px-5 rounded-md bg-primary text-on-primary text-xs font-medium hover:bg-primary-hover active:scale-96 transition-colors shadow-sm flex items-center gap-2"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>Commit Action in Town</span>

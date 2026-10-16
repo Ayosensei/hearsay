@@ -11,6 +11,7 @@ let errors = [];
 const ARBITRARY = /(?:^|[\s"'`:])-?[a-z][a-z0-9]*(?:-[a-z0-9]+)*-\[[^\]\s]+\]/;
 const HEX = /(?<!&)#[0-9a-fA-F]{3,8}\b/;
 const COLOR_FN = /\b(?:rgba?|hsla?)\(/;
+const TRANSITION_ALL = /\btransition-all\b/;
 
 function stripComments(line) {
   return line
@@ -35,6 +36,9 @@ function scanFile(filePath) {
 
     const arbitrary = line.match(ARBITRARY);
     if (arbitrary) errors.push(`${where}: Found arbitrary Tailwind value "${arbitrary[0].trim()}". Use DESIGN.md scale.`);
+
+    const transitionAll = line.match(TRANSITION_ALL);
+    if (transitionAll) errors.push(`${where}: Found "transition-all". DESIGN.md §8 forbids transition-all; list exact properties.`);
   });
 }
 

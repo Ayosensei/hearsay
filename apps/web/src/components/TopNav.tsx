@@ -52,7 +52,7 @@ export function TopNav({
         <button
           onClick={onAdvanceTime}
           disabled={isBusy}
-          className="h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-all duration-120 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          className="h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-colors duration-120 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           title="Simulate 1 world tick (propagate gossip along trust network)"
         >
           <Play className="h-3.5 w-3.5 fill-current" />
@@ -62,7 +62,7 @@ export function TopNav({
         <button
           onClick={onOpenActionModal}
           disabled={isBusy}
-          className="h-10 px-3.5 rounded-md bg-surface-2 hover:bg-surface-3 text-text-primary text-sm font-medium border border-border hover:border-signal/40 active:scale-96 transition-all duration-120 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-10 px-3.5 rounded-md bg-surface-2 hover:bg-surface-3 text-text-primary text-sm font-medium border border-border hover:border-signal/40 active:scale-96 transition-colors duration-120 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Perform a helpful or harmful action in town"
         >
           <Sparkles className="h-3.5 w-3.5 text-signal" />

@@ -50,7 +50,7 @@ export function NpcListPanel({
               key={npc.id}
               onClick={() => onSelectNpc(npc.id)}
               aria-pressed={isSelected}
-              className={`w-full text-left rounded-xl p-3 border transition-all duration-120 flex flex-col gap-2.5 relative ${
+              className={`w-full text-left rounded-xl p-3 border transition-colors duration-120 flex flex-col gap-2.5 relative ${
                 isSelected
                   ? "bg-surface-3 border-signal/50 shadow-md"
                   : "bg-surface-2 border-border hover:border-border-strong hover:bg-surface-2/80"

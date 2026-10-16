@@ -302,7 +302,7 @@ export default function TownApp() {
             edges={townState.graphEdges}
             selectedNpcId={townState.selectedNpcId}
             activePathEdgeIds={townState.activePathEdgeIds}
-            activeWitnessId={townState.activeProvenance?.witnessId}
+            activeWitnessId={townState.activeProvenance?.witnessId || (townState.activePathEdgeIds.length > 0 ? selectedNpc?.primaryRumor?.eyewitnessId : undefined)}
             onSelectNode={handleSelectNpc}
           />
 
@@ -313,6 +313,7 @@ export default function TownApp() {
                 provenance={townState.activeProvenance}
                 targetNpcName={selectedNpc.name}
                 onClose={handleCloseWhyCard}
+                onSelectNpc={handleSelectNpc}
               />
             </div>
           )}

@@ -204,11 +204,11 @@ export default function StyleguidePage() {
         <div className="space-y-3">
           <h2 className="text-sm font-semibold text-text-secondary">Button States</h2>
           <div className="flex flex-wrap gap-4 items-center">
-            <button className="h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-all duration-120 flex items-center gap-2">
+            <button className="h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover active:scale-96 transition-colors duration-120 flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
               <span>Primary (Advance Time)</span>
             </button>
-            <button className="h-10 px-4 rounded-md bg-surface-3 text-text-primary text-sm font-medium hover:bg-surface-2 active:scale-96 transition-all duration-120 border border-border">
+            <button className="h-10 px-4 rounded-md bg-surface-3 text-text-primary text-sm font-medium hover:bg-surface-2 active:scale-96 transition-colors duration-120 border border-border">
               <span>Secondary (Inspect)</span>
             </button>
             <button className="h-10 px-4 rounded-md text-text-secondary hover:text-text-primary text-sm font-medium transition-colors">

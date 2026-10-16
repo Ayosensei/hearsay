@@ -15,7 +15,7 @@ export function TracePanel({ traces }: TracePanelProps) {
   const totalMs = traces.reduce((acc, t) => acc + t.ms, 0);
 
   return (
-    <div className="border-t border-border bg-surface-1 shrink-0 transition-all duration-200">
+    <div className="border-t border-border bg-surface-1 shrink-0 transition-colors duration-200">
       {/* Drawer Toggle Header */}
       <button
         onClick={() => setIsOpen(!isOpen)}

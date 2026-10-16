@@ -1,16 +1,20 @@
 import { ProvenanceChain } from "../lib/types";
 import { isLive } from "../lib/engine-mode";
+import { useEscapeKey } from "../lib/use-escape-key";
 import { Eye, ArrowRight, ShieldCheck, X, Sparkles } from "lucide-react";
 
 interface WhyCardProps {
   provenance: ProvenanceChain;
   targetNpcName: string;
   onClose: () => void;
+  onSelectNpc?: (npcId: string) => void;
 }
 
-export function WhyCard({ provenance, targetNpcName, onClose }: WhyCardProps) {
+export function WhyCard({ provenance, targetNpcName, onClose, onSelectNpc }: WhyCardProps) {
+  useEscapeKey(true, onClose);
+
   return (
-    <div className="rounded-2xl bg-surface-2 p-6 border border-border card-elevation signal-glow relative overflow-hidden transition-all duration-320">
+    <div className="rounded-2xl bg-surface-2 p-6 border border-border card-elevation signal-glow relative overflow-hidden transition-opacity duration-320">
       {/* Top Chrome Ring Border Highlight */}
       <div className="absolute top-0 left-0 right-0 h-1 chrome-ring opacity-90" />
 
@@ -47,9 +51,12 @@ export function WhyCard({ provenance, targetNpcName, onClose }: WhyCardProps) {
 
           return (
             <div key={hop.npcId} className="flex items-center gap-3">
-              {/* Node Card in Chain */}
-              <div
-                className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+              {/* Node Card in Chain (Clickable to select and focus NPC) */}
+              <button
+                type="button"
+                onClick={() => onSelectNpc?.(hop.npcId)}
+                title={`Focus ${hop.npcName} in graph`}
+                className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-colors hover:border-signal/70 active:scale-96 cursor-pointer ${
                   isWitness
                     ? "bg-surface-3 border-gold/50 shadow-sm"
                     : isLast
@@ -97,7 +104,7 @@ export function WhyCard({ provenance, targetNpcName, onClose }: WhyCardProps) {
                     </span>
                   </div>
                 </div>
-              </div>
+              </button>
 
               {/* Hop arrow: the trust multiplier applied on this TRUSTS edge */}
               {!isLast && (
