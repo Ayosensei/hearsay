@@ -31,6 +31,10 @@ export interface RumorKnowledge {
   heardFromName?: string;
   eyewitnessId: string;
   eyewitnessName: string;
+  /** NPC ids from the eyewitness to the current holder, in telling order. */
+  path: string[];
+  /** Tick the underlying event happened; newer news becomes the headline. */
+  tickOccurred: number;
 }
 
 export interface NPC {
@@ -41,13 +45,18 @@ export interface NPC {
   avatarInitials: string;
   attitude: AttitudeType;
   attitudeScore: number; // -1.0 to +1.0
+  /** Derived from the headline rumor (see gossip.deriveNpc). */
   knowledgeState: KnowledgeStateType;
+  /** Everything this NPC knows. Source of truth. */
+  rumors: RumorKnowledge[];
+  /** Headline rumor: newest event, ties broken by confidence. Derived. */
   primaryRumor?: RumorKnowledge;
 }
 
 export interface GraphNode {
   id: string;
   label: string;
+  avatarInitials?: string;
   type: "npc" | "event" | "player";
   faction?: FactionType;
   attitude?: AttitudeType;

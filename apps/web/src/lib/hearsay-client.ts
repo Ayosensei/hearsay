@@ -4,11 +4,8 @@ import {
   ProvenanceChain,
   DialogueMessage,
 } from "./types";
-import {
-  getInitialTownState,
-  advanceSimulationTick,
-  sendMockDialogue,
-} from "./mock-data";
+import { getInitialTownState } from "./mock-data";
+import { advanceSimulationTick, recordPlayerAction, sendMockDialogue } from "./mock-engine";
 
 export interface IHearsayClient {
   getTownState(): Promise<ToolEnvelope<TownState>>;
@@ -100,7 +97,6 @@ export class MockHearsayClient implements IHearsayClient {
     currentState: TownState
   ): Promise<ToolEnvelope<TownState>> {
     await new Promise((resolve) => setTimeout(resolve, 100));
-    const { recordPlayerAction } = await import("./mock-data");
     return recordPlayerAction(actionTitle, actionType, witnessNpcId, placeName, currentState);
   }
 }
