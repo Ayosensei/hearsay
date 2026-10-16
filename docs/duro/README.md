@@ -30,6 +30,7 @@ The frontend in `apps/web` serves as the **Developer Command Center & Town Simul
 | **U11** | FalkorDB Query Trace drawer with execution latencies, step counts, and pretty JSON parameter views. | ✅ Done | Bottom drawer in `/` |
 | **U12** | Control vs Hearsay comparison modal contrasting naive LLM hallucinations with graph-grounded provenance. | ✅ Done | `docs/duro/screens/task3_control_vs_hearsay_1440x900.png` |
 | **U13 (L1)**| Product Landing Page at `/landing`: Instrument Serif display headline, 01/02/03 numbered explainer cards, framed simulation preview, 10-line developer code card, and launch CTA. | ✅ Done | `docs/duro/screens/task13_landing_page_1440x900.png` |
+| **U14** | Final polish, `prefers-reduced-motion` accessibility, dynamic typing indicator, hit target audit, and 2-minute demo video script. | ✅ Done | `docs/duro/DEMO_SCRIPT.md` & `docs/duro/screens/task14_town_dashboard_final_1440x900.png` |
 
 ---
 

@@ -114,6 +114,23 @@ export function DialoguePanel({
             );
           })
         )}
+
+        {/* Dynamic Typing Indicator */}
+        {isSending && (
+          <div
+            aria-live="polite"
+            className="flex items-center gap-2 p-3 rounded-xl rounded-bl-xs bg-surface-2 text-text-tertiary text-xs max-w-[170px] card-elevation border-l-2 border-signal"
+          >
+            <div className="flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-signal animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-signal animate-pulse delay-150" />
+              <span className="h-1.5 w-1.5 rounded-full bg-signal animate-pulse delay-300" />
+            </div>
+            <span className="font-mono text-xs text-text-secondary">
+              {selectedNpc.name.split(" ")[0]} replying...
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Input Box Form */}
