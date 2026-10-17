@@ -6,6 +6,10 @@ Target: Win. Correctness, explainability, and adherence to `DESIGN.md`.
 
 ## Living Town — user-requested redesign
 
+Minimal refinement: two main action buttons; saves, lenses and technical tools
+are in Menu. Deeds are under Your story. The guide shows one step at a time.
+Knowledge percentages and evidence appear when a villager is selected.
+
 The user adopted the Living Town brief: a paper diorama, guided sword story,
 selected-deed Ledger, separate knowledge/attitude explanations, real whisper
 beats, traveller saves and accessible text mode. The older dashboard layout is

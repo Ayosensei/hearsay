@@ -1,5 +1,22 @@
 # Living Town implementation
 
+## Minimal refinement
+
+The user requested less visual clutter after testing the first design. Main
+navigation is now Hearsay, Your story, and Menu, with just two free-play actions.
+Saves, view lenses, accessibility, replay/reset and engine tools are disclosed
+inside Menu. The guide replaces the normal action area with one current step.
+Floating deed cards, persistent confidence notes, the hero headline, brass dock,
+location labels and ambient idles are removed from the main view. Confirmed
+whispers still animate; selected characters retain memory, attitude and trace.
+Mobile retains quiet location navigation so offscreen villagers remain reachable.
+
+Verified the live menu, hidden view options, Escape, character memory and real
+Brom → Mira → Garrick evidence, plus welcome/guided/waiting styleguide states.
+Desktop and 390x844 mobile screenshots are `screens/minimal-*.png`. Typecheck,
+136 tests, design guard, DESIGN.md lint and production build passed. No engine
+or contract changes or new dependencies were required.
+
 The user explicitly adopted `HEARSAY_LIVING_TOWN_DESIGN.md` on 2026-10-17.
 Its town presentation supersedes the older dashboard layout. The contract,
 queries, seed, save identities, and opinion/gossip algorithms are unchanged.

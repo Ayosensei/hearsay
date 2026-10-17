@@ -17,15 +17,14 @@ export function CharacterSheet({ town, npc, eventId, busy, onSpeak, onExplain, o
   return <div className={`character-sheet attitude-${npc.attitude}`}>
     <p className="paper-eyebrow">{npc.role} · Hollowbrook</p>
     <section className={`memory-paper ${memory && memory.confidence < .7 ? "smudged-note" : ""}`}>
-      <h3>{memory?.hops === 0 ? <Eye size={18} /> : <Ear size={18} />} What does {npc.name} know?</h3>
+      <h3>{memory?.hops === 0 ? <Eye size={18} /> : <Ear size={18} />} Memory</h3>
       <strong>{deed?.title ?? "No deeds recorded yet"}</strong>
       <p>{deed ? memoryText(npc, eventId) : "Your story has not started."}</p>
       <Button variant="link" disabled={!deed || busy} onClick={onExplain}>How did they find out?</Button>
     </section>
     <section className="attitude-section">
-      <h3><Heart size={18} /> How do they feel about you?</h3>
+      <h3><Heart size={18} /> Opinion of you</h3>
       <p className="attitude-word"><span aria-hidden="true">{npc.attitude === "hostile" ? "⌢" : npc.attitude === "wary" ? "−" : npc.attitude === "neutral" ? "·" : "⌣"}</span> {npc.attitude}</p>
-      <p>{npc.contributions?.length ? "Their opinion reflects the deeds they know, their confidence, and their own traits." : "They have no memories of your deeds influencing their opinion."}</p>
       <Button variant="link" disabled={busy} onClick={onAttitude}>Why do they feel this way?</Button>
     </section>
     <section className="chat-section">

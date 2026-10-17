@@ -73,7 +73,7 @@ export function useLivingTown() {
     }, "Opening your story…");
     if (next) {
       setSlot(nextSlot); localStorage.setItem("hearsay-active-slot", nextSlot); setEventId(next.events[0]?.id ?? ""); setDrawer(undefined); setLog([]);
-      if (next.events.length) { setTour(0); tell("Welcome back. Hollowbrook remembers. Choose a deed in the Ledger to follow its story."); }
+      if (next.events.length) { setTour(0); tell("Hollowbrook remembers. Take an action, or speak to a villager."); }
       else { setTour(localStorage.getItem(`hearsay-tour-${nextSlot}`) === "done" ? 0 : -1); tell("This traveller has a clean history. Nobody here knows your story yet."); }
     }
   }

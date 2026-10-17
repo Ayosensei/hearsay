@@ -1,0 +1,51 @@
+.minimal-town .town-stage { background: var(--color-skyDeep); }
+.minimal-town .town-panorama > image { opacity: .8; }
+.minimal-town .town-clouds, .minimal-town .villager, .minimal-town .puppet { animation: none; }
+.minimal-town .villager-caption { background: transparent; box-shadow: none; padding: 4px 12px; text-shadow: 0 2px 6px var(--color-skyDeep); }
+.minimal-town .villager-caption strong { font-size: 22px; }
+.minimal-town .attitude-label { font-size: 12px; }
+.minimal-town .villager-button.chosen .villager-caption { outline: none; }
+.minimal-town .villager-button:hover .villager-caption { text-decoration: underline; text-underline-offset: 4px; }
+.minimal-town .villager-button .puppet::after { display: none; }
+.minimal-town .walk-hint, .minimal-town .place-label { display: none; }
+.minimal-header { position: absolute; inset: 24px 40px auto; z-index: 5; display: flex; align-items: center; justify-content: space-between; }
+.minimal-header > div, .minimal-header nav { display: flex; align-items: center; gap: 20px; }
+.minimal-wordmark { font: 28px var(--font-serif); }
+.minimal-location { font-size: 12px; color: var(--color-text-tertiary); }
+.minimal-header button { color: var(--color-paperCream); font-size: 13px; }
+.minimal-welcome { position: absolute; top: 105px; left: 24px; right: 24px; text-align: center; z-index: 4; }
+.minimal-welcome h1 { font: clamp(36px, 4vw, 56px)/1.1 var(--font-serif); letter-spacing: -.02em; text-wrap: balance; }
+.minimal-welcome p { color: var(--color-paperShade); font-size: 14px; margin: 12px 0 24px; }
+.minimal-welcome > button { margin: 0 4px; }
+.minimal-welcome > button[data-variant=ghost] { color: var(--color-paperCream); }
+.minimal-footer { position: absolute; bottom: 32px; left: 24px; right: 24px; z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.minimal-narration { max-width: 640px; min-height: 24px; text-align: center; font: 17px/1.5 var(--font-serif); text-wrap: pretty; }
+.minimal-actions { display: flex; gap: 12px; }
+.minimal-actions > button[data-variant=ghost] { color: var(--color-paperCream); }
+.minimal-hint { color: var(--color-text-tertiary); font-size: 11px; }
+.minimal-guide { max-width: 500px; text-align: center; }
+.minimal-step { color: var(--color-text-tertiary); font: 11px var(--font-mono); margin-bottom: 6px; }
+.minimal-guide h2 { font: 28px var(--font-serif); margin-bottom: 6px; }
+.minimal-guide > p:not(.minimal-step) { font-size: 13px; color: var(--color-paperShade); margin-bottom: 16px; }
+.minimal-guide > div { display: flex; gap: 8px; justify-content: center; }
+.minimal-guide button[data-variant=ghost] { color: var(--color-paperCream); }
+.minimal-town .paper-drawer { box-shadow: -10px 0 40px color-mix(in srgb, var(--color-inkBlack) 25%, transparent); }
+.minimal-menu { display: flex; flex-direction: column; gap: 24px; }
+.minimal-menu section { display: flex; flex-direction: column; gap: 8px; }
+.minimal-menu h3 { font-size: 12px; font-weight: 600; color: var(--color-woodBrown); }
+.minimal-menu section > button { justify-content: start; }
+.minimal-menu .save-buttons { display: flex; gap: 8px; }
+.minimal-menu .paper-caption { margin: 0; }
+.minimal-town .text-story { top: 110px; bottom: 170px; }
+@media (max-width: 700px) {
+  .minimal-header { inset: 16px 16px auto; }
+  .minimal-header > div, .minimal-header nav { gap: 8px; }
+  .minimal-location { display: none; }
+  .minimal-welcome { top: 100px; }
+  .minimal-welcome > button { margin-bottom: 8px; }
+  .minimal-footer { bottom: 24px; left: 16px; right: 16px; }
+  .minimal-narration { font-size: 15px; }
+  .minimal-guide h2 { font-size: 24px; }
+  .minimal-town .location-nav { top: 72px; }
+  .minimal-town .location-nav button { background: var(--color-skyDeep); color: var(--color-paperShade); font-size: 10px; box-shadow: none; }
+}
