@@ -4,11 +4,13 @@ import { afterAll, beforeAll, expect, it } from "vitest";
 import { connectDatabase, createHearsay } from "@hearsay/core";
 import type { Database } from "@hearsay/core";
 import type { ToolInput, ToolName, ToolOutput, HearsayClient } from "@hearsay/contract";
+import { approach, observeAt } from "../town-space";
 
 const suffix = randomUUID().replaceAll("-", "").slice(0, 20);
 const template = `test_expanded_${suffix}`;
 const playerId = `expanded_${suffix}`;
 const second = `expanded_b_${suffix}`;
+const nearbyPlayer = `expanded_c_${suffix}`;
 let db: Database;
 let client: HearsayClient;
 async function call<N extends ToolName>(name: N, input: ToolInput<N>): Promise<ToolOutput<N>> {
@@ -23,12 +25,27 @@ beforeAll(async () => {
   client = createHearsay(db, { templateGraph: template, seedPath: resolve(process.cwd(), "../../seed/hollowbrook-expanded.json") });
   await call("newPlayer", { playerId });
 }, 30000);
+
+it("records exactly the nearby villagers and excludes distant people and other districts", async () => {
+  await call("newPlayer", { playerId: nearbyPlayer });
+  const world = await call("getWorld", {});
+  expect(observeAt(approach("brom"), world).witnesses.map((n) => n.id)).toEqual(["brom"]);
+  expect(observeAt({ district: "oldtown", x: 120, y: 660 }, world).witnesses.map((n) => n.id)).toEqual(["brom"]);
+  expect(observeAt({ district: "oldtown", x: 119, y: 660 }, world).witnesses).toEqual([]);
+  const nearby = observeAt({ district: "vale", x: 915, y: 660 }, world);
+  expect(nearby.witnesses.map((n) => n.id)).toEqual(["elin", "lysa"]);
+  expect(nearby.place?.id).toBe("bakery");
+  const event = await call("recordEvent", { playerId: nearbyPlayer, type: "helped", subject: "mending a delivery cart", placeId: nearby.place?.id ?? "", witnesses: nearby.witnesses.map((n) => n.id) });
+  const knowledge = await call("whoKnows", { playerId: nearbyPlayer, eventId: event.eventId });
+  expect(knowledge.witnesses.sort()).toEqual(["elin", "lysa"]);
+  expect(knowledge.unaware).toContain("oren");
+});
 afterAll(async () => {
   if (!db) return;
   try {
     const listed = await db.list();
     if (!listed.ok) throw new Error(listed.error.message);
-    for (const graph of [template, `player:${playerId}`, `player:${second}`]) {
+    for (const graph of [template, `player:${playerId}`, `player:${second}`, `player:${nearbyPlayer}`]) {
       if (listed.data.includes(graph)) expect((await db.delete(graph)).ok).toBe(true);
     }
   } finally { await db.close(); }
