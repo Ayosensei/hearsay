@@ -12,9 +12,11 @@ import { ControlVsHearsayModal } from "../ControlVsHearsayModal";
 import { MinimalChrome } from "./MinimalChrome";
 import { TownMenu } from "./TownMenu";
 import { ResidentsSheet } from "./ResidentsSheet";
+import { WhisperFlow } from "./WhisperFlow";
 import "./town.css";
 import "./paper.css";
 import "./minimal.css";
+import "./cinematic.css";
 
 export function LivingTownApp() {
   const game = useLivingTown();
@@ -51,9 +53,10 @@ export function LivingTownApp() {
   }
   return <main className={`living-town minimal-town ${game.tour === -1 ? "tour-arrival" : ""} ${game.reduced ? "reduce-motion" : ""} ${game.largeText ? "large-text" : ""}`}>
     <div inert={Boolean(game.drawer || action || compare)}>
-      {!game.textMode && <TownStage town={town} eventId={game.eventId} selected={game.selected} beat={game.beats[0]} why={game.why}
+      {!game.textMode && <TownStage town={town} eventId={game.beats[0]?.eventId ?? game.eventId} selected={game.selected} beat={game.beats[0]} why={game.why}
         quiet showSword={game.tour === 1} lens={lens} reduced={game.reduced} paused={Boolean(game.busy)} onFocus={game.setSelected} onSelect={game.select} onSword={() => !frozen && openAction("sword")} />}
       <MinimalChrome tour={game.tour} cue={cue} narration={game.busy || game.narration} busy={frozen}
+        flow={!game.textMode && <WhisperFlow beat={game.beats[0]} remaining={game.beats.length} lastBeats={game.lastBeats} npcs={town.npcs} tick={town.tick} busy={frozen} onReplay={game.replayWhispers} />}
         onMenu={() => game.setDrawer("settings")} onLedger={() => game.setDrawer("ledger")}
         onBegin={() => game.setTour(1)} onSkip={game.finishTour} onNext={() => void nextBeat()}
         onAction={() => openAction("free")} onAdvance={() => void game.advance()} />

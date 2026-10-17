@@ -1,0 +1,45 @@
+.minimal-town .town-stage { container-type: size; scrollbar-width: thin; scrollbar-color: var(--color-skyMid) transparent; }
+.minimal-town .town-panorama { width: max(100%, calc(100cqh * 2.466)); min-width: 1100px; min-height: 0; height: 100%; }
+.minimal-town .town-panorama > image { opacity: 1; }
+.minimal-town::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(to bottom, color-mix(in srgb, var(--color-skyDeep) 85%, transparent), transparent 24%, transparent 68%, color-mix(in srgb, var(--color-skyDeep) 95%, transparent)); }
+.minimal-town .villager-caption { background: color-mix(in srgb, var(--color-skyDeep) 75%, transparent); border-radius: 12px; padding: 6px 12px; }
+.minimal-town .villager-button.chosen .villager-caption { box-shadow: 0 2px 0 var(--color-signal); }
+.minimal-town .is-telling .puppet { animation: whisper-lean 1600ms ease-in-out both; }
+.minimal-town .just-learned .puppet { filter: drop-shadow(0 0 16px var(--color-signal)); }
+.listener-ring, .witness-ring { fill: none; stroke: var(--color-signal); stroke-width: 3; opacity: .8; }
+.witness-ring { stroke: var(--color-gold); }
+.minimal-town .whisper-flight-path { stroke-width: 4; opacity: .9; stroke-dasharray: 7 9; }
+.minimal-town .whisper-moth { filter: drop-shadow(0 0 12px var(--color-signal)); }
+.minimal-footer { bottom: 16px; gap: 8px; }
+.minimal-narration { text-shadow: 0 2px 6px var(--color-inkBlack); }
+.minimal-actions { padding: 6px; border-radius: 16px; background: color-mix(in srgb, var(--color-skyDeep) 85%, transparent); backdrop-filter: blur(12px); }
+.minimal-town .district-picker { position: fixed; }
+.district-picker label { flex-wrap: wrap; max-width: 280px; }
+.district-hint { flex-basis: 100%; font-size: 11px; opacity: .85; }
+.minimal-town .location-nav { display: flex; position: fixed; top: 92px; right: 40px; left: auto; z-index: 5; }
+.flow-overlay { position: absolute; top: 152px; left: 50%; transform: translateX(-50%); z-index: 5; max-width: calc(100% - 32px); pointer-events: none; }
+.whisper-flow { text-align: center; background: color-mix(in srgb, var(--color-skyDeep) 88%, transparent); backdrop-filter: blur(12px); border: 1px solid color-mix(in srgb, var(--color-signal) 25%, transparent); border-radius: 16px; padding: 12px 24px; pointer-events: auto; }
+.flow-caption { font-size: 11px; color: var(--color-paperShade); letter-spacing: .04em; }
+.flow-handoff { display: flex; align-items: center; justify-content: center; gap: 12px; font: 24px/1.2 var(--font-serif); margin-top: 8px; white-space: nowrap; }
+.flow-handoff svg { color: var(--color-signal); flex-shrink: 0; }
+.flow-handoff strong { font-weight: 400; }
+.flow-confidence { font: 11px var(--font-mono); color: var(--color-signal); }
+.flow-witness { color: var(--color-gold); }
+.flow-progress { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+.flow-progress span { width: 16px; height: 3px; background: var(--color-skyMid); border-radius: 8px; }
+.flow-progress .arrived { background: var(--color-signal); }
+.whisper-flow button { color: var(--color-paperShade); font-size: 11px; margin-top: 4px; }
+.whisper-flow.settled { padding: 8px 20px; }
+.whisper-flow.settled .flow-handoff { font-size: 20px; }
+.tour-arrival .location-nav { display: none; }
+@media (max-width: 700px) {
+  .flow-overlay { top: 140px; width: calc(100% - 32px); }
+  .whisper-flow { padding: 12px; }
+  .flow-handoff { flex-wrap: wrap; gap: 8px; font-size: 22px; white-space: normal; }
+  .flow-confidence { flex-basis: 100%; }
+  .district-hint { display: none; }
+  .minimal-footer { bottom: 16px; }
+  .minimal-narration { max-width: 350px; }
+}
+
+.cinematic-specimen { transform: translateZ(0); }
