@@ -1,5 +1,17 @@
 # Requests board
 
+## R-006 [accepted] User -> DuroT/Goodness: expanded thirteen-person town
+
+Why: the user explicitly requested ten new NPCs, a family of four, and complex
+rumor chains. This authorizes new world content beyond the original demo cast.
+Implementation: a separate expanded seed, preserving the classic seed, fixed
+queries, contract and golden fixtures. Publish a versioned web template/save
+namespace instead of silently rewriting existing player graphs. Family facts
+use BELIEVES and strong directional TRUSTS; no new schema/relationship types.
+Verification: real FalkorDB tests cover thirteen residents, 41 trust edges,
+competing sources, weak-link cutoff, a five-hop explanation and isolation.
+Details: `docs/duro/expanded-town.md`.
+
 Use this file to ask the other owner for a change, or to flag a doc/contract problem. Agents: never silently change something you do not own. Add an entry here and tell your human.
 
 Format:
