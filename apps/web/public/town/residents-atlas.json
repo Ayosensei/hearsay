@@ -1,0 +1,10 @@
+{
+  "image": "residents.png",
+  "coordinates": "normalized grid cells, matching CSS background positions",
+  "columns": 5,
+  "rows": 2,
+  "frames": {
+    "rowan": [0, 0], "elin": [1, 0], "lysa": [2, 0], "oren": [3, 0], "ayla": [4, 0],
+    "fenn": [0, 1], "julian": [1, 1], "marta": [2, 1], "silas": [3, 1], "tilda": [4, 1]
+  }
+}

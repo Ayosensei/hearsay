@@ -1,0 +1,1087 @@
+{
+  "version": 1,
+  "factions": [
+    {
+      "id": "townsfolk",
+      "name": "Townsfolk"
+    },
+    {
+      "id": "guard",
+      "name": "Guard"
+    },
+    {
+      "id": "merchants",
+      "name": "Merchants"
+    }
+  ],
+  "places": [
+    {
+      "id": "forge",
+      "name": "Brom's Forge"
+    },
+    {
+      "id": "inn",
+      "name": "The Copper Kettle"
+    },
+    {
+      "id": "barracks",
+      "name": "Guard Barracks"
+    },
+    {
+      "id": "market",
+      "name": "Market Row"
+    },
+    {
+      "id": "chapel",
+      "name": "Chapel of Ash"
+    },
+    {
+      "id": "square",
+      "name": "Town Square"
+    },
+    {
+      "id": "vale_home",
+      "name": "The Vale Family Home"
+    },
+    {
+      "id": "bakery",
+      "name": "Vale Bakery"
+    },
+    {
+      "id": "timberyard",
+      "name": "Vale Timber Yard"
+    },
+    {
+      "id": "docks",
+      "name": "River Docks"
+    },
+    {
+      "id": "butchery",
+      "name": "Marta's Butchery"
+    },
+    {
+      "id": "boardinghouse",
+      "name": "The Willow Boarding House"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "brom",
+      "name": "Brom",
+      "role": "blacksmith",
+      "faction": "townsfolk",
+      "greed": 0.4,
+      "courage": 0.7,
+      "loyalty": 0.6,
+      "persona": "Blunt and proud of his work. Speaks plainly."
+    },
+    {
+      "id": "mira",
+      "name": "Mira",
+      "role": "innkeeper",
+      "faction": "townsfolk",
+      "greed": 0.5,
+      "courage": 0.4,
+      "loyalty": 0.5,
+      "persona": "Warm but observant. Listens carefully."
+    },
+    {
+      "id": "garrick",
+      "name": "Garrick",
+      "role": "guard captain",
+      "faction": "guard",
+      "greed": 0.2,
+      "courage": 0.9,
+      "loyalty": 0.9,
+      "persona": "Formal and concise. Takes his duties seriously."
+    },
+    {
+      "id": "rowan",
+      "name": "Rowan Vale",
+      "role": "carpenter · Vale father",
+      "faction": "townsfolk",
+      "greed": 0.3,
+      "courage": 0.7,
+      "loyalty": 0.9,
+      "persona": "Rowan and Elin are married. Their adult daughter Lysa is a courier; their adult son Oren is an apprentice. Protective, measured, trusts family more than strangers."
+    },
+    {
+      "id": "elin",
+      "name": "Elin Vale",
+      "role": "baker · Vale mother",
+      "faction": "townsfolk",
+      "greed": 0.25,
+      "courage": 0.6,
+      "loyalty": 0.85,
+      "persona": "Elin is married to Rowan, mother of adult children Lysa and Oren. Runs the family bakery. Warm but practical, close to Marta and the market traders."
+    },
+    {
+      "id": "lysa",
+      "name": "Lysa Vale",
+      "role": "courier · Vale daughter",
+      "faction": "townsfolk",
+      "greed": 0.2,
+      "courage": 0.8,
+      "loyalty": 0.65,
+      "persona": "Adult daughter of Rowan and Elin, sister of Oren. A quick-witted courier whose work connects the family lane and the inn. Values reliable sources."
+    },
+    {
+      "id": "oren",
+      "name": "Oren Vale",
+      "role": "apprentice · Vale son",
+      "faction": "townsfolk",
+      "greed": 0.45,
+      "courage": 0.5,
+      "loyalty": 0.75,
+      "persona": "Adult son of Rowan and Elin, brother of Lysa. A quiet apprentice who admires Brom and trusts his father. Careful rather than talkative."
+    },
+    {
+      "id": "ayla",
+      "name": "Sister Ayla",
+      "role": "priest and healer",
+      "faction": "townsfolk",
+      "greed": 0.1,
+      "courage": 0.5,
+      "loyalty": 0.8,
+      "persona": "A compassionate priest at the Chapel of Ash. Knows the Vale family and Old Fenn. Speaks gently, believes kindness requires responsibility."
+    },
+    {
+      "id": "fenn",
+      "name": "Old Fenn",
+      "role": "beggar and town observer",
+      "faction": "townsfolk",
+      "greed": 0.3,
+      "courage": 0.2,
+      "loyalty": 0.2,
+      "persona": "An elderly beggar who rests in the square. Overlooked but observant, connected to Mira and Tilda. Dry humor, careful about which voices he believes."
+    },
+    {
+      "id": "julian",
+      "name": "Julian Reed",
+      "role": "bachelor and musician",
+      "faction": "townsfolk",
+      "greed": 0.35,
+      "courage": 0.55,
+      "loyalty": 0.35,
+      "persona": "An unmarried adult musician renting a room at the Willow Boarding House. Sociable but skeptical of market talk. His old friend Silas is his most trusted source."
+    },
+    {
+      "id": "marta",
+      "name": "Marta Flint",
+      "role": "butcher",
+      "faction": "merchants",
+      "greed": 0.65,
+      "courage": 0.8,
+      "loyalty": 0.7,
+      "persona": "A blunt butcher whose shop supplies Elin’s bakery and Silas’s river crew. Loyal to regular customers and exacting about fair dealing."
+    },
+    {
+      "id": "silas",
+      "name": "Silas Brook",
+      "role": "fisherman",
+      "faction": "townsfolk",
+      "greed": 0.4,
+      "courage": 0.75,
+      "loyalty": 0.55,
+      "persona": "A patient fisherman at the river docks and Julian’s longtime friend. Trusts Marta’s practical judgment. Finds the square’s chatter less convincing."
+    },
+    {
+      "id": "tilda",
+      "name": "Tilda Moss",
+      "role": "merchant",
+      "faction": "merchants",
+      "greed": 0.8,
+      "courage": 0.3,
+      "loyalty": 0.3,
+      "persona": "A sharp merchant with a stall on Market Row. Talks to Old Fenn, the guard and the Vale bakery. Careful with favors and attentive to her business."
+    }
+  ],
+  "trusts": [
+    {
+      "truster": "mira",
+      "trusted": "brom",
+      "weight": 0.9
+    },
+    {
+      "truster": "brom",
+      "trusted": "mira",
+      "weight": 0.8
+    },
+    {
+      "truster": "garrick",
+      "trusted": "mira",
+      "weight": 0.7
+    },
+    {
+      "truster": "mira",
+      "trusted": "garrick",
+      "weight": 0.6
+    },
+    {
+      "truster": "fenn",
+      "trusted": "mira",
+      "weight": 0.8
+    },
+    {
+      "truster": "mira",
+      "trusted": "fenn",
+      "weight": 0.6
+    },
+    {
+      "truster": "tilda",
+      "trusted": "fenn",
+      "weight": 0.5
+    },
+    {
+      "truster": "fenn",
+      "trusted": "tilda",
+      "weight": 0.3
+    },
+    {
+      "truster": "ayla",
+      "trusted": "mira",
+      "weight": 0.6
+    },
+    {
+      "truster": "mira",
+      "trusted": "ayla",
+      "weight": 0.7
+    },
+    {
+      "truster": "tilda",
+      "trusted": "garrick",
+      "weight": 0.5
+    },
+    {
+      "truster": "garrick",
+      "trusted": "tilda",
+      "weight": 0.4
+    },
+    {
+      "truster": "ayla",
+      "trusted": "brom",
+      "weight": 0.5
+    },
+    {
+      "truster": "rowan",
+      "trusted": "brom",
+      "weight": 0.85
+    },
+    {
+      "truster": "brom",
+      "trusted": "rowan",
+      "weight": 0.7
+    },
+    {
+      "truster": "elin",
+      "trusted": "rowan",
+      "weight": 0.95
+    },
+    {
+      "truster": "rowan",
+      "trusted": "elin",
+      "weight": 0.95
+    },
+    {
+      "truster": "lysa",
+      "trusted": "rowan",
+      "weight": 0.8
+    },
+    {
+      "truster": "rowan",
+      "trusted": "lysa",
+      "weight": 0.85
+    },
+    {
+      "truster": "oren",
+      "trusted": "rowan",
+      "weight": 0.75
+    },
+    {
+      "truster": "rowan",
+      "trusted": "oren",
+      "weight": 0.8
+    },
+    {
+      "truster": "lysa",
+      "trusted": "elin",
+      "weight": 0.9
+    },
+    {
+      "truster": "elin",
+      "trusted": "lysa",
+      "weight": 0.85
+    },
+    {
+      "truster": "oren",
+      "trusted": "elin",
+      "weight": 0.9
+    },
+    {
+      "truster": "elin",
+      "trusted": "oren",
+      "weight": 0.8
+    },
+    {
+      "truster": "lysa",
+      "trusted": "oren",
+      "weight": 0.7
+    },
+    {
+      "truster": "oren",
+      "trusted": "lysa",
+      "weight": 0.8
+    },
+    {
+      "truster": "mira",
+      "trusted": "lysa",
+      "weight": 0.75
+    },
+    {
+      "truster": "elin",
+      "trusted": "ayla",
+      "weight": 0.8
+    },
+    {
+      "truster": "ayla",
+      "trusted": "elin",
+      "weight": 0.8
+    },
+    {
+      "truster": "tilda",
+      "trusted": "elin",
+      "weight": 0.65
+    },
+    {
+      "truster": "marta",
+      "trusted": "elin",
+      "weight": 0.8
+    },
+    {
+      "truster": "elin",
+      "trusted": "marta",
+      "weight": 0.85
+    },
+    {
+      "truster": "marta",
+      "trusted": "tilda",
+      "weight": 0.7
+    },
+    {
+      "truster": "silas",
+      "trusted": "marta",
+      "weight": 0.85
+    },
+    {
+      "truster": "marta",
+      "trusted": "silas",
+      "weight": 0.7
+    },
+    {
+      "truster": "silas",
+      "trusted": "fenn",
+      "weight": 0.3
+    },
+    {
+      "truster": "julian",
+      "trusted": "silas",
+      "weight": 0.8
+    },
+    {
+      "truster": "silas",
+      "trusted": "julian",
+      "weight": 0.75
+    },
+    {
+      "truster": "julian",
+      "trusted": "tilda",
+      "weight": 0.4
+    },
+    {
+      "truster": "ayla",
+      "trusted": "julian",
+      "weight": 0.7
+    }
+  ],
+  "factionRelations": [
+    {
+      "from": "guard",
+      "to": "townsfolk",
+      "type": "ALLIED_WITH"
+    },
+    {
+      "from": "merchants",
+      "to": "townsfolk",
+      "type": "ALLIED_WITH"
+    }
+  ],
+  "facts": [
+    {
+      "id": "f_weather",
+      "text": "The evenings turn cold after sunset.",
+      "topic": "weather"
+    },
+    {
+      "id": "family_vale",
+      "text": "Rowan and Elin Vale are married. Lysa and Oren are their adult children.",
+      "topic": "family"
+    },
+    {
+      "id": "family_work",
+      "text": "Rowan works timber, Elin bakes, Lysa carries letters, and Oren is an apprentice.",
+      "topic": "family"
+    },
+    {
+      "id": "parish",
+      "text": "Sister Ayla tends the Chapel of Ash and offers care to the town.",
+      "topic": "chapel"
+    },
+    {
+      "id": "market_supply",
+      "text": "Marta supplies the bakery and river crew. Tilda trades on Market Row.",
+      "topic": "trade"
+    },
+    {
+      "id": "river_friends",
+      "text": "Silas and Julian are longtime friends. Julian rents a room at the Willow Boarding House.",
+      "topic": "friendship"
+    },
+    {
+      "id": "square_life",
+      "text": "Old Fenn rests in the square, where people from several districts pass.",
+      "topic": "town"
+    }
+  ],
+  "believes": [
+    {
+      "npc": "mira",
+      "fact": "f_weather",
+      "confidence": 0.9
+    },
+    {
+      "npc": "rowan",
+      "fact": "family_vale",
+      "confidence": 1
+    },
+    {
+      "npc": "elin",
+      "fact": "family_vale",
+      "confidence": 1
+    },
+    {
+      "npc": "lysa",
+      "fact": "family_vale",
+      "confidence": 1
+    },
+    {
+      "npc": "oren",
+      "fact": "family_vale",
+      "confidence": 1
+    },
+    {
+      "npc": "ayla",
+      "fact": "family_vale",
+      "confidence": 1
+    },
+    {
+      "npc": "rowan",
+      "fact": "family_work",
+      "confidence": 1
+    },
+    {
+      "npc": "elin",
+      "fact": "family_work",
+      "confidence": 1
+    },
+    {
+      "npc": "lysa",
+      "fact": "family_work",
+      "confidence": 1
+    },
+    {
+      "npc": "oren",
+      "fact": "family_work",
+      "confidence": 1
+    },
+    {
+      "npc": "ayla",
+      "fact": "parish",
+      "confidence": 1
+    },
+    {
+      "npc": "elin",
+      "fact": "parish",
+      "confidence": 1
+    },
+    {
+      "npc": "fenn",
+      "fact": "parish",
+      "confidence": 1
+    },
+    {
+      "npc": "marta",
+      "fact": "market_supply",
+      "confidence": 1
+    },
+    {
+      "npc": "elin",
+      "fact": "market_supply",
+      "confidence": 1
+    },
+    {
+      "npc": "silas",
+      "fact": "market_supply",
+      "confidence": 1
+    },
+    {
+      "npc": "tilda",
+      "fact": "market_supply",
+      "confidence": 1
+    },
+    {
+      "npc": "silas",
+      "fact": "river_friends",
+      "confidence": 1
+    },
+    {
+      "npc": "julian",
+      "fact": "river_friends",
+      "confidence": 1
+    },
+    {
+      "npc": "fenn",
+      "fact": "square_life",
+      "confidence": 1
+    },
+    {
+      "npc": "mira",
+      "fact": "square_life",
+      "confidence": 1
+    },
+    {
+      "npc": "tilda",
+      "fact": "square_life",
+      "confidence": 1
+    }
+  ],
+  "policies": [
+    {
+      "id": "haggle_tilda",
+      "kind": "haggle",
+      "markup": 0.1,
+      "minMarkup": 0.05,
+      "maxMarkup": 0.3,
+      "step": 0.05
+    }
+  ],
+  "follows": [
+    {
+      "npc": "tilda",
+      "policy": "haggle_tilda"
+    }
+  ],
+  "eventTypes": [
+    {
+      "type": "stole",
+      "weight": -0.8,
+      "keywords": [
+        "stole",
+        "stolen",
+        "steal",
+        "theft",
+        "thief"
+      ]
+    },
+    {
+      "type": "attacked",
+      "weight": -0.9,
+      "keywords": [
+        "attacked",
+        "assault",
+        "assaulted"
+      ]
+    },
+    {
+      "type": "lied",
+      "weight": -0.4,
+      "keywords": [
+        "liar",
+        "lied"
+      ]
+    },
+    {
+      "type": "helped",
+      "weight": 0.5,
+      "keywords": []
+    },
+    {
+      "type": "donated",
+      "weight": 0.4,
+      "keywords": [
+        "donation",
+        "donated"
+      ]
+    },
+    {
+      "type": "saved",
+      "weight": 0.9,
+      "keywords": [
+        "rescued"
+      ]
+    },
+    {
+      "type": "traded",
+      "weight": 0.1,
+      "keywords": []
+    }
+  ],
+  "templates": {
+    "greeting": {
+      "hostile": [
+        "Keep your distance."
+      ],
+      "wary": [
+        "What brings you here?"
+      ],
+      "neutral": [
+        "Good day, traveller."
+      ],
+      "friendly": [
+        "It is good to see you."
+      ],
+      "devoted": [
+        "You are welcome here, friend."
+      ]
+    },
+    "aware": {
+      "hostile": [
+        "I have little patience for you."
+      ],
+      "wary": [
+        "You have given me reason to be careful."
+      ],
+      "neutral": [
+        "I am still making up my mind."
+      ],
+      "friendly": [
+        "You have earned some goodwill."
+      ],
+      "devoted": [
+        "You have my respect."
+      ]
+    },
+    "unknownTopic": [
+      "I would not know about that.",
+      "Nobody has told me.",
+      "I have heard nothing about it.",
+      "I cannot speak to that."
+    ],
+    "naive": [
+      "I hear everything in this town.",
+      "Nothing escapes my notice.",
+      "Town news always reaches me."
+    ],
+    "byNpc": {
+      "rowan": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "A good home starts with sound timber and sound judgment."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "My family comes first. I measure people carefully."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "elin": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "There is always room at our table for a considerate traveller."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "People earn a place at our table by how they conduct themselves."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "lysa": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "Every road leads somewhere. I like to know who is at the other end."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "I pay attention to the company people keep."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "oren": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "I am still learning the craft. Father says patience matters."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "I take my father’s judgment seriously."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "ayla": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "Peace to you, traveller. Everyone carries a burden."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "Compassion does not mean ignoring how people behave."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "fenn": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "A bench gives a person time to observe the world."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "People seldom notice who is listening. I make up my own mind."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "julian": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "A room of my own and a tune for the evening. That suits me."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "I prefer a reliable voice to a crowded room."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "marta": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "Plain words and fair dealing. We will get along if you manage those."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "I judge people by their dealings, not their fine speeches."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "silas": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "The river rewards patience. People could learn from it."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "I wait for a dependable account before making a judgment."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      },
+      "tilda": {
+        "greeting": {
+          "hostile": [
+            "Keep your distance, traveller."
+          ],
+          "wary": [
+            "We should proceed carefully."
+          ],
+          "neutral": [
+            "Take your time looking. Good business starts with knowing your customer."
+          ],
+          "friendly": [
+            "It is good to see a welcome face."
+          ],
+          "devoted": [
+            "You have a place among friends here."
+          ]
+        },
+        "aware": {
+          "hostile": [
+            "You have given me little reason to welcome you."
+          ],
+          "wary": [
+            "A reputation is worth weighing as carefully as silver."
+          ],
+          "neutral": [
+            "There is more than one side to a person."
+          ],
+          "friendly": [
+            "You have earned my goodwill."
+          ],
+          "devoted": [
+            "I would gladly vouch for your character."
+          ]
+        },
+        "unknownTopic": [
+          "I cannot speak to something I have not learned about.",
+          "That is outside what I know."
+        ]
+      }
+    }
+  }
+}

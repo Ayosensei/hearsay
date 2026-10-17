@@ -11,9 +11,10 @@ export function TownMenu({ game, lens, onLens }: {
   return <div className="minimal-menu">
     <section><h3>Your traveller · Turn {game.town?.tick}</h3>
       <div className="save-buttons">{["a", "b"].map((slot) => <Button key={slot} variant="secondary" aria-pressed={game.slot === slot} disabled={disabled} onClick={() => game.switchSave(slot)}>Traveller {slot.toUpperCase()}</Button>)}</div>
-      <p className="paper-caption">Separate histories, saved in this browser.</p>
+      <p className="paper-caption">Expanded town · separate histories. Your earlier town saves are kept separately.</p>
     </section>
     <section><h3>Explore your story</h3>
+      <Button variant="ghost" onClick={() => game.setDrawer("residents")}>Meet the villagers ({game.town?.npcs.length ?? 0})</Button>
       <Button variant="ghost" onClick={() => game.setDrawer("ledger")}>Your deeds</Button>
       <Button variant="ghost" disabled={disabled || !game.eventId} onClick={() => void game.explain()}>Trace the selected memory</Button>
     </section>
