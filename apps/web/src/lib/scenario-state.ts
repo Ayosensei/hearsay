@@ -14,6 +14,7 @@ export function scenarioState(town: TownState): ScenarioState | undefined {
   const spec = scenarios[id], trust = guardTrust(town);
   const friendly = (npc: string) => (town.npcs.find((person) => person.id === npc)?.attitudeScore ?? -1) >= .2;
   const goals = id === "medicine" ? [
+    { text: "Obtain medicine through work, charity or theft", complete: ["med-buy", "med-charity", "med-steal"].some((choice) => Boolean(choiceEvent(town, choice))) },
     { text: "Deliver medicine to Lysa", complete: Boolean(choiceEvent(town, "med-deliver")) },
     { text: "Garrick’s trust at least 40 at nightfall", complete: trust !== undefined && trust >= 40 },
   ] : id === "feud" ? [
@@ -21,6 +22,8 @@ export function scenarioState(town: TownState): ScenarioState | undefined {
     { text: "Rowan and Marta both know your repair", complete: knowsChoice(town, "rowan", "feud-bridge") && knowsChoice(town, "marta", "feud-bridge") },
     { text: "Rowan and Marta both friendly", complete: friendly("rowan") && friendly("marta") },
   ] : [
+    { text: "Survey the damaged floodgate", complete: Boolean(choiceEvent(town, "watch-survey")) },
+    { text: "Obtain borrowed or stolen repair tools", complete: ["watch-borrow", "watch-steal"].some((choice) => Boolean(choiceEvent(town, choice))) },
     { text: "Repair the river floodgate with Oren", complete: Boolean(choiceEvent(town, "watch-repair")) },
     { text: "Garrick knows the danger or repair", complete: knowsChoice(town, "garrick", "watch-warn") || knowsChoice(town, "garrick", "watch-repair") },
     { text: "Garrick’s trust at least 60 at nightfall", complete: trust !== undefined && trust >= 60 },

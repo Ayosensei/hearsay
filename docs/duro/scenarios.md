@@ -45,3 +45,12 @@ delivery at Lysa’s home, gossip after every choice, a turn-6 win and restorati
 in a second browser tab. Screenshots: scenario-town.png and
 scenario-medicine-win.png in screens/. DESIGN.md lint has zero errors/warnings;
 on Windows its npm script shell must be Git Bash to execute the .md-named bin.
+
+Final browser checks: threatening Garrick reduced trust to 0, disabled both game
+actions, displayed the loss reason, and retained game over after reload. Retry
+creates a fresh graph. Choose another scenario opens the picker directly; Menu
+also separates scenario selection from the current objective. The objective
+lists acquired medicine/tools and offers a direct visit to Garrick. At 375×812,
+the document width is 375 and the bottom-sheet dialog stays inside the viewport.
+Loss evidence is screens/scenario-trust-loss.png. On reload the memory graph
+selects a gameplay event rather than the administrative verdict receipt.

@@ -14,7 +14,8 @@ export function TownMenu({ game, lens, onLens }: {
       <p className="paper-caption">Expanded town · separate histories. Your earlier town saves are kept separately.</p>
     </section>
     <section><h3>Explore your story</h3>
-      <Button variant="ghost" onClick={() => game.setDrawer("objective")}>Scenarios and objectives</Button>
+      <Button variant="ghost" onClick={() => game.setDrawer("scenarios")}>Choose a scenario</Button>
+      <Button variant="ghost" onClick={() => game.setDrawer("objective")}>Current objective</Button>
       <Button variant="ghost" onClick={() => game.setDrawer("residents")}>Meet the villagers ({game.town?.npcs.length ?? 0})</Button>
       <Button variant="ghost" onClick={() => game.setDrawer("ledger")}>Your deeds</Button>
       <Button variant="ghost" disabled={disabled || !game.eventId} onClick={() => void game.explain()}>Trace the selected memory</Button>

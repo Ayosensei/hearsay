@@ -10,9 +10,10 @@ import { runScenario } from "../../lib/scenario-client";
 import { scenarioFromPlayer } from "../../lib/scenarios";
 import type { ScenarioId } from "../../lib/scenarios";
 import type { TownPosition } from "../../lib/town-space";
+import { scenarioState } from "../../lib/scenario-state";
 
 export interface Beat { id: string; text: string; from?: string; to?: string; eventId?: string; confidence?: number }
-export type Drawer = "objective" | "residents" | "ledger" | "character" | "evidence" | "attitude" | "engine" | "settings" | "reset" | "replay" | undefined;
+export type Drawer = "scenarios" | "objective" | "residents" | "ledger" | "character" | "evidence" | "attitude" | "engine" | "settings" | "reset" | "replay" | undefined;
 
 export function useLivingTown() {
   const [town, setTown] = useState<TownState>();
@@ -83,8 +84,8 @@ export function useLivingTown() {
       return result;
     }, "Opening your story…");
     if (next) {
-      setSlot(nextSave); setChallenge(saved); localStorage.setItem("hearsay-active-slot", nextSave); setEventId(saved?.targetEventId ?? next.events[0]?.id ?? ""); setDrawer(undefined); setLog([]); setLastBeats([]);
-      if (scenarioFromPlayer(next.playerId)) { setTour(0); tell("Scenario restored from the town’s graph. Choose your next location."); }
+      setSlot(nextSave); setChallenge(saved); localStorage.setItem("hearsay-active-slot", nextSave); setEventId(saved?.targetEventId ?? next.events.find((event) => !event.subject?.startsWith("Scenario verdict:"))?.id ?? ""); setDrawer(undefined); setLog([]); setLastBeats([]);
+      if (scenarioFromPlayer(next.playerId)) { setTour(0); tell(scenarioState(next)?.reason ?? "Scenario restored from the town’s graph. Choose your next location."); }
       else if (saved || next.events.length) { setTour(0); tell(saved ? "Earn Garrick’s trust before the theft reaches him." : "Hollowbrook remembers. Take an action, or speak to a villager."); }
       else { setTour(localStorage.getItem(`hearsay-tour-expanded-${nextSlot}`) === "done" ? 0 : -1); tell(`${next.npcs.length} villagers. A fresh story. Choose a deed, then follow who hears about it.`); }
     }
@@ -113,7 +114,8 @@ export function useLivingTown() {
     const steps = next.gossipSteps ?? [];
     setBeats(steps.map((step) => ({ id: crypto.randomUUID(), eventId: step.eventId, from: step.tellerId, to: step.listenerId, confidence: step.credibility,
       text: `${next.npcs.find((npc) => npc.id === step.tellerId)?.name} told ${next.npcs.find((npc) => npc.id === step.listenerId)?.name}. ${Math.round(step.credibility * 100)}% sure.` })));
-    tell(action === "inspect" ? "Saved story checked. No choice was repeated." : `Turn ${next.tick}. ${event?.title ?? "The town exchanged news."}`);
+    const resolved = scenarioState(next);
+    tell(resolved && resolved.stage !== "playing" ? resolved.reason : action === "inspect" ? "Saved story checked. No choice was repeated." : `Turn ${next.tick}. ${event?.title ?? "The town exchanged news."}`);
     return true;
   }
   async function startChallenge() {
