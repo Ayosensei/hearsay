@@ -15,4 +15,5 @@ minimumReleaseAgeExclude:
   - eslint-config-next@16.4.2
   - next@16.4.2
 allowBuilds:
+  esbuild: true
   unrs-resolver: true
