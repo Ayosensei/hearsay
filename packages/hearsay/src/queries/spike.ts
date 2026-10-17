@@ -10,15 +10,7 @@ export {
   Q41_gossip_write,
 } from "./gossip";
 
-// Planned query from docs/shared/05-queries.md, exercised on the G2 scratch graph.
-export const Q61_explain_chain = `MATCH path = (o:NPC {id: $root})-[:TOLD*1..4]->(n:NPC {id: $nid})
-WHERE all(r IN relationships(path) WHERE r.event = $eid)
-WITH path, length(path) AS hops
-ORDER BY hops
-LIMIT 1
-RETURN [x IN nodes(path) | x.id] AS ids,
-       [x IN nodes(path) | x.name] AS names,
-       [r IN relationships(path) | r.confidence] AS confidences`;
+export { Q61_explain_chain } from "./opinion";
 
 // Planned query from docs/shared/05-queries.md, exercised on the G2 scratch graph.
 export const Q70_gossip_hubs = `CALL algo.pageRank('NPC', 'TRUSTS')

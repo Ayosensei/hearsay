@@ -142,20 +142,21 @@ MATCH (n:NPC {id: $nid})
 OPTIONAL MATCH (n)-[k:KNOWS]->(e:Event)<-[:PERFORMED]-(:Player {id: $pid})
 RETURN n.loyalty AS loyalty, n.greed AS greed,
        e.id AS eventId, e.type AS type, e.weight AS weight, e.tick AS tick,
-       k.via AS via, k.confidence AS confidence
+       k.via AS via, k.confidence AS confidence ORDER BY e.id
 ```
 
 **Q60_explain_knows** — how/when this NPC learned this event.
 ```
 MATCH (n:NPC {id: $nid})-[k:KNOWS]->(e:Event {id: $eid})
-RETURN k.via AS via, k.root AS root, k.hop AS hop, k.confidence AS confidence
+RETURN n.id AS npcId, n.name AS name, k.via AS via, k.root AS root,
+       k.hop AS hop, k.confidence AS confidence
 ```
 Zero rows -> `status: 'not_in_graph'`, `chain: []`.
 
 **Q61_explain_chain** — the rumor path from the witness to this NPC.
 ```
 MATCH path = (o:NPC {id: $root})-[:TOLD*1..4]->(n:NPC {id: $nid})
-WHERE all(r IN relationships(path) WHERE r.event = $eid)
+WHERE all(r IN relationships(path) WHERE r.event = $eid AND r.root = $root)
 WITH path, length(path) AS hops
 ORDER BY hops
 LIMIT 1
@@ -164,6 +165,17 @@ RETURN [x IN nodes(path) | x.id] AS ids,
        [r IN relationships(path) | r.confidence] AS confidences
 ```
 G2 verified `all()` and both list comprehensions. The original `ORDER BY length(path)` after the projected RETURN failed at runtime (`Unable to locate a value with alias path within the record`). Sort and limit while `path` is still in scope, as above. The output columns are unchanged. Fallback if needed on another version: walk `k.via` repeatedly using Q60 until `via = 'witness'`. If `hop = 0`, the chain is just `[root]`.
+
+G6 adds the root predicate to keep every edge on the original witness's chain. Q60 also returns the NPC's application ID/name for direct-witness explanations and fallback paths. A known event without this NPC's KNOWS edge returns not_in_graph; a nonexistent or other-player event is rejected before Q60.
+
+**Q62_explain_link** — verify each actual TOLD edge while walking via pointers when Q61 returns no bounded path (including chains beyond four hops).
+```
+MATCH (:NPC {id:$from})-[r:TOLD]->(:NPC {id:$to})
+WHERE r.event=$eid AND r.root=$root RETURN r.confidence AS confidence
+```
+Fallback requires the source hop to decrease by one, the root to remain unchanged, and the corresponding TOLD confidence to match the listener's KNOWS confidence. Missing/duplicate links or inconsistent provenance return INTERNAL, never an invented explanation. Visited NPC IDs prevent cycles. This fallback is for a successful Q61 read with no path; database/query errors are returned through the normal error envelope.
+
+Canonical Q51/Q60/Q61/Q62 constants now live in `packages/hearsay/src/queries/opinion.ts`; the spike reexports Q61. G6 integration tests exercise all four on real FalkorDB. Returned highlight IDs exactly match snapshot IDs: `TOLD:NPC:brom->NPC:mira:ev_...` and final `KNOWS:NPC:garrick->Event:ev_...:ev_...`. Direct witnesses return their own single KNOWS edge ID and no hop confidences.
 
 ## Algorithms as tools
 

@@ -77,3 +77,21 @@ Q40/Q40b/Q41 are now canonical in `queries/gossip.ts`, with the spike reexportin
 Final check: typecheck and all 69 workspace tests pass (51 core, 5 contract, 13 existing web mock). Nine new live G5 tests and three pure selection tests were added. Production content/UI integration still pending; this is not a C2 end-to-end UI claim.
 
 One initial boundary-suite setup failed in ensureWorld before gossip ran. At that time the server logged a background save and repeated `Can't fork for module: File exists` messages, supporting graph-copy/background-save contention. The rerun and final full suite passed. This infrastructure issue remains unresolved; G5 improves failed-setup cleanup and records query IDs in test diagnostics. No automatic production write retry was added. See `G5-gossip.md` for partial-write and independent-service concurrency limits.
+
+## G6 attitude and explanation verification — 2026-10-17
+
+Q51/Q60/Q61/Q62 now live in `queries/opinion.ts`; the spike reexports the production Q61. Checks use real FalkorDB through the official client under Goodness's approved direct-database exception.
+
+| Check | Result | Evidence / decision |
+| --- | --- | --- |
+| Q51 optional known-event inputs | PASS | A known NPC with no memories yields neutral/zero/empty; unknown NPC is rejected first. Only player-performed, NPC-known events contribute. |
+| Exact scoring and boundaries | PASS | Pure tests cover all boundaries, recency floor, traits, confidence and total clamping. At tick 2 Garrick -0.562464/wary, Brom -0.7632/hostile. R-004 corrects example arithmetic, not the formula. |
+| Q60 witness/unaware results | PASS | Brom returns a one-NPC witness chain and KNOWS ID; pre-gossip Tilda returns not_in_graph with no chain or edges. |
+| Q61 production graph path | PASS | Garrick returns Brom/Mira/Garrick and confidences 0.9/0.63. The event/root predicate excludes other events' telling paths. All highlight IDs exist in snapshot. |
+| Q60/Q62 long-chain fallback | PASS | A synthetic five-hop trust chain exceeds Q61's bound; five real TOLD link checks reconstruct the six-NPC chain. |
+| Missing/corrupt provenance | PASS | Missing TOLD edges and contradictory via pointer return INTERNAL; no explanation is invented. |
+| Isolation / validation | PASS | Other-player event IDs fail before path queries; unknown player/NPC/event and malformed arguments stop at their validation boundary. |
+
+Eight new live tests and fourteen pure tests added. Final typecheck and all 91 workspace tests pass (73 core, 5 contract, 13 existing web mock). GRAPH.LIST is empty after teardown. No new dependencies or contract changes.
+
+One boundary run had three failing reset hooks at Q01_graph_copy, after its five-hop test passed. Logs show BGSAVE beginning 04:05:49 UTC and repeated `Can't fork for module: File exists` during those copies. The boundary rerun and final suite passed. The pre-existing copy/background-save issue remains unresolved; no tests were suppressed, persistence settings changed or production writes retried. See `G6-opinion.md` for read consistency limits and outstanding UI/content integration.

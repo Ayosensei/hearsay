@@ -47,7 +47,7 @@ Labels:
 
 `attitude` returns `score`, `label`, and `contributions` (one per event, with `effect`, `confidence`, `learnedFrom`). The UI shows these as the "why" breakdown. No NPC knows nothing -> score 0, label `neutral`, empty contributions.
 
-Worked example (current tick 2): Garrick (loyalty 0.9) knows the theft (weight -0.8, tick 0, confidence 0.63): recency = 0.9, traitFactor = 0.7 + 0.54 = 1.24, effect = -0.8 x 0.63 x 0.9 x 1.24 = -0.5624 -> `wary`. Brom (loyalty 0.6, confidence 1.0, tick 0): traitFactor = 1.06, effect = -0.8 x 1.0 x 0.9 x 1.06 = -0.763 -> `hostile`. Unit tests must include these.
+Worked example (current tick 2): Garrick (loyalty 0.9) knows the theft (weight -0.8, tick 0, confidence 0.63): recency = 0.9, traitFactor = 0.7 + 0.54 = 1.24, effect = -0.8 x 0.63 x 0.9 x 1.24 = -0.562464 -> `wary`. Brom (loyalty 0.6, confidence 1.0, tick 0): traitFactor = 1.06, effect = -0.8 x 1.0 x 0.9 x 1.06 = -0.7632 -> `hostile`. Unit tests assert these unrounded values. Garrick rounds to -0.5625 at four decimal places; the formula is unchanged (see R-004).
 
 ## 3. Explain
 
