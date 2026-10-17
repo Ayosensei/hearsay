@@ -57,8 +57,10 @@ MATCH (p:Player {id: $pid}) RETURN p.id AS id, p.tick AS tick
 
 **Q21_set_tick**
 ```
-MATCH (p:Player {id: $pid}) SET p.tick = $tick RETURN p.tick AS tick
+MATCH (p:Player {id:$pid}) WHERE p.tick=$previousTick
+SET p.tick=p.tick+1 RETURN p.tick AS tick
 ```
+G5 runs this after the round's knowledge write. Zero rows means the expected clock changed; the tool returns INTERNAL instead of overwriting it. These two queries are not a single transaction.
 
 **Q22_create_player** — run inside the freshly copied player graph.
 ```
@@ -104,10 +106,14 @@ Parameters: `minWeight = 0.3`, `minCred = 0.25`.
 ```
 UNWIND $rows AS r
 MATCH (a:NPC {id: r.teller}), (b:NPC {id: r.listener}), (e:Event {id: r.eventId})
+WHERE NOT (b)-[:KNOWS]->(e)
 CREATE (b)-[:KNOWS {via: r.teller, root: r.root, hop: r.hop + 1, confidence: r.cred, tick: $tick}]->(e)
 CREATE (a)-[:TOLD {event: r.eventId, root: r.root, tick: $tick, confidence: r.cred}]->(b)
+RETURN r.eventId AS eventId, r.teller AS teller, r.listener AS listener,
+       r.cred AS cred, r.root AS root, r.hop AS hop
 ```
 (verify: list-of-maps parameter with property access in UNWIND. Fallback: one small query per row.)
+G5 verifies the write-time KNOWS guard on concurrent repeated batches. Q41 now returns only actual additions, so the tool does not report a listener skipped by the guard. The returned hop is the teller's hop; tool steps add 1 for the new listener.
 
 **Q42_who_knows** — witnesses, hearers and the unaware for one event.
 ```
@@ -287,3 +293,13 @@ RETURN e.id AS id
 ```
 
 Snapshots use application properties for IDs: `NPC:brom`, `Event:ev_...`. Edge IDs are `${type}:${from}->${to}` with `:${eventId}` appended for KNOWS/TOLD. KNOWS gets the event ID from its destination; TOLD gets it from its `event` property. Internal database entity IDs are never exposed as graph IDs. Hidden metadata is excluded at both edge endpoints. `focusEventId` is validated when present; the full visible graph is returned for client highlighting.
+
+## G5 gossip implementation
+
+Canonical Q21/Q40/Q40b/Q41 constants live in `packages/hearsay/src/queries/gossip.ts`; the G2 spike reexports the same candidate/write queries. `gossip.ts` runs them through the traced helper and `gossip-selection.ts` picks one highest-confidence teller per event/listener (ASCII ID order breaks ties).
+
+advanceTime reads candidates once, writes the selected batch with `tick=current+1`, then conditionally increments the clock. spread runs up to the requested number of rounds for one validated event, with the listener's absolute hop constrained to maxHops. It stamps knowledge with the unchanged current tick.
+
+After spread, a final Q40b read uses `minCred:0` and `maxHops:Number.MAX_SAFE_INTEGER` for diagnosis only; it performs no writes. Credible remaining paths mean the hop cap stopped propagation (`max_hops`); only below-threshold remaining paths mean `min_credibility`; no remaining gossip-worthy trust paths means `no_listeners`. Quiet events below absolute weight 0.3 have no eligible listeners. reached lists only listeners newly added during this call, not prior knowers or original witnesses.
+
+Same-player spread/advanceTime calls are serialized within one createGossip service. Independent service instances do not share that queue, and the read/select/write/clock sequence is not transactional. The write guard prevents replaying an already recorded listener/event pair on the tested database; it does not promise a global strongest-source winner or one-hop scheduling across competing services. See `docs/goodness/G5-gossip.md`.
