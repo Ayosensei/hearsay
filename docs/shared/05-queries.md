@@ -226,22 +226,23 @@ RETURN a.id AS fromId, labels(a) AS fromLabels, r, b.id AS toId, labels(b) AS to
 MATCH (p:Player {id: $pid}), (n:NPC {id: $nid})
 CREATE (c:Conversation {id: $cid, tick: $tick, at: $at})
 CREATE (p)-[:STARTED]->(c)
-CREATE (c)-[:BETWEEN]->(n)
+CREATE (c)-[:BETWEEN]->(n) RETURN c.id AS id
 ```
 
 **Q96_utterance_add**
 ```
-MATCH (c:Conversation {id: $cid})
-CREATE (u:Utterance {id: $uid, speaker: $speaker, text: $text, tick: $tick, at: $at})
-CREATE (c)-[:HAS]->(u)
+MATCH (:Player {id:$pid})-[:STARTED]->(c:Conversation {id:$cid})-[:BETWEEN]->(:NPC {id:$nid})
+CREATE (u:Utterance {id:$uid,speaker:$speaker,text:$text,tick:$tick,at:$at,sequence:$sequence})
+CREATE (c)-[:HAS]->(u) RETURN u.id AS id
 ```
 
 **Q97_recent_utterances** — last N lines of dialogue between this player and this NPC (for continuity in the prompt).
 ```
 MATCH (:Player {id: $pid})-[:STARTED]->(c:Conversation)-[:BETWEEN]->(:NPC {id: $nid})
 MATCH (c)-[:HAS]->(u:Utterance)
-RETURN u.speaker AS speaker, u.text AS text, u.tick AS tick, u.at AS at
-ORDER BY u.at DESC
+RETURN u.speaker AS speaker, u.text AS text, u.tick AS tick, u.at AS at,
+       c.id AS conversationId, u.sequence AS sequence
+ORDER BY u.at DESC, c.id DESC, u.sequence DESC
 LIMIT $limit
 ```
 
@@ -315,3 +316,21 @@ advanceTime reads candidates once, writes the selected batch with `tick=current+
 After spread, a final Q40b read uses `minCred:0` and `maxHops:Number.MAX_SAFE_INTEGER` for diagnosis only; it performs no writes. Credible remaining paths mean the hop cap stopped propagation (`max_hops`); only below-threshold remaining paths mean `min_credibility`; no remaining gossip-worthy trust paths means `no_listeners`. Quiet events below absolute weight 0.3 have no eligible listeners. reached lists only listeners newly added during this call, not prior knowers or original witnesses.
 
 Same-player spread/advanceTime calls are serialized within one createGossip service. Independent service instances do not share that queue, and the read/select/write/clock sequence is not transactional. The write guard prevents replaying an already recorded listener/event pair on the tested database; it does not promise a global strongest-source winner or one-hop scheduling across competing services. See `docs/goodness/G5-gossip.md`.
+
+## G7 dialogue implementation
+
+Canonical queries are in `packages/hearsay/src/queries/dialogue.ts`. Every query has real FalkorDB integration coverage, under Goodness's previously approved direct-client exception. Values are bound; reads use roQuery. Existing Q50 reads all NPC-known player events, Q51 supplies attitude inputs through the attitude tool, and Q95/Q96/Q97 persist and retrieve dialogue.
+
+| ID | Question / parameters |
+| --- | --- |
+| Q23_resolve_conversation | Does `$cid` belong to `$pid` and `$nid` through STARTED/BETWEEN? Return its application ID. Missing/foreign conversations return BAD_ARGS before writes; no new contract error code is introduced. |
+| Q92_dialogue_known | Match NPC KNOWS Event plus Player PERFORMED, optional Place and teller name; return eventId/type/subject/place/via/teller/confidence for the prompt. Parameters `$pid`, `$nid`. |
+| Q93_dialogue_profile | Return name, role and persona for `$nid`. |
+| Q94_dialogue_beliefs | Match this NPC's BELIEVES edges, return Fact text and belief confidence, ordered by Fact ID. Parameter `$nid`. |
+| Q95_conversation_start | Create Conversation/STARTED/BETWEEN after validating player/NPC. Parameters `$pid`, `$nid`, `$cid`, `$tick`, `$at`; return created ID. |
+| Q96_utterance_add | Recheck conversation ownership in the write; create Utterance/HAS. Parameters `$pid`, `$nid`, `$cid`, `$uid`, `$speaker`, `$text`, `$sequence`, `$tick`, `$at`; return created ID. |
+| Q97_recent_utterances | Return latest `$limit` lines between `$pid`/`$nid`, across their conversations. Chronological history is assembled by reversing the six returned rows. Timestamp ties use conversation ID and sequence. |
+| Q97b_conversation_count | Count HAS/Utterance nodes for the validated `$cid`; supplies next sequence and deterministic template hash input. |
+| Q99_dialogue_unknown | Match player Events without this NPC's KNOWS edge; optionally match EventType for keywords. Return eventId/subject/keywords. Parameters `$pid`, `$nid`. This result stays server-side for firewall checks and is never added to model knowledge. |
+
+Conversation/Utterance IDs are application-generated UUID strings. Per-conversation sequence is a scalar property to order rapid turns; same-player/NPC calls are serialized within one createDialogue service. No database transaction or distributed sequencing is claimed. Snapshot continues to omit conversation nodes and incident edges. Q98 remains reserved for G13's naive control and is not used here.
