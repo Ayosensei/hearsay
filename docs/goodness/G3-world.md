@@ -26,6 +26,8 @@ Every explicit database operation contributes its measured trace, including grap
 
 `pnpm typecheck && pnpm test` covers seed validation plus real FalkorDB tests for repeated ensureWorld, all seed relationship kinds, contract-valid getWorld, repeated newPlayer, cross-player isolation, template immutability, reset of tick/events/traits/policies, concurrent creators/initializers, invalid arguments, unknown players, and bad/missing seed files.
 
+Final workspace result: typecheck passes and 44 tests pass (22 live database tests, 4 seed-validation tests, 5 contract tests and 13 web mock tests). Tests use unique disposable templates and player IDs and clean up their own graphs.
+
 One initial parallel integration run saw a copy failure plus setup/cleanup timeouts; a direct diagnostic then completed 18 concurrent copies without reproducing the failure. Integration files now run sequentially against the shared local database with a 30-second hook allowance; the explicit concurrency tests still run concurrently. This is not evidence of production load capacity; G10 remains the load test.
 
 The UI remains on its mock client. G3 does not implement recordEvent, gossip tools, live HTTP routes, MCP transport, or a persistence restart demonstration.
