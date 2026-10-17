@@ -26,6 +26,38 @@ const options = () => {
   };
 };
 
+it("supports plain-text control replies without imposing the guarded JSON schema", async () => {
+  const transport = vi.fn<typeof fetch>().mockImplementation(async () =>
+    Response.json({
+      candidates: [
+        {
+          finishReason: "STOP",
+          content: {
+            parts: [
+              { thought: true, text: "private thought" },
+              { text: "You stole the sword." },
+            ],
+          },
+        },
+      ],
+    }),
+  );
+  const llm = createLlm({ ...options(), transport });
+  expect(await llm.generate({ ...input, format: "text" })).toEqual({
+    ok: true,
+    data: { reply: "You stole the sword.", referencedEventIds: [] },
+    cached: false,
+  });
+  const config = JSON.parse(
+    String(transport.mock.calls[0]?.[1]?.body),
+  ).generationConfig;
+  expect(config).not.toHaveProperty("responseMimeType");
+  expect(config).not.toHaveProperty("responseJsonSchema");
+  // Output formats must not share cached data despite otherwise identical input.
+  expect((await llm.generate(input)).ok).toBe(false);
+  expect(transport).toHaveBeenCalledTimes(2);
+});
+
 it("uses the configured REST model/header/JSON shape and caches only identical prompts for 60 seconds", async () => {
   let now = 0;
   const transport = vi
