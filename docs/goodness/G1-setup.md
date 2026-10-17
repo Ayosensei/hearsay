@@ -47,10 +47,12 @@ The root development script reserves port 3000 for the database without changing
 
 ## Verification on 2026-10-17
 
-- Frozen-lockfile install: passed in the working checkout.
+- Frozen-lockfile install: passed in both the working checkout and a fresh local clone of the committed branch (no copied node_modules).
 - Typecheck: passed in all four application/library packages.
 - Tests: 18 passed (5 contract boundary tests, 13 existing mock-engine tests). These are not live database tests.
 - Design checker: passed.
+- Fresh-clone typecheck, all 18 tests and design check: passed; installation activated `.githooks` and left the clone clean.
+- Root `pnpm dev`: Next.js became ready on port 3001 and served `/` with HTTP 200; the temporary smoke-test server was then stopped.
 - Hooks: shell syntax passed; valid title accepted, invalid and overlong titles rejected; actual commits ran pre-commit checks.
 - Environment ignores: `.env`, `.env.local`, `.env.production.local` confirmed ignored.
 - MCP/load-test placeholders: correctly exit nonzero and identify G9/G10.
