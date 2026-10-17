@@ -33,3 +33,9 @@ Why: no `seed/hollowbrook.json` was delivered at G3 start. G3 explicitly permits
 Proposed change: deliver the complete six-NPC seed, facts, policies and voices using `docs/shared/03-graph-model.md`. The loader validates the same format; no loader edits should be needed. Existing graph copies are intentionally not overwritten when the file changes; coordinate publishing the complete template before integration.
 Needed by: G5's full six-NPC production golden path and UI integration.
 Resolution: pending DuroT's D1 content.
+
+## R-004 [done] Goodness: reconcile G6 worked-example arithmetic
+Why: the unchanged scoring formula yields Garrick -0.562464 and Brom -0.7632 at tick 2. The task list uses rounded Garrick -0.5625, while the behavior example previously said -0.5624 and -0.763.
+Proposed change: retain the authoritative formula and contract; correct the behavior example to exact values and test those values with numeric tolerance.
+Needed by: G6 scoring implementation.
+Resolution: implemented within Goodness's G6 scope and explained in chat. Garrick remains wary; Brom remains hostile. No formula or schema change.
