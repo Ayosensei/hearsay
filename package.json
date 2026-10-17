@@ -15,6 +15,8 @@
     "lint": "pnpm -r --if-present lint",
     "mcp": "pnpm --filter @hearsay/mcp start",
     "loadtest": "tsx --env-file-if-exists=.env loadtest/run.ts",
+    "queries:generate": "node scripts/query-mirror.mjs",
+    "queries:check": "node scripts/query-mirror.mjs --check",
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "devDependencies": {
