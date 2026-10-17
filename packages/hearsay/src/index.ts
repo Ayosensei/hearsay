@@ -6,3 +6,4 @@ export { createWorld } from "./world";
 export type { WorldOptions, WorldTemplate } from "./world";
 export { createMemory } from "./memory";
 export { createGossip } from "./gossip";
+export { createOpinion } from "./opinion-tools";
