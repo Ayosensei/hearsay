@@ -98,9 +98,11 @@ G6 done 2026-10-17 05:07 WAT 7de8bf8 (scoring: 7ef8267). Live attitude/explain t
 
 G7 done 2026-10-17 05:24 WAT 7f7a719 (pipeline: 2f12bac; REST wrapper: 431b6bc; firewall/templates: 157b654). Graph-scoped say prompts, leak retry/fallback, saved conversation history and Gemini transport safeguards pass typecheck and 113 workspace tests. Database tests are real; generation/HTTP cases use injected fakes. No key/model is configured, so live Gemini remains unverified. See `G7-dialogue.md` for API usage, known firewall limits and the recurring copy/background-save failure.
 
-## My "I can explain this" notes
-
 G8 done 2026-10-17 05:37 WAT 65eafb9 (copy contention mitigation cb8e57a). Typecheck and 115 tests pass. Live Tilda policy sequence/floor/counters and PageRank order verified; see G8-policy.md and copy-retry.md. Full production seed/UI remain pending.
+
+G9 done 2026-10-17 05:55 WAT c23c727. Typecheck and 117 tests pass, including actual stdio client/server calls on live FalkorDB. See packages/mcp/README.md and G9-mcp.md. sayNaive is excluded; optional HTTP transport is not implemented.
+
+## My "I can explain this" notes
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
 - G2: Reads call `roQuery`; a live test proves an attempted write is rejected without adding a node. Database errors return safe envelopes and traces rather than raw Cypher or credentials.
