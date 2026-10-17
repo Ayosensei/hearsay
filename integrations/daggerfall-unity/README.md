@@ -22,6 +22,10 @@ The game exposes `PlayerEntity.OnCrimeUpdate` with its crime enum, `TalkManager.
 
 The Hearsay HTTP bridge already supports local native clients with bearer authentication. It keeps database credentials on the backend. Live Gemini generation is not required; template replies suffice for the first test.
 
+## Compile evidence
+
+The initial profile/HTTP transport helpers compile as C# 5 against the actual release's managed assemblies using Windows' C# compiler. Run `check-compile.ps1 -GameDirectory <game-folder> -OutputDirectory <outside-repo-folder>` to reproduce. `/noconfig` prevents framework response-file references from colliding with the game's own System assemblies. This check does not build a `.dfmod`, invoke Unity's importer or prove an in-game interaction. Those remain separate runtime checks.
+
 ## Sources
 
 - [Official game repository](https://github.com/Interkarma/daggerfall-unity)
