@@ -1,5 +1,16 @@
 # Requests board
 
+## R-007 [open] DuroT -> Goodness: third-party accusations and NPC deception
+
+The user requests framing the butcher and identifying NPC liars. Existing Event
+nodes always describe the player's actions, and gossip preserves the original
+event; no accused actor, claim, contradiction or NPC deception is represented.
+Please approve/design a versioned actor/claim contract before these features are
+implemented. Do not model harming the player as changing the butcher's reputation,
+and do not label secondhand information a lie. The new web-owned Detective mode
+can grade witness, exact explain route and firsthand/secondhand/unheard status
+using existing tools without changing schemas or core behavior.
+
 ## R-006 [accepted] User -> DuroT/Goodness: expanded thirteen-person town
 
 Why: the user explicitly requested ten new NPCs, a family of four, and complex

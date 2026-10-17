@@ -126,6 +126,7 @@ export interface TownEvent {
 }
 
 export interface TownState {
+  puzzle?: import("./puzzle").PuzzleView;
   gossipSteps?: { eventId: string; tellerId: string; listenerId: string; credibility: number; hop: number }[];
   playerId?: string;
   places?: { id: string; name: string }[];

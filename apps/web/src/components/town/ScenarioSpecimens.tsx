@@ -15,7 +15,7 @@ export function ScenarioSpecimens({ town }: { town: TownState }) {
   const [npc, setNpc] = useState("ayla");
   const marker = mode === "won" ? VERDICT.won : mode === "trust lost" ? VERDICT.trust : undefined;
   const completed = scenarioChoices.find((choice) => choice.id === "med-work");
-  const goalIds = { medicine: ["med-charity", "med-deliver"], feud: ["feud-bridge"], watch: ["watch-survey", "watch-borrow", "watch-repair", "watch-warn"] }[id];
+  const goalIds = ({ medicine: ["med-charity", "med-deliver"], feud: ["feud-bridge"], watch: ["watch-survey", "watch-borrow", "watch-repair", "watch-warn"] } as Partial<Record<ScenarioId, string[]>>)[id] ?? [];
   const goalEvents: TownState["events"] = mode === "won" ? scenarioChoices.filter((choice) => goalIds.includes(choice.id)).map((choice) => ({ id: `ev_${choice.id}`, subject: choice.subject, actionType: choice.type, title: choice.label, description: choice.hint, type: "help", weight: .5, witnessId: choice.npc, witnessName: choice.npc, placeName: "Specimen location", tickOccurred: 0 })) : [];
   const example: TownState = { ...town, playerId: `quest_${id}_abcdefghijklmnopqrst`, tick: mode === "deadline" ? 7 : 0,
     npcs: town.npcs.filter((person) => mode !== "unavailable" || person.id !== "garrick").map((person) => ({ ...person, attitude: "neutral", attitudeScore: mode === "won" ? .5 : person.id === "garrick" && mode === "trust lost" ? -1 : person.id === "ayla" && mode === "available" ? .5 : 0, rumors: goalEvents.map((event) => ({ eventId: event.id, eventTitle: event.title, eventType: "help", confidence: 1, hops: 0, eyewitnessId: person.id, eyewitnessName: person.name, path: [], tickOccurred: 0 })) })),
