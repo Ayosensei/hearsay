@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@hearsay/contract": "workspace:*",
-    "falkordb": "6.8.0"
+    "falkordb": "6.8.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",

@@ -88,6 +88,8 @@ Add a line per finished task: `G5 done <date/time> <commit>`.
 
 G2 done 2026-10-17 04:06 WAT ff6e1bf (helper: 142ca76). Live helper and query spike pass; Browser-first exception approved by Goodness. See `spike-results.md` for the Q61 correction and test evidence.
 
+G3 done 2026-10-17 04:25 WAT 1563afc (seed validation: e9b2e23). World initialization, reads, isolated player creation/reset and publication races pass live tests. Uses the explicitly allowed three-NPC seed pending D1; see `G3-world.md` and R-003.
+
 ## My "I can explain this" notes
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
@@ -95,3 +97,6 @@ G2 done 2026-10-17 04:06 WAT ff6e1bf (helper: 142ca76). Live helper and query sp
 - G2: Q61 sorts and limits `path` in a WITH clause before converting it into lists. Sorting by a dropped path alias after RETURN fails on the tested FalkorDB image.
 - G2: The golden gossip spike chooses one best candidate per listener between read/write rounds. New knowers cannot spread until the next round; the production implementation remains G5.
 - G2: GRAPH.COPY preserved all four operational ID range indexes on the recorded image digest. PageRank ranks Mira highest in the locked trust network.
+- G3: Validate references before writing, then publish a fully seeded temporary graph. Existing template graphs are never silently replaced when seed content changes.
+- G3: Initialize the Player node in a temporary template copy before publishing `player:{id}`. Another creator sees a complete save, and gameplay never writes the template.
+- G3: Reset rebuilds one player's graph from template values. The tests change tick, events, traits and a policy in A, prove B/template unchanged, then verify reset restores the defaults.

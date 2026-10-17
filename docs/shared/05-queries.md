@@ -240,3 +240,24 @@ ORDER BY e.tick
 - Returns the documented columns.
 - Returns zero rows (not an error) when nothing matches.
 - Does not leak across players (run the same query against two player graphs).
+
+## G3 seed and world implementation
+
+Canonical constants are in `packages/hearsay/src/queries/seed.ts` and `world.ts`. All writes use fixed query text and `$rows`/scalar parameters. G3's live integration tests execute every seed query, including policies and both faction relation types, against disposable graphs.
+
+| Query ID | Question / parameters |
+| --- | --- |
+| Q03_index_npc/event/player/place | Create the four range indexes shown above; no parameters. |
+| Q04_seed_factions | Create faction IDs/names from `$rows`. |
+| Q04_seed_places | Create place IDs/names from `$rows`. |
+| Q04_seed_npcs | Resolve each row's faction, create NPC scalar properties and MEMBER_OF. |
+| Q04_seed_facts | Create Fact IDs/text/topics from `$rows`. |
+| Q04_seed_policies | Create Policy IDs, kind and numeric markup bounds from `$rows`. |
+| Q04_seed_event_types | Create event type/weight and keyword arrays from `$rows`. |
+| Q04_seed_trusts | Resolve truster/trusted IDs and create weighted TRUSTS edges from `$rows`. |
+| Q04_seed_believes | Resolve NPC/fact IDs and create confidence-bearing BELIEVES edges. |
+| Q04_seed_follows | Resolve NPC/policy IDs and create FOLLOWS with tries/wins zero. |
+| Q04_seed_allied | Resolve faction IDs and create fixed ALLIED_WITH edges. |
+| Q04_seed_hostile | Resolve faction IDs and create fixed HOSTILE_TO edges. |
+
+Q10/Q11/Q12 read template world data. Q20 checks a player's node. Q22 initializes the Player node inside a temporary template copy before publishing the final player graph. GRAPH.LIST/COPY/DELETE remain Q00/Q01/Q02; they are traced via the official client methods. Staging ensures failed seed loading cannot publish a partial template or player; see `docs/goodness/G3-world.md` for reset and concurrency limits.
