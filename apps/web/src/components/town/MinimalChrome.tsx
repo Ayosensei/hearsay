@@ -4,6 +4,8 @@ import { Button } from "../ui/button";
 
 interface Props {
   flow?: React.ReactNode;
+  location?: string;
+  clock?: { paused: boolean; label: string; onToggle: () => void };
   tour: number;
   cue?: [string, string, string];
   narration: string;
@@ -41,9 +43,9 @@ export function MinimalChrome(props: Props) {
         <p className="minimal-narration">{props.narration}</p>
         <div className="minimal-actions" aria-label="Story actions">
           <Button disabled={props.busy} onClick={props.onAction}>Take an action</Button>
-          <Button variant="ghost" disabled={props.busy} onClick={props.onAdvance}>Let the town talk</Button>
+          <Button variant="ghost" disabled={props.clock ? false : props.busy} onClick={props.clock?.onToggle ?? props.onAdvance}>{props.clock ? props.clock.paused ? "Resume town" : "Pause town" : "Let the town talk"}</Button>
         </div>
-        <p className="minimal-hint">Select a villager to talk or follow a memory.</p>
+        <p className="minimal-hint">{props.location ?? "Select a villager to talk or follow a memory."}{props.clock && <> · {props.clock.label}</>}</p>
       </>}
     </footer>}
   </>;

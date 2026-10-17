@@ -6,6 +6,8 @@ import type { NPC, TownState, ProvenanceChain } from "../../lib/types";
 import type { Beat } from "./use-living-town";
 import { homes, homeOf, districtOf, districts, extraCast } from "../../lib/town-residents";
 import type { District } from "../../lib/town-residents";
+import { approach } from "../../lib/town-space";
+import type { TownPosition } from "../../lib/town-space";
 import "./expanded.css";
 
 export { homes } from "../../lib/town-residents";
@@ -15,10 +17,13 @@ export function memoryText(person: NPC, eventId: string) {
     : `Heard from ${memory.heardFromName ?? memory.heardFromId} · ${Math.round(memory.confidence * 100)}% sure`;
 }
 interface Props { town: TownState; eventId: string; selected: string; beat?: Beat; why?: ProvenanceChain;
+  position?: TownPosition; onPosition?: (position: TownPosition) => void;
   lens: "none" | "bonds" | "whispers"; reduced: boolean; paused: boolean; quiet?: boolean; showSword?: boolean; onFocus?: (id: string) => void; onSelect: (id: string) => void; onSword: () => void }
 
-export function TownStage({ town, eventId, selected, beat, why, lens, reduced, paused, quiet = false, showSword = true, onFocus, onSelect, onSword }: Props) {
-  const [traveller, setTraveller] = useState({ x: 150, y: 710 });
+export function TownStage({ town, eventId, selected, beat, why, lens, reduced, paused, quiet = false, showSword = true, onFocus, onSelect, onSword, position, onPosition }: Props) {
+  const [localPosition, setLocalPosition] = useState(approach("brom"));
+  const traveller = position ?? localPosition;
+  const [cameraX, setCameraX] = useState(traveller.x);
   const [district, setDistrict] = useState<District>(districtOf(selected));
   const svg = useRef<SVGSVGElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -28,22 +33,29 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
   };
   const locals = town.npcs.filter((npc) => districtOf(npc.id) === district);
   const road = district === "riverside" ? { min: 490, max: 550 } : { min: 610, max: 800 };
+  function walkTo(next: TownPosition) {
+    if (beat) return;
+    setLocalPosition(next); onPosition?.(next); setCameraX(next.x);
+  }
   useEffect(() => {
     const home = homes[selected];
-    if (home) { setDistrict(home.district); setTraveller({ x: home.x - 140, y: home.y + 20 }); }
+    if (home && !position) { setDistrict(home.district); walkTo(approach(selected)); }
   }, [selected]);
+  useEffect(() => {
+    if (position && !beat) { setDistrict(position.district); setCameraX(position.x); }
+  }, [position, beat?.id]);
   useEffect(() => {
     if (beat?.to) {
       const home = homeOf(beat.to);
       setDistrict(home.district);
-      setTraveller({ x: home.x - 140, y: home.y + 20 });
+      setCameraX(home.x);
     }
   }, [beat?.id, beat?.to]);
   useEffect(() => {
     const element = stage.current;
     if (!element || !svg.current || element.clientWidth >= svg.current.clientWidth) return;
-    element.scrollTo({ left: traveller.x / 1800 * svg.current.clientWidth - element.clientWidth / 2, behavior: reduced ? "instant" : "smooth" });
-  }, [traveller, reduced]);
+    element.scrollTo({ left: cameraX / 1800 * svg.current.clientWidth - element.clientWidth / 2, behavior: reduced ? "instant" : "smooth" });
+  }, [cameraX, district, reduced]);
   const inDistrict = (id: string) => districtOf(id.replace("NPC:", "")) === district;
   const edges = town.graphEdges.filter((edge) => (inDistrict(edge.source) || inDistrict(edge.target)) && (lens === "bonds" ? edge.type === "TRUSTS"
     : lens === "whispers" && edge.type === "TOLD" && edge.id.endsWith(`:${eventId}`)));
@@ -52,16 +64,16 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
     const keys: Record<string, [number, number]> = { ArrowLeft: [-35, 0], a: [-35, 0], ArrowRight: [35, 0], d: [35, 0], ArrowUp: [0, -20], w: [0, -20], ArrowDown: [0, 20], s: [0, 20] };
     const direction = keys[event.key]; if (!direction) return;
     event.preventDefault(); const speed = event.shiftKey ? 2 : 1;
-    setTraveller((p) => ({ x: Math.max(60, Math.min(1740, p.x + direction[0] * speed)), y: Math.max(road.min, Math.min(road.max, p.y + direction[1] * speed)) }));
+    walkTo({ district, x: Math.max(60, Math.min(1740, traveller.x + direction[0] * speed)), y: Math.max(road.min, Math.min(road.max, traveller.y + direction[1] * speed)) });
   }
   const deed = town.events.find((e) => e.id === eventId);
   return <div ref={stage} className={`town-stage ${reduced ? "still" : ""} ${paused ? "world-paused" : ""}`}>
-    <svg ref={svg} viewBox="0 70 1800 730" className="town-panorama" role="group" aria-label="Hollowbrook. Focus the town and use arrow keys or WASD to walk. Walking does not create deeds."
+    <svg ref={svg} viewBox="0 70 1800 730" className="town-panorama" role="group" aria-label="Hollowbrook. Arrow keys or WASD to walk. Your position determines who witnesses an action."
       tabIndex={0} onKeyDown={move} onClick={(event) => {
         if (event.target !== event.currentTarget && (event.target as Element).tagName !== "image") return;
         const matrix = svg.current?.getScreenCTM(); if (!matrix) return;
         const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
-        setTraveller({ x: Math.max(60, Math.min(1740, p.x)), y: Math.max(road.min, Math.min(road.max, p.y)) });
+        walkTo({ district, x: Math.max(60, Math.min(1740, p.x)), y: Math.max(road.min, Math.min(road.max, p.y)) });
       }}>
       <defs>
         <marker id="bond-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="currentColor" /></marker>
@@ -98,10 +110,10 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
       {deed && !quiet && <foreignObject x={deed.placeName.includes("Forge") ? 230 : deed.placeName.includes("Kettle") ? 780 : 1360} y="355" width="270" height="70">
         <div className={`deed-pin ${deed.type}`}><Swords size={18} /><span>{deed.title}</span></div>
       </foreignObject>}
-      <g className="traveller-position" style={{ transform: `translate(${traveller.x - 50}px, ${traveller.y - 135}px)` }} aria-hidden="true">
+      {traveller.district === district && <g className="traveller-position" style={{ transform: `translate(${traveller.x - 50}px, ${traveller.y - 135}px)` }} aria-hidden="true">
         <foreignObject width="100" height="150"><div className="puppet traveller" /></foreignObject>
         <ellipse cx="50" cy="145" rx="35" ry="7" className="ground-shadow" />
-      </g>
+      </g>}
       {locals.map((npc, index) => {
         const home = homeOf(npc.id, index);
         const memory = npc.rumors.find((r) => r.eventId === eventId);
@@ -111,7 +123,7 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
           {reacting && <ellipse cx={home.x} cy={home.y + 15} rx="85" ry="22" className={beat.from ? "listener-ring" : "witness-ring"} />}
           <ellipse cx={home.x} cy={home.y + 15} rx="65" ry="12" className="ground-shadow" />
           <foreignObject x={home.x - 80} y={home.y - 200} width="160" height="280">
-            <Button variant="ghost" className={`villager-button ${selected === npc.id ? "chosen" : ""}`} aria-label={`Talk to ${npc.name}. ${npc.attitude}. ${memoryText(npc, eventId)}`} onClick={() => onSelect(npc.id)}>
+            <Button variant="ghost" disabled={Boolean(beat)} className={`villager-button ${selected === npc.id ? "chosen" : ""}`} aria-label={`Talk to ${npc.name}. ${npc.attitude}. ${memoryText(npc, eventId)}`} onClick={() => onSelect(npc.id)}>
               <span className={`puppet ${extraCast.includes(npc.id) ? "expanded-puppet" : ""} ${npc.id} ${reacting ? "notice" : ""}`} aria-hidden="true" />
               <span className="villager-caption"><strong>{npc.name}</strong><span className="attitude-label">{npc.attitude === "hostile" ? "⌢" : npc.attitude === "wary" ? "−" : npc.attitude === "neutral" ? "·" : "⌣"} {npc.attitude}</span></span>
             </Button>
@@ -128,13 +140,13 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
       {[{ x: 360, label: "Brom’s Forge" }, { x: 900, label: "The Copper Kettle" }, { x: 1490, label: "Guard Barracks" }].map((place) => <text key={place.label} x={place.x} y="300" className="place-label">{place.label}</text>)}
       <foreignObject x="70" y="795" width="450" height="50"><p className="walk-hint"><Footprints size={16} /> Click the road to walk · Arrow keys / WASD</p></foreignObject>
     </svg>
-    <div className="district-picker"><label>District<select aria-label="Choose a district" value={district} onChange={(event) => {
+    <div className="district-picker"><label>District<select aria-label="Choose a district" disabled={Boolean(beat)} value={district} onChange={(event) => {
       const next = event.target.value;
       if (next !== "oldtown" && next !== "vale" && next !== "riverside") return;
       setDistrict(next);
       const first = town.npcs.find((npc) => districtOf(npc.id) === next);
-      if (first) { const home = homeOf(first.id); setTraveller({ x: home.x - 140, y: home.y + 20 }); onFocus?.(first.id); }
+      if (first) { walkTo(approach(first.id)); onFocus?.(first.id); }
     }}>{Object.entries(districts).map(([id, item]) => <option key={id} value={id}>{item.name} · {town.npcs.filter((npc) => districtOf(npc.id) === id).length}</option>)}</select><span className="district-hint">Scroll the town to explore</span></label></div>
-    <div className="location-nav"><select aria-label="Walk to a villager" value="" onChange={(event) => { const npc = locals.find((n) => n.id === event.target.value); if (npc) { const home = homeOf(npc.id); setTraveller({ x: home.x - 140, y: home.y + 20 }); } }}><option value="" disabled>Walk to a villager…</option>{locals.map((npc) => <option key={npc.id} value={npc.id}>{npc.name}</option>)}</select></div>
+    <div className="location-nav"><select aria-label="Walk to a villager" disabled={Boolean(beat)} value="" onChange={(event) => { const npc = locals.find((n) => n.id === event.target.value); if (npc) walkTo(approach(npc.id)); }}><option value="" disabled>Walk to a villager…</option>{locals.map((npc) => <option key={npc.id} value={npc.id}>{npc.name}</option>)}</select></div>
   </div>;
 }

@@ -156,6 +156,7 @@ export function useLivingTown() {
   }
   function switchSave(next: string) { if (town) chats.current.set(slot, town.dialogueHistory); void load(next); }
   return { town, slot, selected, eventId, drawer, busy, error, narration, log, beats, lastBeats, why, tour, reduced, textMode, largeText, offline, active, replayWhispers,
+    clearError: () => setError(""),
     setDrawer, setSelected, setEventId, setTour, setReduced, setTextMode, setLargeText, tell, load, select, record, advance, speak, explain, reset, switchSave, finishTour };
 }
 export type LivingTown = ReturnType<typeof useLivingTown>;
