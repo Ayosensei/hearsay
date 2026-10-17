@@ -42,3 +42,20 @@ Golden credibilities (asserted with 1e-9 tolerance): tick 1 Ayla 0.5, Mira 0.9; 
 Regression commands: `pnpm typecheck && pnpm test`; detailed spike output: `pnpm --filter @hearsay/core test --reporter=verbose`. Query constants live in `packages/hearsay/src/queries/spike.ts`; the corrected Q61 also replaces the planned query in `docs/shared/05-queries.md`. Query mirrors for submission remain G12.
 
 Final verification: typecheck passes across the workspace; 29 tests pass (13 web mock tests, 5 contract tests, 6 live helper tests, 5 live query-spike tests). All scratch graphs were removed by test teardown. The web app still uses its mock client; this task does not claim live UI integration or production tool implementations.
+
+## G4 follow-up verification — 2026-10-17
+
+Tested through the same official Node client and live local FalkorDB, under Goodness's approved direct-client exception. Production constants now live in `queries/memory.ts`; the spike reexports Q30/Q90 to prevent divergence.
+
+| Check | Result | Evidence / decision |
+| --- | --- | --- |
+| Q24 optional witness resolution | PASS | Mixed existing/missing NPCs return UNKNOWN_NPC before Q30; no Event is created. |
+| Q25 place resolution | PASS | Missing place returns UNKNOWN_PLACE before Q30. |
+| Q26 player-scoped event resolution | PASS | whoKnows/focused snapshot reject absent and other-player events without running the view query. |
+| Q30 tool integration | PASS | Default/zero weights, deduplicated witnesses, current tick, concurrent random IDs and literal query-looking subjects verified. |
+| Q42 witness/hearer/unaware partition | PASS | Golden theft yields Brom and five unaware; one seeded Q41 retelling yields Mira via Brom, confidence 0.9 and hop 1. Automated propagation remains G5. |
+| Q50 recall ordering and LIMIT binding | PASS | Brom's witnessed theft has confidence 1 and source witness; Garrick knows nothing; later ticks precede earlier ticks and limit is honored. |
+| Q90 stable entity mapping | PASS | Application property IDs produce Event/KNOWS/TOLD graph IDs. Other-player snapshot contains no recorded Event. |
+| Q90 hidden edge endpoints | CORRECTED / PASS | Original planned edge query omitted EventType filtering. Added both endpoint predicates; hidden metadata and incident edges leave the visible snapshot unchanged. |
+
+Thirteen G4 integration tests use a six-NPC synthetic test seed. Production still uses the three-NPC stub pending D1 (R-003). One new test's accidentally overlength missing-player ID produced BAD_ARGS; corrected the test ID and verified UNKNOWN_PLAYER. No database query syntax failures or new dependencies in G4. See `G4-memory.md` for API usage and concurrency limits.
