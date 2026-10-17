@@ -231,6 +231,16 @@ and comparison live in Under the hood. Existing shadcn Button/Input primitives
 are used. Hit targets at least 44px; controls radius 12px, drawers radius 20px.
 Responsive bottom sheets and location navigation keep the town usable on phones.
 
+## Minimal presentation
+
+User-requested minimal refinement: keep the town artwork but remove persistent
+hero text, decorative dock frames, floating deed cards and confidence chips.
+Main navigation is Hearsay, Your story and Menu. Free play has two controls:
+Take an action and Let the town talk. Trace lives with character memories.
+Saves, lenses, accessibility, reset and engine tools use progressive disclosure
+inside Menu. Guided play shows only its current instruction and primary action.
+Ambient idles are off in the minimal view; confirmed whispers still play.
+
 ## Motion and accessibility
 
 Ambient work/walking is decoration and never creates memories. One-shot whisper

@@ -16,9 +16,9 @@ export function memoryText(person: NPC, eventId: string) {
     : `Heard from ${memory.heardFromName ?? memory.heardFromId} · ${Math.round(memory.confidence * 100)}% sure`;
 }
 interface Props { town: TownState; eventId: string; selected: string; beat?: Beat; why?: ProvenanceChain;
-  lens: "none" | "bonds" | "whispers"; reduced: boolean; paused: boolean; onSelect: (id: string) => void; onSword: () => void }
+  lens: "none" | "bonds" | "whispers"; reduced: boolean; paused: boolean; quiet?: boolean; showSword?: boolean; onSelect: (id: string) => void; onSword: () => void }
 
-export function TownStage({ town, eventId, selected, beat, why, lens, reduced, paused, onSelect, onSword }: Props) {
+export function TownStage({ town, eventId, selected, beat, why, lens, reduced, paused, quiet = false, showSword = true, onSelect, onSword }: Props) {
   const [traveller, setTraveller] = useState({ x: 150, y: 710 });
   const svg = useRef<SVGSVGElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -80,7 +80,7 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
           </g>}
         </g>;
       })()}
-      {deed && <foreignObject x={deed.placeName.includes("Forge") ? 230 : deed.placeName.includes("Kettle") ? 780 : 1360} y="355" width="270" height="70">
+      {deed && !quiet && <foreignObject x={deed.placeName.includes("Forge") ? 230 : deed.placeName.includes("Kettle") ? 780 : 1360} y="355" width="270" height="70">
         <div className={`deed-pin ${deed.type}`}><Swords size={18} /><span>{deed.title}</span></div>
       </foreignObject>}
       <g className="traveller-position" style={{ transform: `translate(${traveller.x - 50}px, ${traveller.y - 135}px)` }} aria-hidden="true">
@@ -100,7 +100,7 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
               <span className="villager-caption"><strong>{npc.name}</strong><span className="attitude-label">{npc.attitude === "hostile" ? "⌢" : npc.attitude === "wary" ? "−" : npc.attitude === "neutral" ? "·" : "⌣"} {npc.attitude}</span></span>
             </Button>
           </foreignObject>
-          {eventId && <foreignObject x={home.x + 45} y={home.y - 205} width="170" height="70">
+          {eventId && (!quiet || reacting) && <foreignObject x={home.x + 45} y={home.y - 205} width="170" height="70">
             <div className={`thought-note ${memory?.hops === 0 ? "witness" : memory ? "heard" : "unaware"} ${memory && memory.confidence < .7 ? "smudged-note" : ""}`} title={memoryText(npc, eventId)}>
               {memory?.hops === 0 ? <Eye size={16} /> : memory ? <Ear size={16} /> : <Moon size={16} />}
               {memory ? <span>{memory.hops === 0 ? "Witness" : `${Math.round(memory.confidence * 100)}% sure`}</span> : "Unaware"}
@@ -108,7 +108,7 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
           </foreignObject>}
         </g>;
       })}
-      <foreignObject x="100" y="535" width="140" height="55"><Button className="sword-hotspot" variant="secondary" onClick={onSword}><Swords size={17} /> Iron sword</Button></foreignObject>
+      {showSword && <foreignObject x="100" y="535" width="140" height="55"><Button className="sword-hotspot" variant="secondary" onClick={onSword}><Swords size={17} /> Iron sword</Button></foreignObject>}
       {[{ x: 360, label: "Brom’s Forge" }, { x: 900, label: "The Copper Kettle" }, { x: 1490, label: "Guard Barracks" }].map((place) => <text key={place.label} x={place.x} y="300" className="place-label">{place.label}</text>)}
       <foreignObject x="70" y="795" width="450" height="50"><p className="walk-hint"><Footprints size={16} /> Click the road to walk · Arrow keys / WASD</p></foreignObject>
     </svg>
