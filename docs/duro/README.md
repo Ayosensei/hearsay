@@ -6,6 +6,10 @@ Target: Win. Correctness, explainability, and adherence to `DESIGN.md`.
 
 ## Living Town — user-requested redesign
 
+Three location-based scenarios now offer paid, charity, theft and social routes.
+Choices spend turns, prerequisites and NPC decisions use graph memories, and
+Garrick’s trust at 20/100 or below ends the game. See scenarios.md.
+
 Autonomous play: walking determines witnesses; deeds use your current location.
 Gossip advances automatically during visible exploration, with Pause/Resume town
 and pauses during reading and reaction playback. See autonomous-town.md.

@@ -112,6 +112,8 @@ export interface DialogueMessage {
 }
 
 export interface TownEvent {
+  subject?: string;
+  actionType?: string;
   weight?: number;
   id: string;
   title: string;
