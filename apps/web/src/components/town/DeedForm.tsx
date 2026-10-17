@@ -19,9 +19,10 @@ const verbs = [
   { id: "saved", label: "Save", verb: "save", icon: Heart, hint: "Strongly helpful" },
   { id: "traded", label: "Trade", verb: "trade", icon: Handshake, hint: "Too minor to spread" },
 ] as const;
-export function DeedForm({ town, busy, error, prepared, goodDeed, initialWitness = "brom", position, onClose, onSubmit }: {
+export function DeedForm({ town, busy, error, prepared, goodDeed, initialWitness = "brom", position, locked = false, onClose, onSubmit }: {
   town: TownState; busy: boolean; error: string; prepared: boolean; goodDeed: boolean; initialWitness?: string;
   position?: TownPosition;
+  locked?: boolean;
   onClose: () => void; onSubmit: (input: ToolInput<"recordEvent">) => Promise<boolean>;
 }) {
   const [editing, setEditing] = useState(!prepared);
@@ -53,7 +54,7 @@ export function DeedForm({ town, busy, error, prepared, goodDeed, initialWitness
       <p className="paper-caption">{verb.hint}{type === "traded" ? ". A small trade can affect its witness’s opinion, but does not become gossip." : ". The memory can travel as time passes."}</p>
       {error && <p role="alert" className="paper-error">{error} Your choices are still here.</p>}
       <Button type="submit" disabled={busy || !subject.trim() || !witnesses.length || witnesses.length > 6 || !place}>{busy ? "Recording…" : editing ? "Do it here" : "Take the sword"}</Button>
-      {!editing && <Button type="button" variant="ghost" disabled={busy} onClick={() => setEditing(true)}>Change this</Button>}
+      {!editing && !locked && <Button type="button" variant="ghost" disabled={busy} onClick={() => setEditing(true)}>Change this</Button>}
     </form>
   </PaperDrawer>;
 }
