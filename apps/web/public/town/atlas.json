@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "image": "puppets.png",
+    "size": { "w": 2172, "h": 724 },
+    "scale": 1,
+    "description": "Four full-body paper puppets; movement and state tags are controlled by React/CSS, not baked gameplay animations."
+  },
+  "frames": {
+    "traveller": { "x": 0, "y": 0, "w": 543, "h": 724 },
+    "brom": { "x": 543, "y": 0, "w": 543, "h": 724 },
+    "mira": { "x": 1086, "y": 0, "w": 543, "h": 724 },
+    "garrick": { "x": 1629, "y": 0, "w": 543, "h": 724 }
+  }
+}

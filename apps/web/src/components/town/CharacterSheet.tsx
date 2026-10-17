@@ -8,7 +8,7 @@ import type { NPC, TownState } from "../../lib/types";
 
 export function CharacterSheet({ town, npc, eventId, busy, onSpeak, onExplain, onAttitude }: {
   town: TownState; npc: NPC; eventId: string; busy: boolean;
-  onSpeak: (text: string) => Promise<void>; onExplain: () => void; onAttitude: () => void;
+  onSpeak: (text: string) => Promise<boolean | void>; onExplain: () => void; onAttitude: () => void;
 }) {
   const [text, setText] = useState("");
   const deed = town.events.find((e) => e.id === eventId);
@@ -38,7 +38,7 @@ export function CharacterSheet({ town, npc, eventId, busy, onSpeak, onExplain, o
         </article>)}
       </div>
       <Button variant="secondary" className="suggested-question" disabled={busy} onClick={() => void onSpeak("Have you heard anything about me?")}><CircleHelp size={16} /> Have you heard anything about me?</Button>
-      <form className="flex gap-2" onSubmit={async (e) => { e.preventDefault(); if (text.trim()) { await onSpeak(text.trim()); setText(""); } }}>
+      <form className="flex gap-2" onSubmit={async (e) => { e.preventDefault(); if (text.trim() && await onSpeak(text.trim())) setText(""); }}>
         <Input aria-label={`Message to ${npc.name}`} value={text} maxLength={400} onChange={(e) => setText(e.target.value)} placeholder={`Ask ${npc.name}…`} disabled={busy} />
         <Button disabled={busy || !text.trim()}>Send</Button>
       </form>

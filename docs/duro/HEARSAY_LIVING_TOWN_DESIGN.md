@@ -305,7 +305,7 @@ Every character needs these cycles. Frame counts are minimums for 2D skeletal (S
 * Work loop (hammering, wiping tables, patrolling), ambient only
 * Walk left and right (8 frames)
 * Turn to face the traveller (4 frames)
-* Notice (head snap, gold eye mark appears) 
+* Notice (head snap, gold eye mark appears)
 * Speak (mouth and hand loop)
 * Whisper lean in, and receive whisper (ear tilt)
 * Reaction faces: hostile, wary, neutral, friendly, devoted (static pose with 2 frame idle breathing)

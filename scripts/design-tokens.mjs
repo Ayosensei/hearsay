@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 
 // DESIGN.md remains the source; components never duplicate palette literals.
-const design = fs.readFileSync('DESIGN.md', 'utf8');
+const design = fs.readFileSync('DESIGN.md', 'utf8').replaceAll('\r\n', '\n');
 const palette = design.split('colors:\n')[1]?.split('typography:')[0] ?? '';
 const declarations = [...palette.matchAll(/^  ([\w-]+): "(#[0-9A-Fa-f]+)"/gm)]
   .map(([, name, value]) => `  --color-${name}: ${value};`).join('\n');

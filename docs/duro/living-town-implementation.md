@@ -62,4 +62,28 @@ attitudes, prepared/full forms, knowledge, evidence, empty/failure/reset states.
 
 Real database integration tests assert exact gossip steps and attitude
 contributions as well as the existing full theft/gossip/explain flow.
-Browser and final build evidence are recorded after the final checks below.
+Full workspace suite: 136 tests passed against real FalkorDB. Typecheck, design
+guard, design-document lint, and production build passed. The build retains the
+existing core seed-loader dynamic-filesystem tracing warning; no new build error.
+
+Browser checks on the actual app:
+
+- Traveller B began clean; the prepared sword card recorded one theft.
+- Brom became hostile and an eyewitness; Mira and Garrick stayed unaware.
+- Garrick replied “Nobody has told me.” with template source/knowledge check.
+- Explain before gossip showed the explicit no-evidence state.
+- First turn: Brom told Mira, confidence 90%; Garrick remained unaware.
+- Second turn: Mira told Garrick, confidence 63%; Garrick became wary.
+- Evidence returned Brom → Mira → Garrick, 100/90/63%, with expandable arithmetic.
+- Attitude view separately showed the negative theft contribution.
+- Traveller A retained its pre-existing three-deed history. B stayed separate.
+- Reload preserved B's turn-two world and selected save; visible chat reset as documented.
+- At 390x844, location navigation scrolled the 1100px stage to the barracks;
+  Garrick's knowledge and attitude were readable in the mobile sheet.
+- Escape closed drawers. Reduced motion and Story as text switched successfully;
+  the text view retained the same character and action controls.
+- Styleguide exposed prepared/full forms, preserved-failure choices, evidence,
+  unaware/witness/attitude states and the new town/lenses.
+
+Screenshots: `screens/living-town-{arrival,desktop,evidence,styleguide}-1440x900.png`
+and `screens/living-town-mobile-390x844.png`. They are actual browser captures.

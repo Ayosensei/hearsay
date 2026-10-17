@@ -23,6 +23,11 @@
 .villager-button.chosen .villager-caption { outline: 2px solid var(--color-signal); }
 .villager-button .puppet::after { content: ''; display: block; width: 16px; height: 20px; border-radius: 8px; background: var(--mood); box-shadow: 0 0 25px var(--mood); position: relative; top: 70%; left: 80%; }
 .just-learned .puppet { filter: drop-shadow(0 0 10px var(--color-signal)); }
+.npc-garrick { animation: patrol 12s ease-in-out infinite alternate; }
+.npc-mira { animation: patrol 18s ease-in-out infinite alternate-reverse; }
+.is-telling .puppet { animation: whisper-lean 1600ms ease-in-out both; }
+@keyframes patrol { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
+@keyframes whisper-lean { 0%,100% { transform: rotate(0); } 50% { transform: rotate(7deg); } }
 .thought-note { display: inline-flex; gap: 5px; align-items: center; padding: 8px 10px; border-radius: 4px 12px 12px 4px; background: var(--color-paperCream); color: var(--color-inkBlack); font: 13px var(--font-mono); box-shadow: 0 4px 5px color-mix(in srgb, var(--color-inkBlack) 30%, transparent); }
 .thought-note.witness { border-left: 4px solid var(--color-gold); }
 .thought-note.heard { border-left: 4px solid var(--color-signal); }
@@ -38,14 +43,16 @@
 .evidence-thread { fill: none; stroke: var(--color-gold); stroke-width: 5; filter: drop-shadow(0 0 6px var(--color-gold)); }
 .whisper-flight-path { fill: none; stroke: var(--color-signal); stroke-width: 3; stroke-dasharray: 7 7; opacity: .6; }
 .whisper-moth { fill: var(--color-paperCream); stroke: var(--color-signal); stroke-width: 2; filter: drop-shadow(0 0 9px var(--color-signal)); }
+.turn-pulse { fill: none; stroke: var(--color-skyGlow); stroke-width: 10px; transform-origin: 900px 650px; animation: lantern-pulse 700ms ease-out both; pointer-events: none; }
+@keyframes lantern-pulse { from { transform: scale(.1); opacity: .6; } to { transform: scale(1); opacity: 0; } }
 .location-nav { display: none; }
 @keyframes paper-idle { from { transform: rotate(-1deg) translateY(0); } to { transform: rotate(1deg) translateY(-3px); } }
 @keyframes cloud-drift { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
-.still *, .world-paused .puppet, .world-paused .town-clouds { animation: none !important; }
+.still *, .world-paused .puppet, .world-paused .villager, .world-paused .town-clouds { animation: none !important; }
 .still .traveller-position { transition: none; }
 @media (prefers-reduced-motion: reduce) { .town-stage * { animation: none !important; } .traveller-position { transition: none; } .whisper-moth { display: none; } }
 @media (max-width: 700px) {
   .town-panorama { min-width: 1100px; height: 100%; }
-  .location-nav { display: flex; position: fixed; bottom: 145px; left: 12px; right: 12px; gap: 6px; justify-content: center; z-index: 4; }
+  .location-nav { display: flex; position: fixed; top: 210px; left: 12px; right: 12px; gap: 6px; justify-content: center; z-index: 4; }
   .location-nav button { font-size: 11px; padding: 6px 10px; }
 }

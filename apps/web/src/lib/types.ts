@@ -112,6 +112,7 @@ export interface DialogueMessage {
 }
 
 export interface TownEvent {
+  weight?: number;
   id: string;
   title: string;
   description: string;

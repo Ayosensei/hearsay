@@ -72,12 +72,12 @@ export function useLivingTown() {
       return result;
     }, "Opening your story…");
     if (next) {
-      setSlot(nextSlot); setEventId(next.events[0]?.id ?? ""); setDrawer(undefined); setLog([]);
+      setSlot(nextSlot); localStorage.setItem("hearsay-active-slot", nextSlot); setEventId(next.events[0]?.id ?? ""); setDrawer(undefined); setLog([]);
       if (next.events.length) { setTour(0); tell("Welcome back. Hollowbrook remembers. Choose a deed in the Ledger to follow its story."); }
       else { setTour(localStorage.getItem(`hearsay-tour-${nextSlot}`) === "done" ? 0 : -1); tell("This traveller has a clean history. Nobody here knows your story yet."); }
     }
   }
-  useEffect(() => { void load("a"); /* A single initial load; save switches are explicit. */
+  useEffect(() => { void load(localStorage.getItem("hearsay-active-slot") === "b" ? "b" : "a"); /* A single initial load; save switches are explicit. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   function finishTour() { setTour(0); localStorage.setItem(`hearsay-tour-${slot}`, "done"); }
@@ -114,7 +114,7 @@ export function useLivingTown() {
     }
   }
   async function speak(text: string) {
-    if (!town) return;
+    if (!town) return false;
     const next = await run(async () => {
       const result = await liveTown.sendMessage(selected, text, town);
       return result.ok ? { ok: true, data: result.data.updatedState, trace: result.trace } : result;
@@ -124,7 +124,9 @@ export function useLivingTown() {
       const knows = person?.rumors.some((r) => r.eventId === eventId);
       tell(knows ? `${person?.name} replies from their own memories.` : `${person?.name} has not learned about this event. Conversation does not create a deed.`);
       if (tour === 2 && selected === "garrick") setTour(3);
+      return true;
     }
+    return false;
   }
   async function explain(id = selected) {
     if (!town || !eventId || active || locked.current) return;

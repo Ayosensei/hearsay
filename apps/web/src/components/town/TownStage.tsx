@@ -56,6 +56,7 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
       </defs>
       <image href="/town/hollowbrook.png" x="0" y="130" width="1800" height="600" aria-hidden="true" />
       <g className="town-clouds" aria-hidden="true"><path d="M450 180q60-30 120 0t120 0M1170 130q40-20 80 0t90 0" /></g>
+      {beat && !reduced && <ellipse key={beat.id} cx="900" cy="650" rx="840" ry="180" className="turn-pulse" aria-hidden="true" />}
       {edges.map((edge) => {
         const a = point(edge.source), b = point(edge.target);
         return <g key={edge.id} className={lens === "bonds" ? "bond-line" : "whisper-history"}>
@@ -90,7 +91,8 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
         const home = homes[npc.id] ?? { x: 600 + index * 180, y: 660, place: npc.role };
         const memory = npc.rumors.find((r) => r.eventId === eventId);
         const reacting = beat?.to === npc.id;
-        return <g key={npc.id} className={`villager attitude-${npc.attitude} ${reacting ? "just-learned" : ""}`}>
+        const newThisTurn = town.gossipSteps?.some((s) => s.listenerId === npc.id && s.eventId === eventId);
+        return <g key={npc.id} className={`villager npc-${npc.id} attitude-${npc.attitude} ${reacting || newThisTurn ? "just-learned" : ""} ${beat?.from === npc.id ? "is-telling" : ""}`}>
           <ellipse cx={home.x} cy={home.y + 15} rx="65" ry="12" className="ground-shadow" />
           <foreignObject x={home.x - 80} y={home.y - 200} width="160" height="280">
             <Button variant="ghost" className={`villager-button ${selected === npc.id ? "chosen" : ""}`} aria-label={`Talk to ${npc.name}. ${npc.attitude}. ${memoryText(npc, eventId)}`} onClick={() => onSelect(npc.id)}>
@@ -99,7 +101,7 @@ export function TownStage({ town, eventId, selected, beat, why, lens, reduced, p
             </Button>
           </foreignObject>
           {eventId && <foreignObject x={home.x + 45} y={home.y - 205} width="170" height="70">
-            <div className={`thought-note ${memory?.hops === 0 ? "witness" : memory ? "heard" : "unaware"}`} title={memoryText(npc, eventId)}>
+            <div className={`thought-note ${memory?.hops === 0 ? "witness" : memory ? "heard" : "unaware"} ${memory && memory.confidence < .7 ? "smudged-note" : ""}`} title={memoryText(npc, eventId)}>
               {memory?.hops === 0 ? <Eye size={16} /> : memory ? <Ear size={16} /> : <Moon size={16} />}
               {memory ? <span>{memory.hops === 0 ? "Witness" : `${Math.round(memory.confidence * 100)}% sure`}</span> : "Unaware"}
             </div>
