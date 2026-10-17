@@ -29,6 +29,7 @@ export function useLivingTown() {
   const chats = useRef(new Map<string, TownState["dialogueHistory"]>());
   const active = Boolean(busy || beats.length);
   const tell = useCallback((text: string) => { setNarration(text); setLog((old) => [...old, text].slice(-100)); }, []);
+  useEffect(() => { setWhy(undefined); }, [eventId, slot]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -91,7 +92,10 @@ export function useLivingTown() {
     const witness = next.npcs.find((n) => n.id === input.witnesses[0]);
     const text = `${witness?.name ?? "Your witness"} saw you ${input.type === "stole" ? "take" : input.type} ${input.subject ?? "something"}. ${witness?.name ?? "They"} ${witness ? `is ${witness.attitude} toward you` : "remembers"}.`;
     setBeats([{ id: crypto.randomUUID(), text, to: witness?.id, eventId: event?.id, confidence: 1 }]);
-    if (tour > 0) setTour(2);
+    if (tour > 0) {
+      if (tour === 1 && input.type === "stole" && input.placeId === "forge" && input.witnesses[0] === "brom") setTour(2);
+      else finishTour();
+    }
     return true;
   }
   async function advance() {
@@ -104,7 +108,10 @@ export function useLivingTown() {
       eventId: s.eventId, confidence: s.credibility,
       text: `${name(s.tellerId)} told ${name(s.listenerId)} about ${next.events.find((e) => e.id === s.eventId)?.title ?? "a deed"}. ${name(s.listenerId)} is ${Math.round(s.credibility * 100)}% sure.` }))
       : [{ id: crypto.randomUUID(), text: "No new rumours spread this turn. The town is quiet." }]);
-    if (tour === 3) setTour(4); else if (tour === 4) setTour(5);
+    if (tour === 3 || tour === 4) {
+      if (next.npcs.find((n) => n.id === "garrick")?.rumors.some((r) => r.eventId === eventId)) setTour(5);
+      else if (next.npcs.find((n) => n.id === "mira")?.rumors.some((r) => r.eventId === eventId)) setTour(4);
+    }
   }
   async function speak(text: string) {
     if (!town) return;

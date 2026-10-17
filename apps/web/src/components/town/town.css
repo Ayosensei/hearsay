@@ -1,0 +1,51 @@
+.living-town { min-height: 100svh; overflow: hidden; position: relative; background: var(--color-skyDeep); color: var(--color-paperCream); }
+.town-stage { position: absolute; inset: 0; overflow-x: auto; background: radial-gradient(ellipse at 50% 65%, var(--color-skyMid), var(--color-skyDeep) 75%); }
+.town-panorama { display: block; width: 100%; height: 100%; min-width: 1100px; min-height: 680px; }
+.town-panorama image { pointer-events: auto; }
+.town-clouds { fill: none; stroke: var(--color-paperShade); stroke-width: 12; opacity: .08; animation: cloud-drift 18s ease-in-out infinite alternate; }
+.ground-shadow { fill: var(--color-inkBlack); opacity: .4; }
+.puppet { display: block; width: 100%; height: 100%; background-image: url('/town/puppets.png'); background-size: 400% 100%; background-repeat: no-repeat; filter: drop-shadow(0 6px 3px color-mix(in srgb, var(--color-inkBlack) 45%, transparent)); }
+.puppet.traveller { background-position: 0% 0; }
+.puppet.brom { background-position: 33.333% 0; }
+.puppet.mira { background-position: 66.666% 0; }
+.puppet.garrick { background-position: 100% 0; }
+.villager-button { display: flex; flex-direction: column; width: 160px; height: 270px; padding: 0; border-radius: 0; background: transparent !important; color: var(--color-paperCream); white-space: normal; }
+.villager-button .puppet { height: 205px; flex-shrink: 0; transform-origin: 50% 95%; animation: paper-idle 5s ease-in-out infinite alternate; }
+.villager:nth-of-type(even) .puppet { animation-delay: -2s; }
+.villager-caption { display: flex; flex-direction: column; gap: 2px; align-items: center; background: color-mix(in srgb, var(--color-skyDeep) 90%, transparent); border-radius: 12px; padding: 6px 18px; box-shadow: 0 2px 8px color-mix(in srgb, var(--color-inkBlack) 40%, transparent); }
+.villager-caption strong { font-family: var(--font-serif); font-size: 24px; }
+.attitude-label { color: var(--mood); text-transform: capitalize; font-size: 13px; }
+.attitude-hostile { --mood: var(--color-attitude-hostile); }
+.attitude-wary { --mood: var(--color-attitude-wary); }
+.attitude-neutral { --mood: var(--color-paperCream); }
+.attitude-friendly { --mood: var(--color-attitude-friendly); }
+.attitude-devoted { --mood: var(--color-attitude-devoted); }
+.villager-button.chosen .villager-caption { outline: 2px solid var(--color-signal); }
+.villager-button .puppet::after { content: ''; display: block; width: 16px; height: 20px; border-radius: 8px; background: var(--mood); box-shadow: 0 0 25px var(--mood); position: relative; top: 70%; left: 80%; }
+.just-learned .puppet { filter: drop-shadow(0 0 10px var(--color-signal)); }
+.thought-note { display: inline-flex; gap: 5px; align-items: center; padding: 8px 10px; border-radius: 4px 12px 12px 4px; background: var(--color-paperCream); color: var(--color-inkBlack); font: 13px var(--font-mono); box-shadow: 0 4px 5px color-mix(in srgb, var(--color-inkBlack) 30%, transparent); }
+.thought-note.witness { border-left: 4px solid var(--color-gold); }
+.thought-note.heard { border-left: 4px solid var(--color-signal); }
+.thought-note.unaware { background: var(--color-skyMid); color: var(--color-paperCream); }
+.deed-pin { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--color-paperCream); color: var(--color-inkBlack); border-left: 5px solid var(--color-event-harm); font-size: 16px; box-shadow: 0 6px 12px color-mix(in srgb, var(--color-inkBlack) 40%, transparent); transform: rotate(-3deg); }
+.deed-pin.help { border-color: var(--color-event-help); }
+.sword-hotspot { background: var(--color-paperCream) !important; color: var(--color-inkBlack) !important; box-shadow: 0 4px 12px color-mix(in srgb, var(--color-inkBlack) 50%, transparent); }
+.place-label { fill: var(--color-paperCream); stroke: var(--color-skyDeep); stroke-width: 5px; paint-order: stroke; font-family: var(--font-serif); font-size: 26px; text-anchor: middle; }
+.walk-hint { display: flex; gap: 8px; align-items: center; color: var(--color-paperShade); font-size: 14px; opacity: .7; }
+.traveller-position { transition: transform 700ms ease-in-out; }
+.bond-line { color: var(--color-paperShade); fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 5 7; opacity: .6; }
+.whisper-history { color: var(--color-signal); fill: none; stroke: currentColor; stroke-width: 3; opacity: .7; }
+.evidence-thread { fill: none; stroke: var(--color-gold); stroke-width: 5; filter: drop-shadow(0 0 6px var(--color-gold)); }
+.whisper-flight-path { fill: none; stroke: var(--color-signal); stroke-width: 3; stroke-dasharray: 7 7; opacity: .6; }
+.whisper-moth { fill: var(--color-paperCream); stroke: var(--color-signal); stroke-width: 2; filter: drop-shadow(0 0 9px var(--color-signal)); }
+.location-nav { display: none; }
+@keyframes paper-idle { from { transform: rotate(-1deg) translateY(0); } to { transform: rotate(1deg) translateY(-3px); } }
+@keyframes cloud-drift { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
+.still *, .world-paused .puppet, .world-paused .town-clouds { animation: none !important; }
+.still .traveller-position { transition: none; }
+@media (prefers-reduced-motion: reduce) { .town-stage * { animation: none !important; } .traveller-position { transition: none; } .whisper-moth { display: none; } }
+@media (max-width: 700px) {
+  .town-panorama { min-width: 1100px; height: 100%; }
+  .location-nav { display: flex; position: fixed; bottom: 145px; left: 12px; right: 12px; gap: 6px; justify-content: center; z-index: 4; }
+  .location-nav button { font-size: 11px; padding: 6px 10px; }
+}

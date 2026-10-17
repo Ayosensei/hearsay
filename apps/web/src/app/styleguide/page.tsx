@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CodeCard } from "../../components/CodeCard";
 import { LiveSpecimens } from "../../components/hearsay/LiveSpecimens";
+import { TownSpecimens } from "../../components/town/TownSpecimens";
 import {
   ArrowLeft,
   Sparkles,
@@ -63,6 +64,7 @@ export default function StyleguidePage() {
         </div>
       </header>
 
+      <TownSpecimens />
       <LiveSpecimens />
       {/* 01. Color Palette */}
       <section className="space-y-6">

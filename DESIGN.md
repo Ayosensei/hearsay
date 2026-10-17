@@ -1,17 +1,17 @@
 ---
 version: alpha
 name: Hearsay
-description: A near-black, editorial, developer-grade interface for a graph-powered NPC memory layer. One electric-blue signal, one gold for provenance, serif italics for emphasis.
+description: A warm paper diorama at indigo dusk. Lantern-lit characters reveal real graph memory, with blue whispers and gold provenance.
 colors:
-  background: "#05070B"
-  surface-1: "#0A0E15"
-  surface-2: "#0F141D"
-  surface-3: "#151B27"
+  background: "#1B1E3F"
+  surface-1: "#242447"
+  surface-2: "#302D50"
+  surface-3: "#3A3563"
   border: "#1A2030"
   border-strong: "#262E42"
-  text-primary: "#F2F4F8"
-  text-secondary: "#A6AEC0"
-  text-tertiary: "#7D869A"
+  text-primary: "#F4E9D2"
+  text-secondary: "#D9C9A6"
+  text-tertiary: "#BFB6CE"
   primary: "#3150E9"
   primary-hover: "#4562F0"
   primary-pressed: "#2A44CC"
@@ -35,6 +35,13 @@ colors:
   faction-townsfolk: "#7DD3FC"
   faction-guard: "#B79CFF"
   faction-merchants: "#5EEAD4"
+  skyDeep: "#1B1E3F"
+  skyMid: "#3A3563"
+  skyGlow: "#F2A65A"
+  paperCream: "#F4E9D2"
+  paperShade: "#D9C9A6"
+  inkBlack: "#1C1A24"
+  woodBrown: "#5A3E2B"
 typography:
   display-xl:
     fontFamily: Instrument Serif
@@ -195,158 +202,48 @@ components:
 
 # Hearsay design system
 
-This file is the single source of truth for how Hearsay looks. Coding agents must read it before touching any UI, follow it exactly, and run `npx @google/design.md lint DESIGN.md` after editing it. The layout, components and screens are specified in `docs/duro/ui-spec.md`; **this file wins on colour, type, shape, depth, motion and craft rules.**
+The user-approved Living Town brief in `docs/duro/HEARSAY_LIVING_TOWN_DESIGN.md`
+replaces the former Obsidian and Signal presentation. The shared tool contract and
+backend behavior remain authoritative. This palette is generated into globals.css
+with `node scripts/design-tokens.mjs`.
 
-## 1. Overview
+## Identity and materials
 
-**Identity: "Obsidian and Signal."** A near-black canvas, editorial serif headlines with italic emphasis, quiet layered surfaces, and exactly two chromatic ideas:
+A layered paper town at indigo dusk. Warm lanterns, cream paper, readable ink.
+The town occupies the stage; controls are paper tags and a brass action dock.
+Use the existing Instrument Serif, Geist and Geist Mono fonts. Serif italic for
+one emphasized word; mono only for actual numbers and technical inspection.
+No new UI, animation, icon or state library is needed for the SVG/React renderer.
 
-- **Signal blue** carries information moving through the graph: the primary action, focus, and the glowing rumor path.
-- **Gold** marks **provenance**, where something came from: the witness at the start of a chain, "saw it yourself", source tags. Used sparingly so it always means something.
+## Meaning
 
-Everything else is neutral. Colour is meaning, never decoration. The feeling is a premium developer tool: calm, precise, a little cinematic, with enough narrative character (serif italics, NPC initials, a chrome ring) that it is clearly about a living town and not a generic dashboard.
+Gold marks witnesses and provenance only. Signal blue marks confirmed gossip.
+Attitudes use the existing five semantic colors plus explicit labels and faces.
+Confidence is a labeled number and note texture, never a health bar.
+Paper surfaces use paperCream with inkBlack; sky surfaces use text-primary.
 
-**Moodboard (what to borrow; never copy branding, logos or assets).**
-- *OpenCircle (opencircle.cc):* near-black canvas (theme colour `#04060A`), chrome-metal ring and crown-gold used for rank and honour, leaderboard clarity. We borrow the metallic ring and the restrained gold.
-- *ClassFundz (classfundz.com):* electric blue (`#3150E9`) over deep navy ink, serif headlines with an italic emphasised word ("Built for *both sides.*"), numbered steps (01, 02, 03), calm trust cards, big readable numbers. We borrow the blue, the italic-emphasis headline and the numbered rhythm.
-- *UI Skills (ui-skills.com):* design-engineering craft details: concentric radii, shadows over borders, tabular numbers, balanced text wrapping, press feedback, interruptible transitions, staggered entrances, 44px hit areas. We encode these as rules below.
-- *TypeUI (typeui.sh):* the idea of a design system delivered to coding agents as an instruction file so output stays consistent. This file is ours.
+## Layout and components
 
-**Signature moments (design these with extra care):**
-1. **Why? card.** A hero card with a chrome-ring top edge, a serif headline with one italic word ("How Garrick *learned* about it"), the chain as avatars joined by signal-blue arrows, gold on the root witness, tabular confidences (0.90, 0.63). This is the single most beautiful thing in the product.
-2. **Rumor path.** The graph dims everything else and the path glows in signal blue with particles moving teller to listener.
-3. **Control vs Hearsay.** Two columns, one with a quiet "no provenance" note, one with gold provenance. The contrast is the argument.
-4. **Hero headline.** On the landing and empty states: Instrument Serif, large, one italic word, `text-wrap: balance`.
+The full-screen town has an arrival invitation, Ledger at top left, traveller
+saves at top right, narrator and action dock below, and closeable edge drawers.
+Character knowledge and attitude are separate sections. Technical graph/trace
+and comparison live in Under the hood. Existing shadcn Button/Input primitives
+are used. Hit targets at least 44px; controls radius 12px, drawers radius 20px.
+Responsive bottom sheets and location navigation keep the town usable on phones.
 
-## 2. Colors
+## Motion and accessibility
 
-All values are in the front matter. Roles:
+Ambient work/walking is decoration and never creates memories. One-shot whisper
+flights (up to 1600ms) and witness reactions require confirmed tool results.
+Queue results in response order. UI transitions use 120/200/320ms; no transition-all.
+Reduced motion removes parallax, flicker and flights; use static paths and narration.
+Every beat has a text equivalent. Arrow/WASD walking never runs engine writes.
+Escape closes drawers, Tab/Enter reaches all actions; focused dock Space advances.
+Offer readable text mode, larger text and reduced motion. No unrequested audio.
 
-- **Surfaces** step from `background` (app) to `surface-1` (panels) to `surface-2` (cards, inputs) to `surface-3` (raised, hover, selected). Differences are subtle on purpose; depth comes from layered shadows, not from bright borders.
-- **Text:** `text-primary` for content, `text-secondary` for supporting text, `text-tertiary` for hints and metadata only (it meets 4.5:1 on `surface-3` and above; never use it on anything lighter).
-- **Primary** `#3150E9` is a *fill* colour (white text on it meets 6:1). It is too dark to use as text or thin strokes on the dark canvas; for those use **signal** `#8FA2FF` (about 8:1).
-- **Gold** `#E8C46A` only for provenance and the single "origin" highlight. `on-gold` for text on gold fills.
-- **Attitudes** (hostile, wary, neutral, friendly, devoted) are used only on attitude badges, attitude bars and graph node tints. Each always appears with an icon and a text label.
-- **Events:** `event-harm` and `event-help` tint event nodes and effect bars.
-- **Agents:** small dots on trace chips only. **Factions:** graph node rings and the left border of an NPC's chat bubble only.
-- Never introduce a new colour. If a screen seems to need one, ask for a token first.
+## Enforcement and craft
 
-Alpha effects used in CSS (not tokens, because they depend on the surface beneath): hairline `rgba(255,255,255,0.06)`, strong hairline `rgba(255,255,255,0.10)`, signal glow `rgba(143,162,255,0.35)`.
-
-## 3. Typography
-
-- **Instrument Serif** (regular and *italic*) for display only: hero headlines, empty-state titles, the Why? headline, big numbers on the landing. Always one emphasised word set in italic; never a whole sentence in italic.
-- **Geist** for all UI text. **Geist Mono** for ids, query names, trace rows, JSON, counts and any number that changes.
-- Load via `next/font/google` (self-hosted at build): `Geist`, `Geist_Mono`, `Instrument_Serif` (weight 400, styles normal and italic). If a family is unavailable in the installed Next.js version, use the closest equivalent and record it on the styleguide page.
-- Rules: `font-variant-numeric: tabular-nums` on every changing number (tick, confidence, ms, counts); `text-wrap: balance` on headings and `text-wrap: pretty` on body copy; `-webkit-font-smoothing: antialiased` on the root; sentence case everywhere (no ALL CAPS except 11px tracking-wide section eyebrows, used rarely); max line length 68ch for prose.
-- Eyebrows (small labels above headings) use `label` at `text-tertiary` with letter-spacing 0.08em, optionally numbered "01", "02", "03" in Geist Mono (the ClassFundz rhythm).
-
-## 4. Layout
-
-- 4px base grid; use only the `spacing` tokens (4, 8, 12, 16, 24, 32, 48, 64).
-- App shell, panel sizes and panel contents: see `docs/duro/ui-spec.md` section 4. Target 1920x1080 (video) and 1440x900.
-- Gutters between panels 12px; panel inner padding 16px; card inner padding 8px outer / 16px inner (see Shapes).
-- Content hierarchy: one clear focal point per screen. The graph or the Why? card is the focal point; everything else steps back (`text-secondary`, `surface-1`).
-- Align optically: an icon next to text is nudged so its visual centre, not its box, aligns with the cap height. Play and arrow icons are shifted 1px toward their pointing direction.
-- Hit areas: every interactive element has a hit area of at least 44x44px. Dense list controls may look 32 to 36px tall but get a 44px hit area (padding or a `::after` that extends the target).
-- Landing page rhythm (if built): hero, numbered 01 / 02 / 03 explainer cards, a code card with the ten-line integration, a closing call to action. Generous vertical space (96 to 128px between sections), max content width 1120px.
-
-## 5. Elevation and depth
-
-Shadows over borders. Surfaces get depth from layered, low-opacity shadows plus a 1px inner top highlight, not from solid grey borders.
-
-- **Card:** `0 0 0 1px rgba(255,255,255,0.06), 0 1px 1px rgba(0,0,0,0.40), 0 12px 32px -12px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.05)`.
-- **Raised / hover:** same recipe, ring at 0.10, shadow slightly larger; transition only the properties that change.
-- **Floating (tooltip, popover, toast):** `0 0 0 1px rgba(255,255,255,0.08), 0 8px 24px -4px rgba(0,0,0,0.8)`.
-- **Signal glow** (Why? card, highlighted path): `0 0 0 1px rgba(143,162,255,0.35), 0 0 48px -8px rgba(143,162,255,0.35)`.
-- **Chrome ring** (selected NPC avatar, top edge of the Why? card): a 1.5px ring using `conic-gradient(from 210deg, #5B6478, #E6EAF2, #6B7388, #C9D0DF, #5B6478)` masked to the ring. Maximum two chrome elements on screen at once.
-- **Background:** flat `background` with one very faint radial wash of `primary` at 6% opacity, top-left, plus optional 2% noise. No other gradients.
-- Structural borders (input outlines, dividers, focus) still use `border` and `border-strong` where a shadow ring would be wrong.
-
-## 6. Shapes
-
-Concentric radii: **outer radius = inner radius + padding.** Panels and cards use `xl` (24px) with 8px padding around an inner surface of `lg` (16px). Controls (buttons, inputs) use `md` (12px). Small elements (tooltips, kbd) use `sm` (8px). Chips, badges and avatars use `full`. Never put two equal radii on a parent and a closely nested child.
-
-- Avatars: circle, 1px inset outline `rgba(255,255,255,0.10)`; the selected NPC gets the chrome ring.
-- Graph nodes: NPC = circle with faction ring; event = rounded diamond; player = small primary dot.
-- Icons: lucide, stroke 1.75, 16/20/24px. Icon-only buttons are 40px with a 44px hit area.
-
-## 7. Components
-
-Property mappings are in the front matter. Behaviour and anatomy:
-
-- **Buttons.** Primary (`primary` fill, white text) for the one main action per region (Advance Time, Send, Do it). Secondary (`surface-3`) for alternatives. Ghost for tertiary. Height 40. States: hover lightens; **pressed scales to 0.96** and darkens; disabled 40% opacity, no hover; focus-visible is a 2px `signal` ring with 2px offset. Loading shows a spinner inside the button without changing its width.
-- **Cards.** Outer `card` (xl, 8px padding) wrapping `card-inner` (lg, 16px padding) for anything with a header band; simple content can use one level. The Why? card uses `card-hero` with the signal glow and chrome top edge.
-- **NPC card.** Avatar (initials, faction ring) + name (headline) + role (caption, secondary) + attitude badge + knows chip. Selected: chrome ring on the avatar, `surface-3` background.
-- **Attitude badge.** Pill, icon + label + score (tabular). Tinted background at 12% of the attitude colour, text at the full colour.
-- **Knows chip.** `chip` (nothing known), `chip-signal` with an ear icon (heard via X), `chip-provenance` with an eye icon (saw it).
-- **Inputs.** `surface-2`, `border`, 12px radius, 40px height; focus ring `signal`. Placeholder `text-tertiary`.
-- **Tabs.** Text tabs, no boxes. Active tab `text-primary` with a 2px `primary` underline that slides between tabs (200ms). Inactive `text-secondary`.
-- **Trace row.** Mono, `surface-2`, a 6px dot in the agent colour, query id in `text-secondary`, rows and ms right-aligned tabular. Hand-off connector between rows is a 1px `signal` line at 40% opacity.
-- **Chat bubble.** Player: `surface-3`, right. NPC: `surface-2`, left, 2px left border in the faction colour. Meta row beneath in `caption` and `text-tertiary`.
-- **Tooltip.** `surface-3`, `sm` radius, 150ms delay, never hides critical info.
-- **Toast** (sonner): `surface-3` floating recipe, bottom right, max three.
-- **Landing hero** (optional task L1): serif display headline with one italic word, subline in `body-lg` secondary, primary CTA "Open the town" plus a secondary "Read the docs", a framed product screenshot with the chrome ring, then the numbered explainer.
-- **Code card:** `surface-1`, mono, syntax colours limited to `text-primary`, `signal`, `gold` (strings), `text-tertiary` (comments).
-
-## 8. Motion
-
-Motion explains cause and effect; it never decorates.
-
-- Durations: 120ms (hover, press), 200ms (tabs, small state), 320ms (panels, reveals). Easing `cubic-bezier(0.22, 1, 0.36, 1)`.
-- **Never `transition: all`.** List the exact properties (`transform`, `opacity`, `background-color`, `box-shadow`, `color`).
-- **Interruptible:** state toggles use CSS transitions (so they can reverse mid-way), not keyframes. Keyframes only for one-shot entrances.
-- **Press feedback:** pressed buttons and cards scale to 0.96 (120ms).
-- **Entrances:** opacity 0 to 1, `translateY(8px)` to 0, `blur(4px)` to 0, 320ms; lists stagger at 40ms per item (cap the total at 400ms). **Exits** are subtler and faster: opacity and `translateY(4px)`, 160ms.
-- **Numbers:** changing numbers crossfade (120ms) in place with tabular figures; never let layout shift.
-- **Rumor path:** continuous particles teller to listener (the one allowed looping animation), a 400ms ease-in when the highlight appears.
-- **Reduced motion:** honour `prefers-reduced-motion`: no particles (static thick line), no blur or translate, transitions at most 120ms.
-- No parallax, no bouncing, no confetti.
-
-## 9. Craft checklist (apply to every component)
-
-1. Nested radii are concentric (outer = inner + padding).
-2. Shadows and ring-shadows for depth; solid borders only for structure and inputs.
-3. Tabular numbers on anything that changes.
-4. `text-wrap: balance` on headings, `pretty` on paragraphs.
-5. Press scale 0.96 on buttons and clickable cards.
-6. Specific transition properties; no `transition: all`.
-7. Entrance stagger on lists; subtle exits.
-8. Hit areas at least 44px; visible focus ring.
-9. Optically aligned icons and labels.
-10. Avatars and images get a 1px inset outline at 10% white.
-11. No layout shift: reserve space for skeletons, images and changing numbers.
-12. Contrast: text at least 4.5:1, large text and UI strokes at least 3:1. `npx @google/design.md lint` must pass.
-
-## 10. Do's and Don'ts
-
-**Do**
-- Use only tokens from this file (as CSS variables and Tailwind theme values); add a token here first if something is missing.
-- Use `primary` for fills and `signal` for text, strokes, glows and the rumor path.
-- Reserve gold for provenance (origin of a chain, "saw it", source tags).
-- Pair every colour signal with an icon or label.
-- Keep one focal point per screen and let everything else recede.
-- Set one word of a serif headline in italic for emphasis.
-- Show real numbers (confidences, ms, ticks) in tabular mono; show real ids in the trace.
-- Make the empty, loading and error states as polished as the populated state.
-
-**Don't**
-- Don't use pure white backgrounds, pure `#000`, or any light theme.
-- Don't use `primary` as text colour on dark surfaces (it fails contrast).
-- Don't use more than two chrome elements on screen, or gold for decoration.
-- Don't use gradients beyond the vignette, the chrome ring and the signal glow; no rainbow or purple-pink gradients.
-- Don't use emojis, stock illustrations, mascots or decorative icons.
-- Don't use ALL CAPS body text, centred paragraphs longer than two lines, or italic sentences.
-- Don't nest cards more than two levels deep.
-- Don't use `transition: all`, bounce easing, or animations longer than 400ms (except the rumor particles).
-- Don't use arbitrary values (`bg-[#...]`, `text-[13px]`); use tokens and the type scale.
-- Don't add a UI library, icon set or font that is not named here.
-- Don't ship a screen that is not on the `/styleguide` page.
-
-## 11. Enforcement
-
-- `npx @google/design.md lint DESIGN.md` on every change to this file (pre-commit runs it when this file is staged). It catches broken token references and contrast failures.
-- `pnpm check:design` scans `apps/web` for hard-coded colours, arbitrary values and forbidden libraries.
-- The `/styleguide` route renders every token and component state; compare the app against it.
-- Screenshots at 1440x900 after each UI task, committed to `docs/duro/screens/`.
-- Format note: DESIGN.md is an alpha format. Run `npx @google/design.md spec` once to see the current rules and fix anything `lint` reports in this file (key names, section order or extra sections such as Motion and the Craft checklist). Never delete a rule to make lint pass without moving it to another section.
+Use semantic tokens, existing Tailwind scale, named exports and small components.
+All new states appear on /styleguide. Run design lint and check:design, and save
+1440x900 screenshots. Never imply stealth, inventory, calendar, arrest, score,
+cloud accounts or unverified live dialogue. Walking has no gameplay consequences.
