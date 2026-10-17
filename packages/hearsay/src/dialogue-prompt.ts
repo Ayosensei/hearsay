@@ -39,6 +39,14 @@ export function buildDialoguePrompt(
     (e) =>
       `- [${e.eventId}] The traveller ${sentences[e.type]} ${e.subject || "something"} at ${e.place || "an unspecified location"} (you ${e.via === "witness" ? "saw it yourself" : `heard it from ${e.teller ?? e.via}`}, you are ${Math.round(e.confidence * 100)}% sure)`,
   );
+  const messages: LlmInput["messages"] = [];
+  for (const line of [...history, { speaker: "player", text }]) {
+    const role = line.speaker === "player" ? "user" : "model";
+    if (!messages.length && role === "model") continue;
+    const previous = messages.at(-1);
+    if (previous?.role === role) previous.text += `\n${line.text}`;
+    else messages.push({ role, text: line.text });
+  }
   return {
     system: [
       `You are ${profile.name}, ${profile.role} of Hollowbrook. ${profile.persona}`,
@@ -52,13 +60,6 @@ export function buildDialoguePrompt(
       ...beliefs.map((b) => `- ${b.text}`),
       'Return JSON: {"reply": string, "referencedEventIds": string[]}',
     ].join("\n"),
-    messages: [
-      ...history.map((line) => ({
-        role:
-          line.speaker === "player" ? ("user" as const) : ("model" as const),
-        text: line.text,
-      })),
-      { role: "user", text },
-    ],
+    messages,
   };
 }

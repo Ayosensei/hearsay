@@ -118,6 +118,41 @@ it("times out even if the injected transport ignores abort and never resolves", 
     await createLlm({ ...options(), transport, timeoutMs: 10 }).generate(input),
   ).toMatchObject({ ok: false, error: { reason: "timeout" } });
 });
+it("bounds repeated rate limits and response-body parsing within the same deadline", async () => {
+  const rate = vi
+    .fn<typeof fetch>()
+    .mockImplementation(async () => new Response("", { status: 429 }));
+  expect(
+    await createLlm({
+      ...options(),
+      transport: rate,
+      sleep: async () => {},
+    }).generate(input),
+  ).toMatchObject({ ok: false, error: { reason: "http_429" } });
+  expect(rate).toHaveBeenCalledTimes(3);
+  const transport: typeof fetch = async () =>
+    new Response(new ReadableStream({ start() {} }));
+  expect(
+    await createLlm({ ...options(), transport, timeoutMs: 10 }).generate(input),
+  ).toMatchObject({ ok: false, error: { reason: "timeout" } });
+});
+it("rejects invalid referenced-event shapes and replies longer than 50 words", async () => {
+  for (const data of [
+    { reply: "Hello", referencedEventIds: ["invalid"] },
+    { reply: "word ".repeat(51), referencedEventIds: [] },
+  ]) {
+    const transport: typeof fetch = async () =>
+      Response.json({
+        candidates: [{ content: { parts: [{ text: JSON.stringify(data) }] } }],
+      });
+    expect(
+      await createLlm({ ...options(), transport }).generate(input),
+    ).toMatchObject({
+      ok: false,
+      error: { reason: "invalid_response_or_network" },
+    });
+  }
+});
 it("honors off mode even after caching and never sends a request with missing configuration", async () => {
   const transport = vi
     .fn<typeof fetch>()
