@@ -12,14 +12,14 @@
 1. **[0:00] Opening View (`/`):**
    - *"Welcome to Hearsay: an explainable, graph-native memory layer for game NPCs built on FalkorDB."*
    - Focus on the 3-panel workspace: NPC Directory on the left, Social Graph in the center, Dialogue on the right.
-   - Point to **Martha Vane** (Innkeeper): notice her gold `Eye-Witness` badge for *Gold Donated to Guild*.
+   - Point to **Brom** (Blacksmith): notice his gold `Eye-Witness` badge for *Help Brom forge iron gate hinges*.
 
 2. **[0:15] Firewall Test:**
-   - Click **Garrick Thorne** (Blacksmith).
+   - Click **Garrick** (Town Guard).
    - Point out Garrick's knows status: `Unaware (0 facts)`.
-   - Type in chat: *"Did you hear what happened at the guild?"*
+   - Type in chat: *"Did you hear what happened at the forge?"*
    - Garrick replies: *"I haven't heard anything about that, traveler."*
-   - *"Notice the Knowledge Firewall active indicator in the top right. Even though the player donated gold in town, Garrick was not there. The LLM prompt is strictly isolated from un-witnessed world facts. Zero hallucination, zero omniscient telepathy."*
+   - *"Notice the Knowledge Firewall active indicator in the top right. Even though the player helped Brom at the forge, Garrick was not there. The LLM prompt is strictly isolated from un-witnessed world facts. Zero hallucination, zero omniscient telepathy."*
 
 ---
 
@@ -28,12 +28,13 @@
 1. **[0:30] Advancing Time:**
    - Click the primary **Advance Time** button in the top navigation bar.
    - Tick increments from `0001` to `0002`.
-   - Watch the animated SVG laser stream and traveling particle orbs diffuse along the `TRUSTS` edge from Martha to Garrick.
+   - Watch the animated SVG laser stream and traveling particle orbs diffuse along the `TRUSTS` edge from Brom to Mira (`(mira)-[:TRUSTS]->(brom)`).
 
 2. **[0:45] Grounded Dialogue:**
-   - Select Garrick again: his status now shows `Heard via Martha (1 hop)`.
-   - Ask him: *"Did you hear what happened at the guild?"*
-   - Garrick replies: *"Martha told me you donated fifty gold to the guild. Fine work, traveler."*
+   - Advance time again to tick `0003`: rumor diffuses to Garrick (`(garrick)-[:TRUSTS]->(mira)`).
+   - Select Garrick again: his status now shows `Heard via Mira (0.63)`.
+   - Ask him: *"Did you hear what happened at the forge?"*
+   - Garrick replies: *"Brom witnessed someone at the forge, then told Mira at the inn. Word reached me with 63% confidence."*
    - Note the meta row: `Graph-grounded`.
 
 ---
@@ -44,14 +45,15 @@
    - Click the gold button under Garrick's message: **"Why do you know this?"**
    - The hero **Why? Card** appears at the bottom-left of the graph with its metallic chrome ring.
    - Point to the chain:
-     - Origin (Gold): **Martha Vane** (Eyewitness, Confidence 0.90)
-     - Receiver: **Garrick Thorne** (Confidence 0.72)
-     - Mathematical decay: $c_{hop} = c_{prev} \times w_{trust} \times 0.85$.
+     - Origin (Gold): **Brom** (Eyewitness, Confidence 1.00)
+     - Intermediary: **Mira** (Confidence 0.90)
+     - Receiver: **Garrick** (Confidence 0.63)
+     - Mathematical decay: $c_{hop} = c_{prev} \times w_{trust}$.
    - The graph dims all background nodes and highlights the rumor path in signal blue.
 
 2. **[1:15] Trace Inspector:**
    - Expand the bottom **FalkorDB Query Traces** drawer.
-   - Point to query `Q12_explain_provenance` executing in **1.4ms**.
+   - Point to query `Q60_explain_knows` executing in **1.4ms**.
    - Show that all queries are pre-compiled, parameter-driven Cypher—the LLM never writes Cypher.
 
 ---
@@ -60,11 +62,11 @@
 
 1. **[1:30] Act in Town:**
    - Click the **Act in Town** button.
-   - Select action: *"Poison the Town Well"* (Harmful deed).
-   - Select eyewitness: **Barty Green** (Stablehand) at the Town Well.
+   - Select action: *"Poison the Guard Barracks well"* (Harmful deed).
+   - Select eyewitness: **Garrick** (Guard) at Guard Barracks.
    - Click **Commit Action**.
-   - A new red diamond event node sprouts in the graph with a dashed `WITNESSED` edge to Barty. Barty's attitude drops into Hostile (`-0.85`).
-   - Click **Advance Time**: watch the rumor begin spreading to Martha and Captain Vane.
+   - A new red diamond event node sprouts in the graph with a dashed `WITNESSED` edge to Garrick. Garrick's attitude drops into Hostile (`-0.85`).
+   - Click **Advance Time**: watch the rumor begin spreading to Fenn and Tilda.
 
 2. **[1:45] Control vs Hearsay:**
    - Click **Control vs Hearsay** in the top navigation bar.
