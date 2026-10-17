@@ -56,7 +56,11 @@ The root development script reserves port 3000 for the database without changing
 - Hooks: shell syntax passed; valid title accepted, invalid and overlong titles rejected; actual commits ran pre-commit checks.
 - Environment ignores: `.env`, `.env.local`, `.env.production.local` confirmed ignored.
 - MCP/load-test placeholders: correctly exit nonzero and identify G9/G10.
-- Docker startup: blocked, `docker` is not installed or on PATH. No database startup, Browser, volume durability or real Cypher validation is claimed.
+- Docker startup: passed after installation and first-start initialization. Docker Engine 29.8.2 and Compose v5.6.0 started `hearsay-falkordb-1` with `docker compose up -d falkordb`.
+- Database: `docker compose exec -T falkordb redis-cli PING` returned `PONG`; `GRAPH.LIST` succeeded with an empty graph list on this fresh instance.
+- Browser: http://localhost:3000 returned HTTP 200 with title `FalkorDB Browser`.
+- Storage: inspection confirmed the read/write named volume `hearsay_falkordb_data` at `/var/lib/falkordb/data`. This proves the mount, not persistence across restart (G11).
+- Windows session: the newly installed CLI was not on this shell's PATH. Validation used `C:\Users\DELL\AppData\Local\Programs\DockerDesktop\resources\bin\docker.exe`; a new terminal should pick up the installer PATH change.
 - Repository: origin has `duro/bootstrap` as its default branch and no `main`; no merge to an invented main branch is performed.
 
-G1's code is delivered, but its full acceptance remains pending the Docker startup check and agreed integration branch.
+G1's implementation and local runtime acceptance checks have passed. Integration remains through the PR against the existing default branch; no merge to `main` is claimed. Gameplay still runs on the UI mock until later engine integration.
