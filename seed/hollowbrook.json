@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "factions": [
+    { "id": "townsfolk", "name": "Townsfolk" },
+    { "id": "guard", "name": "Guard" }
+  ],
+  "places": [
+    { "id": "forge", "name": "Brom's Forge" },
+    { "id": "inn", "name": "The Copper Kettle" },
+    { "id": "barracks", "name": "Guard Barracks" }
+  ],
+  "npcs": [
+    {
+      "id": "brom",
+      "name": "Brom",
+      "role": "blacksmith",
+      "faction": "townsfolk",
+      "greed": 0.4,
+      "courage": 0.7,
+      "loyalty": 0.6,
+      "persona": "Blunt and proud of his work. Speaks plainly."
+    },
+    {
+      "id": "mira",
+      "name": "Mira",
+      "role": "innkeeper",
+      "faction": "townsfolk",
+      "greed": 0.5,
+      "courage": 0.4,
+      "loyalty": 0.5,
+      "persona": "Warm but observant. Listens carefully."
+    },
+    {
+      "id": "garrick",
+      "name": "Garrick",
+      "role": "guard captain",
+      "faction": "guard",
+      "greed": 0.2,
+      "courage": 0.9,
+      "loyalty": 0.9,
+      "persona": "Formal and concise. Takes his duties seriously."
+    }
+  ],
+  "trusts": [
+    { "truster": "mira", "trusted": "brom", "weight": 0.9 },
+    { "truster": "brom", "trusted": "mira", "weight": 0.8 },
+    { "truster": "garrick", "trusted": "mira", "weight": 0.7 },
+    { "truster": "mira", "trusted": "garrick", "weight": 0.6 }
+  ],
+  "factionRelations": [
+    { "from": "guard", "to": "townsfolk", "type": "ALLIED_WITH" }
+  ],
+  "facts": [
+    {
+      "id": "f_weather",
+      "text": "The evenings turn cold after sunset.",
+      "topic": "weather"
+    }
+  ],
+  "believes": [{ "npc": "mira", "fact": "f_weather", "confidence": 0.9 }],
+  "policies": [],
+  "follows": [],
+  "eventTypes": [
+    {
+      "type": "stole",
+      "weight": -0.8,
+      "keywords": ["stole", "stolen", "steal", "theft", "thief"]
+    },
+    {
+      "type": "attacked",
+      "weight": -0.9,
+      "keywords": ["attacked", "assault", "assaulted"]
+    },
+    { "type": "lied", "weight": -0.4, "keywords": ["liar", "lied"] },
+    { "type": "helped", "weight": 0.5, "keywords": [] },
+    { "type": "donated", "weight": 0.4, "keywords": ["donation", "donated"] },
+    { "type": "saved", "weight": 0.9, "keywords": ["rescued"] },
+    { "type": "traded", "weight": 0.1, "keywords": [] }
+  ],
+  "templates": {
+    "greeting": {
+      "hostile": ["Keep your distance."],
+      "wary": ["What brings you here?"],
+      "neutral": ["Good day, traveller."],
+      "friendly": ["It is good to see you."],
+      "devoted": ["You are welcome here, friend."]
+    },
+    "aware": {
+      "hostile": ["I have little patience for you."],
+      "wary": ["You have given me reason to be careful."],
+      "neutral": ["I am still making up my mind."],
+      "friendly": ["You have earned some goodwill."],
+      "devoted": ["You have my respect."]
+    },
+    "unknownTopic": [
+      "I would not know about that.",
+      "Nobody has told me.",
+      "I have heard nothing about it.",
+      "I cannot speak to that."
+    ],
+    "naive": [
+      "I hear everything in this town.",
+      "Nothing escapes my notice.",
+      "Town news always reaches me."
+    ]
+  }
+}

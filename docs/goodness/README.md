@@ -86,6 +86,39 @@ Bugs only. Support DuroT on integration issues. Review the README graph sections
 
 Add a line per finished task: `G5 done <date/time> <commit>`.
 
+G2 done 2026-10-17 04:06 WAT ff6e1bf (helper: 142ca76). Live helper and query spike pass; Browser-first exception approved by Goodness. See `spike-results.md` for the Q61 correction and test evidence.
+
+G3 done 2026-10-17 04:25 WAT 1563afc (seed validation: e9b2e23). World initialization, reads, isolated player creation/reset and publication races pass live tests. Uses the explicitly allowed three-NPC seed pending D1; see `G3-world.md` and R-003.
+
+G4 done 2026-10-17 04:42 WAT 94ef432 (record/recall: 9e8f377). Four live memory tools, stable snapshots and the six-NPC golden witness check pass. Full workspace: typecheck and 57 tests pass. Production content remains the three-NPC stub; UI integration remains pending. See `G4-memory.md`.
+
+G5 done 2026-10-17 04:56 WAT 46e8ce9 (engine: 00f7d90; selection: 9e33b61). Live advanceTime/spread match golden ticks, confidence decay, depth limits and duplicate prevention. Typecheck and 69 workspace tests pass. Production seed and live UI integration remain pending; one setup failure correlated with background-save/fork contention. See `G5-gossip.md` for evidence and concurrency limits.
+
+G6 done 2026-10-17 05:07 WAT 7de8bf8 (scoring: 7ef8267). Live attitude/explain tools return exact scores, actual event-specific telling paths and snapshot highlight IDs; five-hop fallback verified. Typecheck and 91 workspace tests pass. Arithmetic examples corrected without changing the formula (R-004). See `G6-opinion.md` for real/mock boundaries and the recurring reset-copy infrastructure issue.
+
+G7 done 2026-10-17 05:24 WAT 7f7a719 (pipeline: 2f12bac; REST wrapper: 431b6bc; firewall/templates: 157b654). Graph-scoped say prompts, leak retry/fallback, saved conversation history and Gemini transport safeguards pass typecheck and 113 workspace tests. Database tests are real; generation/HTTP cases use injected fakes. No key/model is configured, so live Gemini remains unverified. See `G7-dialogue.md` for API usage, known firewall limits and the recurring copy/background-save failure.
+
 ## My "I can explain this" notes
 
-(fill in)
+G8 done 2026-10-17 05:37 WAT 65eafb9 (copy contention mitigation cb8e57a). Typecheck and 115 tests pass. Live Tilda policy sequence/floor/counters and PageRank order verified; see G8-policy.md and copy-retry.md. Full production seed/UI remain pending.
+
+- G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
+- G2: Reads call `roQuery`; a live test proves an attempted write is rejected without adding a node. Database errors return safe envelopes and traces rather than raw Cypher or credentials.
+- G2: Q61 sorts and limits `path` in a WITH clause before converting it into lists. Sorting by a dropped path alias after RETURN fails on the tested FalkorDB image.
+- G2: The golden gossip spike chooses one best candidate per listener between read/write rounds. New knowers cannot spread until the next round; the production implementation remains G5.
+- G2: GRAPH.COPY preserved all four operational ID range indexes on the recorded image digest. PageRank ranks Mira highest in the locked trust network.
+- G3: Validate references before writing, then publish a fully seeded temporary graph. Existing template graphs are never silently replaced when seed content changes.
+- G3: Initialize the Player node in a temporary template copy before publishing `player:{id}`. Another creator sees a complete save, and gameplay never writes the template.
+- G3: Reset rebuilds one player's graph from template values. The tests change tick, events, traits and a policy in A, prove B/template unchanged, then verify reset restores the defaults.
+- G4: Validate all witness/place IDs before Q30. The query binds values and creates the Event and its direct-witness KNOWS edges; duplicate witnesses are removed first.
+- G4: Successful empty recall means this NPC has no graph knowledge of this player's events. An unknown NPC is a separate error, not empty knowledge.
+- G4: Graph snapshots use `kind:id` from our properties; KNOWS/TOLD edge IDs include the event ID. Metadata nodes and their incident edges stay hidden. Separate reads are not a transactional snapshot during concurrent writes.
+- G5: TRUSTS points from listener to teller. Credibility is teller confidence times that edge's weight. Tilda hears Fenn's 0.36 rather than Garrick's 0.315 because the stronger candidate wins.
+- G5: Read all candidates before writing a round. Newly informed NPCs wait until the next round; advanceTime runs one round and increments the clock, while spread runs bounded rounds without changing time.
+- G5: Q41 skips listeners already aware at write time and reports actual additions. A per-service player queue orders gossip calls, but independent services and resets require stronger coordination; gossip writes and clock updates are not one transaction.
+- G6: Attitude reads only this NPC's known player events. Multiply event weight, confidence, recency and trait factor; clamp the summed score. Garrick is -0.562464/wary and Brom -0.7632/hostile at tick 2.
+- G6: Explain traverses actual TOLD edges for one event and original witness. Its IDs match snapshot. An unaware NPC gets not_in_graph; missing/corrupt provenance is an explicit error, not a generated justification.
+- G6: Repeated advanceTime can exceed four hops. The fallback follows via pointers while checking each actual TOLD link, decreasing hop and consistent root; it cannot invent a missing edge or follow a cycle indefinitely.
+- G7: Only NPC-known events and their BELIEVES facts become authoritative prompt context. Player claims remain unverified speech. Unknown-event data stays server-side for the firewall, never in the known-event section.
+- G7: Reject unknown event IDs, keywords and subject words; retry once, then choose a checked seed template. Save accepted replies only. This is a lexical firewall with documented limits, not a semantic guarantee against every paraphrase.
+- G7: Conversation ownership is scoped through Player/STARTED/Conversation/BETWEEN/NPC. History is real Utterance data; off mode bypasses even an injected model, and default Gemini generation has an 8-second request/retry budget.
