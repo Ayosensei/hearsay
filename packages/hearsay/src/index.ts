@@ -5,3 +5,4 @@ export type { Database, DatabaseConfig, QueryParams, Row } from "./db";
 export { createWorld } from "./world";
 export type { WorldOptions, WorldTemplate } from "./world";
 export { createMemory } from "./memory";
+export { createGossip } from "./gossip";

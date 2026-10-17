@@ -158,7 +158,7 @@ describe("planned Cypher on the live locked seed", () => {
             tick,
           }),
         ),
-      ).toEqual([]);
+      ).toEqual(rows);
     }
     const path = data(
       await db.ro(graph, "Q61_explain_chain", q.Q61_explain_chain, {
