@@ -92,6 +92,8 @@ G3 done 2026-10-17 04:25 WAT 1563afc (seed validation: e9b2e23). World initializ
 
 G4 done 2026-10-17 04:42 WAT 94ef432 (record/recall: 9e8f377). Four live memory tools, stable snapshots and the six-NPC golden witness check pass. Full workspace: typecheck and 57 tests pass. Production content remains the three-NPC stub; UI integration remains pending. See `G4-memory.md`.
 
+G5 done 2026-10-17 04:56 WAT 46e8ce9 (engine: 00f7d90; selection: 9e33b61). Live advanceTime/spread match golden ticks, confidence decay, depth limits and duplicate prevention. Typecheck and 69 workspace tests pass. Production seed and live UI integration remain pending; one setup failure correlated with background-save/fork contention. See `G5-gossip.md` for evidence and concurrency limits.
+
 ## My "I can explain this" notes
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
@@ -105,3 +107,6 @@ G4 done 2026-10-17 04:42 WAT 94ef432 (record/recall: 9e8f377). Four live memory 
 - G4: Validate all witness/place IDs before Q30. The query binds values and creates the Event and its direct-witness KNOWS edges; duplicate witnesses are removed first.
 - G4: Successful empty recall means this NPC has no graph knowledge of this player's events. An unknown NPC is a separate error, not empty knowledge.
 - G4: Graph snapshots use `kind:id` from our properties; KNOWS/TOLD edge IDs include the event ID. Metadata nodes and their incident edges stay hidden. Separate reads are not a transactional snapshot during concurrent writes.
+- G5: TRUSTS points from listener to teller. Credibility is teller confidence times that edge's weight. Tilda hears Fenn's 0.36 rather than Garrick's 0.315 because the stronger candidate wins.
+- G5: Read all candidates before writing a round. Newly informed NPCs wait until the next round; advanceTime runs one round and increments the clock, while spread runs bounded rounds without changing time.
+- G5: Q41 skips listeners already aware at write time and reports actual additions. A per-service player queue orders gossip calls, but independent services and resets require stronger coordination; gossip writes and clock updates are not one transaction.

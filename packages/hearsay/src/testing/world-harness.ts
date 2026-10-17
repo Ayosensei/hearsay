@@ -10,7 +10,9 @@ import { createWorld } from "../world";
 
 export function data<T>(result: Envelope<T>): T {
   if (!result.ok)
-    throw new Error(`${result.error.code}: ${result.error.message}`);
+    throw new Error(
+      `${result.error.code}: ${result.error.message}; queries: ${result.trace.map((step) => step.queryId).join(", ")}`,
+    );
   return result.data;
 }
 export async function worldHarness() {

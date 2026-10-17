@@ -59,3 +59,21 @@ Tested through the same official Node client and live local FalkorDB, under Good
 | Q90 hidden edge endpoints | CORRECTED / PASS | Original planned edge query omitted EventType filtering. Added both endpoint predicates; hidden metadata and incident edges leave the visible snapshot unchanged. |
 
 Thirteen G4 integration tests use a six-NPC synthetic test seed. Production still uses the three-NPC stub pending D1 (R-003). One new test's accidentally overlength missing-player ID produced BAD_ARGS; corrected the test ID and verified UNKNOWN_PLAYER. No database query syntax failures or new dependencies in G4. See `G4-memory.md` for API usage and concurrency limits.
+
+## G5 production gossip verification — 2026-10-17
+
+Q40/Q40b/Q41 are now canonical in `queries/gossip.ts`, with the spike reexporting them. Live official-client verification continues under Goodness's approved direct-database exception.
+
+| Check | Result | Evidence / decision |
+| --- | --- | --- |
+| Q40 production advanceTime | PASS | Four calls produce golden additions 2, 2, 1, 0; ticks 1, 2, 3, 4. New knowledge records the new tick and original witness root. |
+| Q40b production spread | PASS | Fresh depth 1 reaches Ayla/Mira; fresh depth 3 reaches all five; the clock remains zero. Repeated spread writes nothing. |
+| Confidence and event-weight thresholds | PASS | Confidence exactly 0.9 includes Mira; remaining weaker paths report min_credibility. Weights +0.3/-0.3 gossip; +0.299 and default traded do not. |
+| Q41 guarded write and returned rows | PASS | Added NOT-KNOWS guard and actual-addition RETURN. Two concurrent identical batches return row counts 0 and 1; only one new KNOWS/TOLD pair exists. |
+| Q21 conditional clock increment | PASS | Expected prior tick advances once; reusing a stale tick returns no rows. Four simultaneous same-service advanceTime calls serialize to unique ticks. |
+| Graph provenance and isolation | PASS | Tilda learns via Fenn at 0.36; events stay unchanged; other-player memories remain empty. |
+| Teller selection (pure TypeScript) | PASS | Highest credibility, ASCII teller tie-break, per-event/listener deduplication, stable output and no input mutation. |
+
+Final check: typecheck and all 69 workspace tests pass (51 core, 5 contract, 13 existing web mock). Nine new live G5 tests and three pure selection tests were added. Production content/UI integration still pending; this is not a C2 end-to-end UI claim.
+
+One initial boundary-suite setup failed in ensureWorld before gossip ran. At that time the server logged a background save and repeated `Can't fork for module: File exists` messages, supporting graph-copy/background-save contention. The rerun and final full suite passed. This infrastructure issue remains unresolved; G5 improves failed-setup cleanup and records query IDs in test diagnostics. No automatic production write retry was added. See `G5-gossip.md` for partial-write and independent-service concurrency limits.
