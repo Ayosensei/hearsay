@@ -22,6 +22,10 @@ The first archive verification's cleanup helper resolved a pnpm junction as a sy
 
 ## Publication remains pending
 
-Registry inspection found an unrelated `hearsay@3.0.0`; we must not direct developers to install that package. The initial `@hearsay/cli` name was provisional. Goodness supplied the npm username `goodynessdev` and explicitly selected MIT, so the package is now named `@goodynessdev/hearsay` with its MIT license included in the archive. A public registry read returned 404 for that package name; authenticated publication rights are not established by that alone. This machine's `npm whoami` reported ENEEDAUTH. `private:true` remains until authentication and the release step are ready. No npm account secrets are needed in chat, and no publication was attempted.
+Registry inspection found an unrelated `hearsay@3.0.0`; we must not direct developers to install that package. Goodness supplied the npm username `goodynessdev` and explicitly selected MIT. The package is now `@goodynessdev/hearsay`, its MIT license is included, the private publication guard is removed and public registry metadata is configured. `npm whoami` subsequently confirmed `goodynessdev`.
+
+The exact public release archive passed a fresh-cache npm/npx invocation and `npm publish --dry-run`. Its five files and shasum are recorded in CLI-release.json. On 2026-10-17 at 11:44 WAT, actual publication was rejected by npm with E403: the account must enable 2FA or use an authorized token that bypasses 2FA. No token workaround was configured. A subsequent version lookup returned 404; **0.1.0 is not published**. Goodness must complete 2FA setup in their own browser before retrying.
+
+Current typecheck and all 49 mirrors pass. The last complete suite passed 133 tests. A fresh full database rerun is delayed because Docker Desktop's Linux engine is not available; restarting Desktop has not exposed its pipe yet. The release changes since the green suite concern packaging and documentation, not engine behavior. Do not claim a fresh full suite or successful public-registry npx check until those run. No npm account secrets are needed in chat.
 
 This does not claim an existing Unity game integration or website integration. It supplies the local transport a future native game adapter can call.

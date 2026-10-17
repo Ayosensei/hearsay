@@ -114,7 +114,7 @@ G13 done 2026-10-17 06:16 WAT 650923a (plain-text wrapper 9a63ffc). Control dial
 
 ## My "I can explain this" notes
 
-Developer CLI added by Goodness request on 2026-10-17: init/doctor/tools/call/serve/mcp, standalone packed-package verification, 133 passing tests and unchanged 49-query mirrors. Package scope @goodynessdev/hearsay and MIT license are confirmed; npm publication awaits account login. See CLI.md and packages/cli/README.md.
+Developer CLI added by Goodness request on 2026-10-17: init/doctor/tools/call/serve/mcp, standalone packed-package verification, last full suite 133 tests and unchanged 49-query mirrors. Package scope @goodynessdev/hearsay and MIT license are confirmed. npm login is verified; publication was rejected with E403 requiring 2FA, and the public version is still absent. A fresh DB suite awaits Docker startup. See CLI.md, CLI-release.json and packages/cli/README.md.
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
 - G2: Reads call `roQuery`; a live test proves an attempted write is rejected without adding a node. Database errors return safe envelopes and traces rather than raw Cypher or credentials.
