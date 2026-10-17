@@ -7,3 +7,5 @@ export type { WorldOptions, WorldTemplate } from "./world";
 export { createMemory } from "./memory";
 export { createGossip } from "./gossip";
 export { createOpinion } from "./opinion-tools";
+export { createDialogue } from "./dialogue";
+export type { DialogueOptions } from "./dialogue";
