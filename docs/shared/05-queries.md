@@ -255,7 +255,7 @@ LIMIT $limit
 MATCH (:Player {id: $pid})-[:PERFORMED]->(e:Event)
 OPTIONAL MATCH (e)-[:HAPPENED_AT]->(pl:Place)
 RETURN e.id AS eventId, e.type AS type, e.subject AS subject, pl.name AS place, e.tick AS tick
-ORDER BY e.tick
+ORDER BY e.tick, e.id
 ```
 
 ## Test checklist per query
@@ -333,6 +333,11 @@ Canonical queries are in `packages/hearsay/src/queries/dialogue.ts`. Every query
 | Q96_utterance_add | Recheck conversation ownership in the write; create Utterance/HAS. Parameters `$pid`, `$nid`, `$cid`, `$uid`, `$speaker`, `$text`, `$sequence`, `$tick`, `$at`; return created ID. |
 | Q97_recent_utterances | Return latest `$limit` lines between `$pid`/`$nid`, across their conversations. Chronological history is assembled by reversing the six returned rows. Timestamp ties use conversation ID and sequence. |
 | Q97b_conversation_count | Count HAS/Utterance nodes for the validated `$cid`; supplies next sequence and deterministic template hash input. |
-| Q99_dialogue_unknown | Match player Events without this NPC's KNOWS edge; optionally match EventType for keywords. Return eventId/subject/keywords. Parameters `$pid`, `$nid`. This result stays server-side for firewall checks and is never added to model knowledge. |
+| Q99_dialogue_unknown | Match player Events without this NPC's KNOWS edge; optionally match EventType for keywords. Return eventId/type/subject/keywords. Parameters `$pid`, `$nid`. This result stays server-side for firewall checks and is never added to model knowledge. |
 
-Conversation/Utterance IDs are application-generated UUID strings. Per-conversation sequence is a scalar property to order rapid turns; same-player/NPC calls are serialized within one createDialogue service. No database transaction or distributed sequencing is claimed. Snapshot continues to omit conversation nodes and incident edges. Q98 remains reserved for G13's naive control and is not used here.
+Conversation/Utterance IDs are application-generated UUID strings. Per-conversation sequence is a scalar property to order rapid turns; same-player/NPC calls are serialized within one createDialogue service. No database transaction or distributed sequencing is claimed. Snapshot continues to omit conversation nodes and incident edges. Q98 is used only by G13's naive control, never by guarded say.
+
+## G13 control implementation
+
+Q98 is now active in `queries/naive.ts`: all player events, ordered by tick and application event ID, with no NPC knowledge filter. Q99 additionally returns `e.type AS type` so control leak measurement can report event types; guarded dialogue still keeps this server-only input out of its prompt. Both use read-only queries and bound parameters. The control writes no conversation data and is not registered in MCP. `pnpm queries:generate` now emits 49 source/hash-checked mirrors, including Q98.
+

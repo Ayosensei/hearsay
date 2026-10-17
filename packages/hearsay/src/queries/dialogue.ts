@@ -32,4 +32,4 @@ OPTIONAL MATCH (c)-[:HAS]->(u:Utterance) RETURN count(u) AS count`;
 export const Q99_dialogue_unknown = `MATCH (n:NPC {id:$nid}), (:Player {id:$pid})-[:PERFORMED]->(e:Event)
 WHERE NOT (n)-[:KNOWS]->(e)
 OPTIONAL MATCH (t:EventType {type:e.type})
-RETURN e.id AS eventId, e.subject AS subject, t.keywords AS keywords ORDER BY e.id`;
+RETURN e.id AS eventId, e.type AS type, e.subject AS subject, t.keywords AS keywords ORDER BY e.id`;

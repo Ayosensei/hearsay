@@ -235,8 +235,13 @@
     "sha256": "23129b5590229431b921d72d488370ccb4c4240d6eda3072255555e7e6ed35ab"
   },
   {
+    "id": "Q98_player_events_all",
+    "source": "packages/hearsay/src/queries/naive.ts",
+    "sha256": "d2386229ae840522a59bb17fbacec98a6ed9f2517e5e2a3d4eeff5a0630aeef4"
+  },
+  {
     "id": "Q99_dialogue_unknown",
     "source": "packages/hearsay/src/queries/dialogue.ts",
-    "sha256": "9ccc2616206ce24a6f452249fc886710370b678a33fd8e3fe0ee50a47e89f52c"
+    "sha256": "9c96dc2147d506da3c3e1545038301a2ff703312ef72b4228c59c69b03159a3c"
   }
 ]
