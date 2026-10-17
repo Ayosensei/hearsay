@@ -6,7 +6,7 @@ import { browserPlayer } from "../../lib/live-town";
 import type { TownState, ToolEnvelope, ProvenanceChain } from "../../lib/types";
 
 export interface Beat { id: string; text: string; from?: string; to?: string; eventId?: string; confidence?: number }
-export type Drawer = "ledger" | "character" | "evidence" | "attitude" | "engine" | "settings" | "reset" | "replay" | undefined;
+export type Drawer = "residents" | "ledger" | "character" | "evidence" | "attitude" | "engine" | "settings" | "reset" | "replay" | undefined;
 
 export function useLivingTown() {
   const [town, setTown] = useState<TownState>();
@@ -74,13 +74,13 @@ export function useLivingTown() {
     if (next) {
       setSlot(nextSlot); localStorage.setItem("hearsay-active-slot", nextSlot); setEventId(next.events[0]?.id ?? ""); setDrawer(undefined); setLog([]);
       if (next.events.length) { setTour(0); tell("Hollowbrook remembers. Take an action, or speak to a villager."); }
-      else { setTour(localStorage.getItem(`hearsay-tour-${nextSlot}`) === "done" ? 0 : -1); tell("This traveller has a clean history. Nobody here knows your story yet."); }
+      else { setTour(localStorage.getItem(`hearsay-tour-expanded-${nextSlot}`) === "done" ? 0 : -1); tell(`${next.npcs.length} villagers. A fresh story. Choose a deed, then follow who hears about it.`); }
     }
   }
   useEffect(() => { void load(localStorage.getItem("hearsay-active-slot") === "b" ? "b" : "a"); /* A single initial load; save switches are explicit. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  function finishTour() { setTour(0); localStorage.setItem(`hearsay-tour-${slot}`, "done"); }
+  function finishTour() { setTour(0); localStorage.setItem(`hearsay-tour-expanded-${slot}`, "done"); }
   function select(id: string) { setSelected(id); setWhy(undefined); setDrawer("character"); }
 
   async function record(input: ToolInput<"recordEvent">) {
@@ -89,11 +89,12 @@ export function useLivingTown() {
     if (!next) return false;
     const event = next.events.find((e) => !town.events.some((old) => old.id === e.id));
     setEventId(event?.id ?? ""); setDrawer(undefined);
-    const witness = next.npcs.find((n) => n.id === input.witnesses[0]);
-    const text = `${witness?.name ?? "Your witness"} saw you ${input.type === "stole" ? "take" : input.type} ${input.subject ?? "something"}. ${witness?.name ?? "They"} ${witness ? `is ${witness.attitude} toward you` : "remembers"}.`;
-    setBeats([{ id: crypto.randomUUID(), text, to: witness?.id, eventId: event?.id, confidence: 1 }]);
+    setBeats(input.witnesses.map((id) => {
+      const witness = next.npcs.find((n) => n.id === id);
+      return { id: crypto.randomUUID(), text: `${witness?.name ?? "Your witness"} witnessed your deed and is ${witness?.attitude ?? "remembering it"}.`, to: id, eventId: event?.id, confidence: 1 };
+    }));
     if (tour > 0) {
-      if (tour === 1 && input.type === "stole" && input.placeId === "forge" && input.witnesses[0] === "brom") setTour(2);
+      if (tour === 1 && input.type === "stole" && input.placeId === "forge" && input.witnesses.length === 1 && input.witnesses[0] === "brom") setTour(2);
       else finishTour();
     }
     return true;

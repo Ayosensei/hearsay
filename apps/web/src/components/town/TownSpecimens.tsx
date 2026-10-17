@@ -13,6 +13,10 @@ import { EngineSheet } from "./EngineSheet";
 import { MinimalChrome } from "./MinimalChrome";
 import { TownMenu } from "./TownMenu";
 import "./minimal.css";
+import expandedSeed from "../../../../../seed/hollowbrook-expanded.json";
+import { faction, initials } from "../../lib/live-view";
+import type { NPC } from "../../lib/types";
+import { ResidentsSheet } from "./ResidentsSheet";
 
 export function TownSpecimens() {
   const [lens, setLens] = useState<"none" | "bonds" | "whispers">("none");
@@ -23,10 +27,13 @@ export function TownSpecimens() {
   const [chrome, setChrome] = useState(0);
   const initial = getInitialTownState();
   const moods = ["hostile", "wary", "neutral", "friendly", "devoted"] as const;
-  const town = { ...initial, npcs: initial.npcs.filter((n) => ["brom", "mira", "garrick"].includes(n.id)).map((n, i) => ({ ...n, attitude: moods[(i + mood) % moods.length] })) };
+  const town = { ...initial, places: expandedSeed.places, npcs: expandedSeed.npcs.map((n, i): NPC => ({
+    id: n.id, name: n.name, role: n.role, faction: faction(n.faction), avatarInitials: initials(n.name),
+    attitude: moods[(i + mood) % moods.length], attitudeScore: 0, rumors: [], knowledgeState: "none",
+  })) };
   return <section className="space-y-4">
     <h2 className="font-serif text-4xl">Minimal town</h2>
-    <div className="flex gap-2">{["Free exploration", "Welcome", "Guided", "Waiting"].map((name, i) => <Button key={name} variant="secondary" onClick={() => setChrome(i)}>{name}</Button>)}<Button onClick={() => setSheet("menu")}>Menu specimen</Button></div>
+    <div className="flex flex-wrap gap-2">{["Free exploration", "Welcome", "Guided", "Waiting"].map((name, i) => <Button key={name} variant="secondary" onClick={() => setChrome(i)}>{name}</Button>)}<Button onClick={() => setSheet("menu")}>Menu specimen</Button><Button onClick={() => setSheet("residents")}>13 villagers</Button></div>
     <div className="living-town minimal-town relative h-180 overflow-hidden rounded-xl" style={{ minHeight: 0 }}>
       <TownStage quiet showSword={false} town={town} eventId={town.events[0]?.id ?? ""} selected="garrick" lens="none" reduced paused={false} onSelect={() => setSheet("character")} onSword={() => {}} />
       <MinimalChrome tour={chrome === 1 ? -1 : chrome === 2 ? 3 : 0} cue={chrome === 2 ? ["Let word spread", "Give the town a chance to share what it knows.", "Let the town talk"] : undefined} narration={chrome === 3 ? "Waiting for the town…" : "Mira told Garrick. He is 63% sure."} busy={chrome === 3} onMenu={() => setSheet("menu")} onLedger={() => setSheet("ledger")} onBegin={() => setChrome(2)} onSkip={() => setChrome(0)} onNext={() => setChrome(0)} onAction={() => setSheet("form")} onAdvance={() => setChrome(3)} />
@@ -38,6 +45,7 @@ export function TownSpecimens() {
     <div className="relative h-180 overflow-hidden rounded-xl"><TownStage town={town} eventId={town.events[0]?.id ?? ""} selected="garrick" lens={lens} reduced={reduced} paused={false} why={initial.activeProvenance} onSelect={() => setSheet("character")} onSword={() => setSheet("prepared")} /></div>
     {["prepared", "form"].includes(sheet) && <DeedForm town={{ ...town, places: [{ id: "forge", name: "Brom’s Forge" }] }} prepared={sheet === "prepared"} goodDeed={false} busy={loading} error={loading ? "" : "Failure specimen: choices preserved. No automatic retry."} onClose={() => setSheet("")} onSubmit={async () => false} />}
     {sheet && !["prepared", "form"].includes(sheet) && <PaperDrawer title={`${sheet} specimen`} onClose={() => setSheet("")}>
+      {sheet === "residents" && <ResidentsSheet npcs={town.npcs} onSelect={() => setSheet("character")} />}
       {sheet === "menu" && <TownMenu lens={lens} onLens={setLens} game={{ town, active: false, offline: false, slot: "a", eventId: town.events[0]?.id ?? "", switchSave: () => {}, setDrawer: () => {}, explain: async () => {}, reduced, setReduced, textMode: false, setTextMode: () => {}, largeText: false, setLargeText: () => {} }} />}
       {sheet === "character" && <CharacterSheet town={town} npc={town.npcs[0]} eventId={town.events[0]?.id ?? ""} busy={loading} onSpeak={async () => {}} onExplain={() => setSheet("evidence")} onAttitude={() => setSheet("attitude")} />}
       {sheet === "ledger" && <LedgerSheet town={town} eventId="" onSelect={() => {}} />}

@@ -1,0 +1,28 @@
+.puppet.expanded-puppet { background-image: url('/town/residents.png'); background-size: 500% 200%; }
+.puppet.rowan { background-position: 0% 0%; }
+.puppet.elin { background-position: 25% 0%; }
+.puppet.lysa { background-position: 50% 0%; }
+.puppet.oren { background-position: 75% 0%; }
+.puppet.ayla { background-position: 100% 0%; }
+.puppet.fenn { background-position: 0% 100%; }
+.puppet.julian { background-position: 25% 100%; }
+.puppet.marta { background-position: 50% 100%; }
+.puppet.silas { background-position: 75% 100%; }
+.puppet.tilda { background-position: 100% 100%; }
+.district-picker { position: absolute; top: 92px; left: 40px; z-index: 5; color: var(--color-paperShade); }
+.district-picker label { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.district-picker select, .location-nav select { background: var(--color-skyDeep); color: var(--color-paperCream); border: 1px solid var(--color-skyMid); border-radius: 12px; padding: 8px 12px; min-height: 44px; font-size: 12px; }
+.tour-arrival .district-picker, .tour-arrival .location-nav { display: none; }
+.resident-entry { flex-direction: column; height: auto; min-height: 64px; align-items: start; width: 100%; padding: 12px; white-space: normal; text-align: left; }
+.resident-entry span { font-size: 12px; font-weight: 400; }
+.resident-entry small { font-size: 11px; text-transform: capitalize; }
+.witnesses-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 240px; overflow-y: auto; padding: 4px; }
+.witnesses-grid button { white-space: normal; height: auto; min-height: 44px; font-size: 12px; }
+.district-origin { fill: var(--color-paperCream); stroke: var(--color-skyDeep); stroke-width: 4px; paint-order: stroke; font: 18px var(--font-serif); }
+@media (max-width: 700px) {
+  .district-picker { position: fixed; top: 76px; left: 16px; }
+  .living-town.minimal-town .location-nav { display: flex; top: 76px; left: auto; right: 16px; }
+  .location-nav select { max-width: 150px; }
+  .district-picker label { font-size: 0; }
+  .district-picker select { max-width: 174px; }
+}

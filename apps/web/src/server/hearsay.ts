@@ -15,8 +15,8 @@ export async function getHearsay() {
     return {
       connection,
       client: createHearsay(connection.data, {
-        seedPath: process.env.HEARSAY_SEED_PATH ?? resolve(process.cwd(), "../../seed/hollowbrook.json"),
-        templateGraph: process.env.HEARSAY_TEMPLATE_GRAPH ?? "world_template",
+        seedPath: process.env.HEARSAY_SEED_PATH ?? resolve(process.cwd(), "../../seed/hollowbrook-expanded.json"),
+        templateGraph: process.env.HEARSAY_TEMPLATE_GRAPH ?? "world_template_hollowbrook13",
       }),
     };
   })();

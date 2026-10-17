@@ -11,6 +11,7 @@ import { EngineSheet } from "./EngineSheet";
 import { ControlVsHearsayModal } from "../ControlVsHearsayModal";
 import { MinimalChrome } from "./MinimalChrome";
 import { TownMenu } from "./TownMenu";
+import { ResidentsSheet } from "./ResidentsSheet";
 import "./town.css";
 import "./paper.css";
 import "./minimal.css";
@@ -48,10 +49,10 @@ export function LivingTownApp() {
     else if (game.tour === 5) await game.explain("garrick");
     else { game.setDrawer(undefined); game.finishTour(); }
   }
-  return <main className={`living-town minimal-town ${game.reduced ? "reduce-motion" : ""} ${game.largeText ? "large-text" : ""}`}>
+  return <main className={`living-town minimal-town ${game.tour === -1 ? "tour-arrival" : ""} ${game.reduced ? "reduce-motion" : ""} ${game.largeText ? "large-text" : ""}`}>
     <div inert={Boolean(game.drawer || action || compare)}>
       {!game.textMode && <TownStage town={town} eventId={game.eventId} selected={game.selected} beat={game.beats[0]} why={game.why}
-        quiet showSword={game.tour === 1} lens={lens} reduced={game.reduced} paused={Boolean(game.busy)} onSelect={game.select} onSword={() => !frozen && openAction("sword")} />}
+        quiet showSword={game.tour === 1} lens={lens} reduced={game.reduced} paused={Boolean(game.busy)} onFocus={game.setSelected} onSelect={game.select} onSword={() => !frozen && openAction("sword")} />}
       <MinimalChrome tour={game.tour} cue={cue} narration={game.busy || game.narration} busy={frozen}
         onMenu={() => game.setDrawer("settings")} onLedger={() => game.setDrawer("ledger")}
         onBegin={() => game.setTour(1)} onSkip={game.finishTour} onNext={() => void nextBeat()}
@@ -61,8 +62,9 @@ export function LivingTownApp() {
     <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{game.busy || game.narration}</p>
     {game.offline && <p className="status-banner" role="alert">You are offline. Your last confirmed story is still here.</p>}
     {game.error && !action && <p className="status-banner" role="alert">{game.error}</p>}
-    {action && <DeedForm town={town} prepared={action === "sword"} goodDeed={action === "good"} busy={Boolean(game.busy)} error={game.error} onClose={close} onSubmit={async (input) => { const ok = await game.record(input); if (ok) setAction(undefined); return ok; }} />}
-    {game.drawer && <PaperDrawer title={game.drawer === "character" ? npc.name : game.drawer === "ledger" ? "The Ledger" : game.drawer === "evidence" ? "Follow the whisper" : game.drawer === "attitude" ? "The weight of a memory" : game.drawer === "engine" ? "Under the hood" : game.drawer === "settings" ? "Menu" : "Begin again?"} onClose={close} dark={game.drawer === "engine"}>
+    {action && <DeedForm town={town} prepared={action === "sword"} goodDeed={action === "good"} initialWitness={game.selected} busy={Boolean(game.busy)} error={game.error} onClose={close} onSubmit={async (input) => { const ok = await game.record(input); if (ok) setAction(undefined); return ok; }} />}
+    {game.drawer && <PaperDrawer title={game.drawer === "residents" ? "Meet the villagers" : game.drawer === "character" ? npc.name : game.drawer === "ledger" ? "The Ledger" : game.drawer === "evidence" ? "Follow the whisper" : game.drawer === "attitude" ? "The weight of a memory" : game.drawer === "engine" ? "Under the hood" : game.drawer === "settings" ? "Menu" : "Begin again?"} onClose={close} dark={game.drawer === "engine"}>
+      {game.drawer === "residents" && <ResidentsSheet npcs={town.npcs} onSelect={game.select} />}
       {game.drawer === "character" && <CharacterSheet key={npc.id} town={town} npc={npc} eventId={game.eventId} busy={frozen} onSpeak={game.speak} onExplain={() => void game.explain()} onAttitude={() => game.setDrawer("attitude")} />}
       {game.drawer === "ledger" && <LedgerSheet town={town} eventId={game.eventId} onSelect={(id) => { game.setEventId(id); game.setDrawer(undefined); game.tell(`Following ${town.events.find((e) => e.id === id)?.title}. Select a villager to inspect their memory.`); }} />}
       {game.drawer === "evidence" && <><EvidenceSheet npc={npc} why={game.why} eventTitle={deed?.title} />{game.tour === 6 && <div className="space-y-3 mt-6"><h3 className="font-serif text-3xl">Now you have seen how Hollowbrook <em>remembers.</em></h3><Button onClick={() => { game.finishTour(); openAction("good"); }}>Try a good deed</Button><Button variant="secondary" disabled={frozen} onClick={() => { game.finishTour(); game.switchSave(game.slot === "a" ? "b" : "a"); }}>Meet a second traveller</Button><Button variant="ghost" onClick={() => { game.finishTour(); close(); }}>Explore the town</Button></div>}</>}

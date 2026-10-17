@@ -12,7 +12,8 @@ export function browserPlayer(slot = "a") {
     id = `web_${crypto.randomUUID().replaceAll("-", "").slice(0, 24)}`;
     localStorage.setItem("hearsay-player", id);
   }
-  return `${id}_${slot}`;
+  // A new world edition must not overwrite or misread an existing three-person save.
+  return `${id}_x_${slot}`;
 }
 
 // This adapter only prepares presentation data. All knowledge and provenance come from tools.

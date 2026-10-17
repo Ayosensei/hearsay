@@ -6,6 +6,12 @@ Target: Win. Correctness, explainability, and adherence to `DESIGN.md`.
 
 ## Living Town — user-requested redesign
 
+Expanded edition: thirteen villagers across Old Town, Vale Lane and Riverside.
+Use the district picker or Menu → Meet the villagers. The Vale family has four
+members; deeds support 1–6 witnesses and a family selection shortcut. Forty-one
+directional trust edges produce competing routes, weak-link cutoffs and five-hop
+evidence. Earlier saves remain separate. See `expanded-town.md`.
+
 Minimal refinement: two main action buttons; saves, lenses and technical tools
 are in Menu. Deeds are under Your story. The guide shows one step at a time.
 Knowledge percentages and evidence appear when a villager is selected.

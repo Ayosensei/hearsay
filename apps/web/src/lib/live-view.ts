@@ -35,7 +35,9 @@ export function mapEvents(snapshot: ToolOutput<"snapshot">): TownEvent[] {
 export function mapGraph(snapshot: ToolOutput<"snapshot">, npcs: NPC[]) {
   const nodes: GraphNode[] = snapshot.nodes.filter((node) => ["NPC", "Event", "Player"].includes(node.kind)).map((node, index) => {
     const npc = npcs.find((candidate) => `NPC:${candidate.id}` === node.id);
-    const point = coordinates[npc?.id ?? ""] ?? [80 + (index % 5) * 100, node.kind === "Player" ? 410 : 45];
+    const angle = 2 * Math.PI * npcs.findIndex((person) => person.id === npc?.id) / npcs.length - Math.PI / 2;
+    const point = npc && npcs.length > 6 ? [320 + 250 * Math.cos(angle), 220 + 170 * Math.sin(angle)]
+      : coordinates[npc?.id ?? ""] ?? [80 + (index % 5) * 100, node.kind === "Player" ? 410 : 45];
     return {
       id: node.id, label: node.kind === "Event" ? `${String(node.props.type)} ${String(node.props.subject ?? "")}`.trim() : node.label,
       type: node.kind === "NPC" ? "npc" : node.kind === "Player" ? "player" : "event",
