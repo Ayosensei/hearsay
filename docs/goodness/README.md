@@ -94,6 +94,8 @@ G4 done 2026-10-17 04:42 WAT 94ef432 (record/recall: 9e8f377). Four live memory 
 
 G5 done 2026-10-17 04:56 WAT 46e8ce9 (engine: 00f7d90; selection: 9e33b61). Live advanceTime/spread match golden ticks, confidence decay, depth limits and duplicate prevention. Typecheck and 69 workspace tests pass. Production seed and live UI integration remain pending; one setup failure correlated with background-save/fork contention. See `G5-gossip.md` for evidence and concurrency limits.
 
+G6 done 2026-10-17 05:07 WAT 7de8bf8 (scoring: 7ef8267). Live attitude/explain tools return exact scores, actual event-specific telling paths and snapshot highlight IDs; five-hop fallback verified. Typecheck and 91 workspace tests pass. Arithmetic examples corrected without changing the formula (R-004). See `G6-opinion.md` for real/mock boundaries and the recurring reset-copy infrastructure issue.
+
 ## My "I can explain this" notes
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
@@ -110,3 +112,6 @@ G5 done 2026-10-17 04:56 WAT 46e8ce9 (engine: 00f7d90; selection: 9e33b61). Live
 - G5: TRUSTS points from listener to teller. Credibility is teller confidence times that edge's weight. Tilda hears Fenn's 0.36 rather than Garrick's 0.315 because the stronger candidate wins.
 - G5: Read all candidates before writing a round. Newly informed NPCs wait until the next round; advanceTime runs one round and increments the clock, while spread runs bounded rounds without changing time.
 - G5: Q41 skips listeners already aware at write time and reports actual additions. A per-service player queue orders gossip calls, but independent services and resets require stronger coordination; gossip writes and clock updates are not one transaction.
+- G6: Attitude reads only this NPC's known player events. Multiply event weight, confidence, recency and trait factor; clamp the summed score. Garrick is -0.562464/wary and Brom -0.7632/hostile at tick 2.
+- G6: Explain traverses actual TOLD edges for one event and original witness. Its IDs match snapshot. An unaware NPC gets not_in_graph; missing/corrupt provenance is an explicit error, not a generated justification.
+- G6: Repeated advanceTime can exceed four hops. The fallback follows via pointers while checking each actual TOLD link, decreasing hop and consistent root; it cannot invent a missing edge or follow a cycle indefinitely.
