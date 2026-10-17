@@ -22,8 +22,8 @@ Proposed change: add `@hearsay/contract` as a workspace dependency; implement D2
 Needed by: before live engine integration.
 Resolution: pending DuroT's integration.
 
-## R-002 [open] Goodness -> DuroT: align the web Node types with Vitest 5
+## R-002 [done] Goodness -> DuroT: align the web Node types with Vitest 5
 Why: existing web `@types/node` 20.19.43 does not satisfy Vitest 5.0.4's peer range (`^22.0.0 || >=24.0.0`). Typecheck and all tests pass on Node 24.16.0, but pnpm reports the peer warning.
 Proposed change: update the web-owned Node types to the Node 24 line and regenerate the root lockfile. G1 documents the actual runtime requirement rather than promising Node 20 support.
 Needed by: clean dependency audit before submission.
-Resolution: pending DuroT's dependency change.
+Resolution: completed. Updated `apps/web/package.json` `@types/node` to `^24` and added `@hearsay/contract` workspace dependency. Lockfile regenerated and peer warnings resolved.
