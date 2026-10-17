@@ -41,7 +41,7 @@ Needed by: G6 scoring implementation.
 Resolution: implemented within Goodness's G6 scope and explained in chat. Garrick remains wary; Brom remains hostile. No formula or schema change.
 
 ## R-005 [open] Goodness -> DuroT: complete G11 Cloud/app smoke
-Why: local clean-restart persistence and isolated template self-healing pass, but no Cloud endpoint/credentials or live website integration are configured in this workspace. A local check cannot establish Cloud behavior.
+Why: local clean-restart persistence and actual Cloud core initialization/recovery pass, but the website still uses its mock client. A direct core check cannot establish browser/app integration.
 Proposed change: configure the free Cloud instance through private environment settings, connect the live app/core to it and verify ensureWorld reseeds a fresh empty instance. Use synthetic disposable data and do not wipe another user's graphs. Record actual result and cleanup; never commit credentials.
 Needed by: final external validation of G11.
-Resolution: pending endpoint/access and DuroT's live integration. Local evidence is in G11-results.json; the overall G11 acceptance remains partial.
+Resolution: Cloud access is configured privately. Real core initialization on an empty instance, template recovery, event recall through a fresh connection and owned-graph cleanup passed at 08:27 WAT on 2026-10-17 (G11-cloud-results.json). Remaining: DuroT's live app integration and browser-to-Cloud recovery check. Local evidence is in G11-results.json; overall G11 acceptance remains partial.
