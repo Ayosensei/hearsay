@@ -9,16 +9,21 @@
   "scripts": {
     "dev": "pnpm --filter web dev --port 3001",
     "build": "pnpm --filter web build",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm -r typecheck && tsc --noEmit -p loadtest/tsconfig.json",
     "check:design": "pnpm --filter web check:design",
     "test": "pnpm -r --if-present test",
     "lint": "pnpm -r --if-present lint",
     "mcp": "pnpm --filter @hearsay/mcp start",
-    "loadtest": "node scripts/pending-task.mjs G10",
+    "cli": "tsx packages/cli/src/index.ts",
+    "loadtest": "tsx --env-file-if-exists=.env loadtest/run.ts",
+    "queries:generate": "node scripts/query-mirror.mjs",
+    "queries:check": "node scripts/query-mirror.mjs --check",
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "devDependencies": {
+    "@types/node": "24.19.2",
     "prettier": "^3.5.0",
+    "tsx": "4.23.15",
     "typescript": "^5.8.0"
   }
 }

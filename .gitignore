@@ -21,4 +21,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.tsbuildinfo
+/packages/cli/dist/
+/packages/cli/*.tgz
 /*.png

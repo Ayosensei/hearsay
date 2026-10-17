@@ -1,0 +1,247 @@
+[
+  {
+    "id": "Q03_index_event",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "74ca67eb29b6b310aa3bd08cc68ed395f29c3476f52201c3c5b8b1346d18f764"
+  },
+  {
+    "id": "Q03_index_npc",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "1e3769a19fb32e6ad853d35c13c8db9f8204b835ae641b16b3d1d11bbbdecf00"
+  },
+  {
+    "id": "Q03_index_place",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "bb6e6688f3ec0c903ca578547aba6c2fb90e5966c9b785529451ffba6e272864"
+  },
+  {
+    "id": "Q03_index_player",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "2b980710f694030c02c07ccb3e2aef4fdeb715ee0d3c701a556ac4459759d760"
+  },
+  {
+    "id": "Q04_seed_allied",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "195480807031c8e9233eb29375b1923f128f8ffe8f188835f5cecf279a7983d8"
+  },
+  {
+    "id": "Q04_seed_believes",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "945097b904792424216a66b9073645a8e39937163d97d6e5ae1f3dca6df40b35"
+  },
+  {
+    "id": "Q04_seed_event_types",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "7205d8ae2f14c37cdc4f2853731d860c2de95578cb69529804b44a8d292bf13d"
+  },
+  {
+    "id": "Q04_seed_factions",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "0f72802460d1833477063adf878b7471593110ef1621b425e8178e70030b5c4b"
+  },
+  {
+    "id": "Q04_seed_facts",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "d34ece2fb16badd7f0b0560ee5a7afd6c4794dc30cc33faa178c9c3556dc55ae"
+  },
+  {
+    "id": "Q04_seed_follows",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "31342658f4e75ce332a15bcddf4de0f9cc48acb9b058c3823b90ca98523f6cbf"
+  },
+  {
+    "id": "Q04_seed_hostile",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "f167adb07cb25db2ef795dc22870371acd3429c55839d72f3eaa979afeeb5709"
+  },
+  {
+    "id": "Q04_seed_npcs",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "fabfcd3792b71d90dea1b6f14feef8b207b0871896d0fb1ae68e2266c6b789c9"
+  },
+  {
+    "id": "Q04_seed_places",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "65545cc24992fcc817d13bf9ab3360aaefc7df5dea76625d4a78c360af11fdbe"
+  },
+  {
+    "id": "Q04_seed_policies",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "c40af9029bf54ec1bb45a9686d94324907d3492d9350da6da2ee27631e1a4de7"
+  },
+  {
+    "id": "Q04_seed_trusts",
+    "source": "packages/hearsay/src/queries/seed.ts",
+    "sha256": "1c5c15b0d2744b95f49a87931eae3f4fc64695883e34f7565025c281431c95cd"
+  },
+  {
+    "id": "Q10_get_npcs",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "ac638d3445aa1056bbf34024b4c4e5aed77f682262cd6f10b105682372dcd45d"
+  },
+  {
+    "id": "Q11_get_places",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "d87f3068236f3a4787851548f138e0a3f1776de2717fb734c2bfc6df16d6c25c"
+  },
+  {
+    "id": "Q12_get_event_types",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "13314db5e57df1969478168db6fc4865573a3e87d47ef2185749f61064664842"
+  },
+  {
+    "id": "Q20_get_player",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "11d6022722b31058a031980e046c4e3f59c2e3c9682a8570424164093860cc50"
+  },
+  {
+    "id": "Q21_set_tick",
+    "source": "packages/hearsay/src/queries/gossip.ts",
+    "sha256": "421fe5e96f7fcdb1ca710d364c87dd6fd8f7e7dd8277180feb2bcc7346cfded7"
+  },
+  {
+    "id": "Q22_create_player",
+    "source": "packages/hearsay/src/queries/world.ts",
+    "sha256": "b3e058dc141f515016d7227ff54dd53cee728aea0b50e77a18ce3610f9d0decd"
+  },
+  {
+    "id": "Q23_resolve_conversation",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "c2fff97820139db6953ebed2827b5605597387753a780d1dd1d297f101646f90"
+  },
+  {
+    "id": "Q24_resolve_npcs",
+    "source": "packages/hearsay/src/queries/memory.ts",
+    "sha256": "5d3c74d99c86df6e0df25f61f30bc6950a2793d7744cc163e7eb428334343c4f"
+  },
+  {
+    "id": "Q25_resolve_place",
+    "source": "packages/hearsay/src/queries/memory.ts",
+    "sha256": "77072ecc3b5b3ad4cf1e6087a0d3314392561e328c5b4d52b567b35ae34fc0f5"
+  },
+  {
+    "id": "Q26_resolve_event",
+    "source": "packages/hearsay/src/queries/memory.ts",
+    "sha256": "236ec0f4191b32fa175572fdf7098bfaccbe6b392dac20d0c5212bae638d9c78"
+  },
+  {
+    "id": "Q30_record_event",
+    "source": "packages/hearsay/src/queries/memory.ts",
+    "sha256": "6c878233e4dd5dd62a4eb92a177c305946ffab0b690d3f2104ba0f8316dc32b3"
+  },
+  {
+    "id": "Q40_gossip_candidates_all",
+    "source": "packages/hearsay/src/queries/gossip.ts",
+    "sha256": "d57cc29dd570db0bc075c2e344978e3b1bb503781dca096e9095f94384a43d6f"
+  },
+  {
+    "id": "Q40b_gossip_candidates_one",
+    "source": "packages/hearsay/src/queries/gossip.ts",
+    "sha256": "cad33a536131e6e22e846653ab08be28d65674a48881a5b7df9eb2900b4dce0c"
+  },
+  {
+    "id": "Q41_gossip_write",
+    "source": "packages/hearsay/src/queries/gossip.ts",
+    "sha256": "1a6a0fc3b232d81f6df8724dc907c2f09c124c34590e94f8aa8ce29879ba208c"
+  },
+  {
+    "id": "Q42_who_knows",
+    "source": "packages/hearsay/src/queries/memory.ts",
+    "sha256": "c4ed045506176108b8e4e9a0882620b17baa0c59f4cc55d6743148a23b88023e"
+  },
+  {
+    "id": "Q50_recall",
+    "source": "packages/hearsay/src/queries/memory.ts",
+    "sha256": "27267e1c23a9000c2f044728bfdda8cb19d3e2dcafbb08a68a2e2f9f63748d77"
+  },
+  {
+    "id": "Q51_attitude_inputs",
+    "source": "packages/hearsay/src/queries/opinion.ts",
+    "sha256": "4724611c049be6537e270d0494142f9531638e3408e77e04775279515f4605d4"
+  },
+  {
+    "id": "Q60_explain_knows",
+    "source": "packages/hearsay/src/queries/opinion.ts",
+    "sha256": "df420380b5b5041db69b20e23a4051a7a31cee7bde35b5cc96dcd6e004d2db8f"
+  },
+  {
+    "id": "Q61_explain_chain",
+    "source": "packages/hearsay/src/queries/opinion.ts",
+    "sha256": "ba8b1fb775e741e61486d7ab151a4d3f345ef131cafd16a5d1eafa9a97ff1d03"
+  },
+  {
+    "id": "Q62_explain_link",
+    "source": "packages/hearsay/src/queries/opinion.ts",
+    "sha256": "4d76fd2fbd1c4d1d8f4f24b7ab050108fb7b46ac004bd7f88be4ef90cc478eaa"
+  },
+  {
+    "id": "Q70_gossip_hubs",
+    "source": "packages/hearsay/src/queries/policy.ts",
+    "sha256": "6b7c939e97fdee0956ade2ab88c5428ffa8de45c9d9794dcfc43bd1bd8f9c855"
+  },
+  {
+    "id": "Q80_policy_get",
+    "source": "packages/hearsay/src/queries/policy.ts",
+    "sha256": "74d4c48465318732c2b5a1825dbb4d0812fb54f5fbfff8b4808d8e0af616e735"
+  },
+  {
+    "id": "Q81_policy_update",
+    "source": "packages/hearsay/src/queries/policy.ts",
+    "sha256": "f01b7ffd94473eef26c876d9536102847e287d9e90c036cd98b6286c061f0ff1"
+  },
+  {
+    "id": "Q90_snapshot_edges",
+    "source": "packages/hearsay/src/queries/memory.ts",
+    "sha256": "6a25c55955610661d881ea30cb469edf245fbe57bcdf6940080f2d0a8060d7a2"
+  },
+  {
+    "id": "Q90_snapshot_nodes",
+    "source": "packages/hearsay/src/queries/memory.ts",
+    "sha256": "60e888443f211e433b3cd67dcadadebda24264264b79cf3ee7043fd022fd0d21"
+  },
+  {
+    "id": "Q92_dialogue_known",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "ac1e1b3aacc486169df249ff33e8a931192edcba6afe677358392e4cd02a0eba"
+  },
+  {
+    "id": "Q93_dialogue_profile",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "6b035e1f442433d21f6b98b61774a5dced355d5c6cb1764b4b7df7ae3180efc1"
+  },
+  {
+    "id": "Q94_dialogue_beliefs",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "324f10b099e38f7c32093f39985bd3df94cd23c6cec1214e4fe6f7455a9e6e2d"
+  },
+  {
+    "id": "Q95_conversation_start",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "7b6b8ed355a52a2ad9fbc7b5939028cbeef31b879a4ba0cf0be99c0c3b59c2f6"
+  },
+  {
+    "id": "Q96_utterance_add",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "c503227fd0a5a05706b1371b022e3e62534d615cdce2b22d5b988b41ced5b87e"
+  },
+  {
+    "id": "Q97_recent_utterances",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "fe9a2615c7325cab1eae920b0490e9c36c8b0e6f0ad037f2629ad61f51266123"
+  },
+  {
+    "id": "Q97b_conversation_count",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "23129b5590229431b921d72d488370ccb4c4240d6eda3072255555e7e6ed35ab"
+  },
+  {
+    "id": "Q98_player_events_all",
+    "source": "packages/hearsay/src/queries/naive.ts",
+    "sha256": "d2386229ae840522a59bb17fbacec98a6ed9f2517e5e2a3d4eeff5a0630aeef4"
+  },
+  {
+    "id": "Q99_dialogue_unknown",
+    "source": "packages/hearsay/src/queries/dialogue.ts",
+    "sha256": "9c96dc2147d506da3c3e1545038301a2ff703312ef72b4228c59c69b03159a3c"
+  }
+]

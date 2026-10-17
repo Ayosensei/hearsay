@@ -1,0 +1,36 @@
+{
+  "playerId": "persist_657347a1554f458897ab223bce6037d1",
+  "templateGraph": "persist_template_657347a1554f458897ab223bce6037d1",
+  "eventId": "ev_afca3c19rde5fdrklr3x6kit1",
+  "conversationId": "conv_786cf406dc4c463a80dd4f5d4ad8b54e",
+  "reply": "You have given me reason to be careful.",
+  "npcCount": 3,
+  "preparedAt": "2026-10-17T05:02:44.277Z",
+  "cloud": {
+    "status": "not_run",
+    "reason": "No Cloud endpoint/credentials or live app integration configured."
+  },
+  "containerRestart": {
+    "beforeStartedAt": "2026-10-17T02:50:24.784691855Z",
+    "afterStartedAt": "2026-10-17T05:02:46.106254569Z",
+    "changed": true
+  },
+  "verifiedAt": "2026-10-17T05:02:52.175Z",
+  "localPersistence": {
+    "passed": true,
+    "tick": 2,
+    "eventId": "ev_afca3c19rde5fdrklr3x6kit1",
+    "learnedFrom": "mira",
+    "confidence": 0.63,
+    "savedUtterances": 2,
+    "manualSave": false,
+    "aofEnabled": false
+  },
+  "localSelfHealing": {
+    "passed": true,
+    "at": "2026-10-17T05:02:55.869Z",
+    "npcCount": 3
+  },
+  "note": "Local isolated template wipe recovery is not a Cloud smoke test.",
+  "cleanedUpAt": "2026-10-17T05:02:59.501Z"
+}

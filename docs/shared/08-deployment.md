@@ -40,6 +40,22 @@ Verify in task G11: record a player's events, restart the container, call `recal
 
 Minimum FalkorDB self-hosting requirement is Redis 8.0.0 or later; the official Docker image already includes everything, so use the image.
 
+### G11 verified local restart procedure (2026-10-17)
+
+Run from the repository with the local Docker database. The smoke script restricts itself to localhost and unique `persist_` graph names; it never deletes the default town or other players.
+
+```
+pnpm exec tsx packages/hearsay/src/persistence-smoke.ts prepare
+docker compose restart falkordb
+pnpm exec tsx packages/hearsay/src/persistence-smoke.ts verify
+pnpm exec tsx packages/hearsay/src/persistence-smoke.ts recover
+pnpm exec tsx packages/hearsay/src/persistence-smoke.ts cleanup
+```
+
+The recorded run passed without manual SAVE or enabling AOF. CONFIG GET dir returned `/var/lib/falkordb/data`; INFO persistence showed `aof_enabled:0`. The container's StartedAt changed from 2026-10-17T02:50:24.784691855Z to 2026-10-17T05:02:46.106254569Z. A new connection recovered the theft, Garrick's Mira/0.63 knowledge, tick 2 and both saved Utterances. recover deleted only the owned template and proved ensureWorld rebuilt it from the current three-NPC seed. cleanup removed the owned graphs. Evidence: `docs/goodness/G11-results.json`.
+
+This verifies clean container restart with the mounted local data directory, not crash/kill durability or container recreation. Local template recovery is not a Cloud result. The Cloud/app half of G11 remains pending a configured Cloud endpoint/credentials and DuroT's live application integration (R-005); no Cloud pass is claimed.
+
 ## Path B (optional): live link
 
 Free pieces:
