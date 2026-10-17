@@ -96,6 +96,8 @@ G5 done 2026-10-17 04:56 WAT 46e8ce9 (engine: 00f7d90; selection: 9e33b61). Live
 
 G6 done 2026-10-17 05:07 WAT 7de8bf8 (scoring: 7ef8267). Live attitude/explain tools return exact scores, actual event-specific telling paths and snapshot highlight IDs; five-hop fallback verified. Typecheck and 91 workspace tests pass. Arithmetic examples corrected without changing the formula (R-004). See `G6-opinion.md` for real/mock boundaries and the recurring reset-copy infrastructure issue.
 
+G7 done 2026-10-17 05:24 WAT 7f7a719 (pipeline: 2f12bac; REST wrapper: 431b6bc; firewall/templates: 157b654). Graph-scoped say prompts, leak retry/fallback, saved conversation history and Gemini transport safeguards pass typecheck and 113 workspace tests. Database tests are real; generation/HTTP cases use injected fakes. No key/model is configured, so live Gemini remains unverified. See `G7-dialogue.md` for API usage, known firewall limits and the recurring copy/background-save failure.
+
 ## My "I can explain this" notes
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
@@ -115,3 +117,6 @@ G6 done 2026-10-17 05:07 WAT 7de8bf8 (scoring: 7ef8267). Live attitude/explain t
 - G6: Attitude reads only this NPC's known player events. Multiply event weight, confidence, recency and trait factor; clamp the summed score. Garrick is -0.562464/wary and Brom -0.7632/hostile at tick 2.
 - G6: Explain traverses actual TOLD edges for one event and original witness. Its IDs match snapshot. An unaware NPC gets not_in_graph; missing/corrupt provenance is an explicit error, not a generated justification.
 - G6: Repeated advanceTime can exceed four hops. The fallback follows via pointers while checking each actual TOLD link, decreasing hop and consistent root; it cannot invent a missing edge or follow a cycle indefinitely.
+- G7: Only NPC-known events and their BELIEVES facts become authoritative prompt context. Player claims remain unverified speech. Unknown-event data stays server-side for the firewall, never in the known-event section.
+- G7: Reject unknown event IDs, keywords and subject words; retry once, then choose a checked seed template. Save accepted replies only. This is a lexical firewall with documented limits, not a semantic guarantee against every paraphrase.
+- G7: Conversation ownership is scoped through Player/STARTED/Conversation/BETWEEN/NPC. History is real Utterance data; off mode bypasses even an injected model, and default Gemini generation has an 8-second request/retry budget.

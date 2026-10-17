@@ -95,3 +95,23 @@ Q51/Q60/Q61/Q62 now live in `queries/opinion.ts`; the spike reexports the produc
 Eight new live tests and fourteen pure tests added. Final typecheck and all 91 workspace tests pass (73 core, 5 contract, 13 existing web mock). GRAPH.LIST is empty after teardown. No new dependencies or contract changes.
 
 One boundary run had three failing reset hooks at Q01_graph_copy, after its five-hop test passed. Logs show BGSAVE beginning 04:05:49 UTC and repeated `Can't fork for module: File exists` during those copies. The boundary rerun and final suite passed. The pre-existing copy/background-save issue remains unresolved; no tests were suppressed, persistence settings changed or production writes retried. See `G6-opinion.md` for read consistency limits and outstanding UI/content integration.
+
+## G7 dialogue verification — 2026-10-17
+
+All new dialogue queries are canonical in `queries/dialogue.ts`. Official-client tests use live local FalkorDB under Goodness's existing direct-database exception. No new dependencies or contract changes.
+
+| Check | Result | Evidence / decision |
+| --- | --- | --- |
+| Q23 conversation ownership | PASS | Valid same-player/NPC continuation works; foreign, missing and other-NPC IDs return BAD_ARGS before writes. |
+| Q50/Q51 + Q92/Q93/Q94 prompt context | PASS | Known theft appears after real gossip with Mira source/63% confidence and wary attitude. Before gossip its ID/subject are absent from system knowledge. Only Mira receives her assigned weather belief. |
+| Q95/Q96 conversation writes | PASS | Actual Conversation/Utterance links persist player and accepted NPC text. Rejected leaking drafts are never saved. Query-looking text remains literal input; NPC count stays six. |
+| Q97/Q97b history/count/order | PASS | New service instance reads the prior pair into its prompt. Same-service concurrent turns save sequence 0..5. Other-player history is empty. |
+| Q99 unknown event input | PASS | Server-only event/subject/keyword results trigger leak checks but are never appended to model knowledge. Player's own claims remain unverified user messages. |
+| Firewall/template behavior | PASS | Reject two injected leaking replies then save safe fallback with passed:false; accept a clean retry; off bypasses provider; reject unsafe templates and use wordless abstention if necessary. |
+| Gemini REST wrapper | SIMULATED HTTP PASS | Seven tests cover configured request/header/JSON shape, deadlines, 5xx/429 bounds/backoff, cache expiry, malformed output and disabled/missing configuration. No actual Gemini request made. |
+
+Final typecheck and all 113 workspace tests pass (95 core, 5 contract, 13 existing web mock). G7 added nine live-database tests, seven simulated-HTTP wrapper tests, five pure firewall/template tests and one prompt-history test. Test graph cleanup verified with empty GRAPH.LIST.
+
+One initial boundary run failed a reset hook at Q01_graph_copy before its clean-retry assertion; logs at 04:21:07 UTC show background saving and module-fork contention. The boundary rerun and final full suite passed. This existing infrastructure issue is still unresolved. No test suppression, durability change or automatic write retry. No G7 Cypher syntax failures.
+
+Live Gemini quality/quota/latency remains unverified because no key/model is configured. Production content remains the three-NPC stub and the website still uses mocks. See `G7-dialogue.md` for lexical-firewall, partial-write and concurrency limits.
