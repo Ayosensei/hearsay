@@ -26,6 +26,9 @@ importers:
       '@hearsay/contract':
         specifier: workspace:*
         version: link:../../packages/contract
+      '@hearsay/core':
+        specifier: workspace:*
+        version: link:../../packages/hearsay
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
