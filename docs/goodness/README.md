@@ -106,6 +106,8 @@ G10 done 2026-10-17 06:01 WAT d0597f8. All 1,280 measured tool calls pass at N=1
 
 G11 local verification 2026-10-17 06:05 WAT f9b9272. Actual container restart preserves event, gossip, tick and conversation; local template self-healing passes. Typecheck and 117 tests pass. Full G11 remains pending Cloud/app validation under R-005; see G11-persistence.md and G11-results.json.
 
+G12 done 2026-10-17 06:14 WAT 77a3817. All 48 query mirrors and their hashes match canonical source, intentional drift is rejected, typecheck and 117 tests pass. See G12-judge-notes.md for line-by-line explanations.
+
 ## My "I can explain this" notes
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
@@ -133,3 +135,4 @@ G11 local verification 2026-10-17 06:05 WAT f9b9272. Actual container restart pr
 - G12: Q61 keeps path in WITH while sorting and filters every telling edge by event/root. G12-judge-notes.md explains each line and the checked long-chain fallback.
 - G12: Generated .cypher files come from literal source constants, with hashes and a drift check; they are not another hand-maintained implementation.
 - G12: State evidence limits: real local database/MCP/restart/load checks, fake model tests, unverified Gemini/Cloud, pending full production seed and website integration.
+
