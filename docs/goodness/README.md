@@ -102,9 +102,11 @@ G8 done 2026-10-17 05:37 WAT 65eafb9 (copy contention mitigation cb8e57a). Typec
 
 G9 done 2026-10-17 05:55 WAT c23c727. Typecheck and 117 tests pass, including actual stdio client/server calls on live FalkorDB. See packages/mcp/README.md and G9-mcp.md. sayNaive is excluded; optional HTTP transport is not implemented.
 
-## My "I can explain this" notes
-
 G10 done 2026-10-17 06:01 WAT d0597f8. All 1,280 measured tool calls pass at N=10/50/100, concurrency=5, with zero cleanup errors. Raw samples, machine and p50/p95/p99 are committed in loadtest/. Typecheck and 117 workspace tests pass. Current production stub has three NPCs; this is not a final-town capacity claim.
+
+G11 local verification 2026-10-17 06:05 WAT f9b9272. Actual container restart preserves event, gossip, tick and conversation; local template self-healing passes. Typecheck and 117 tests pass. Full G11 remains pending Cloud/app validation under R-005; see G11-persistence.md and G11-results.json.
+
+## My "I can explain this" notes
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
 - G2: Reads call `roQuery`; a live test proves an attempted write is rejected without adding a node. Database errors return safe envelopes and traces rather than raw Cypher or credentials.
