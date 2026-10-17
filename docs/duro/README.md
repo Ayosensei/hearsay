@@ -4,6 +4,14 @@
 Hackathon: Graph Hacks (Track 02: Agent Memory & Coordination)  
 Target: Win. Correctness, explainability, and adherence to `DESIGN.md`.
 
+## Living Town — user-requested redesign
+
+The user adopted the Living Town brief: a paper diorama, guided sword story,
+selected-deed Ledger, separate knowledge/attitude explanations, real whisper
+beats, traveller saves and accessible text mode. The older dashboard layout is
+superseded for this work. See `living-town-implementation.md` and the copied
+`HEARSAY_LIVING_TOWN_DESIGN.md` for behavior and renderer/artwork decisions.
+
 ## D10 live integration — 2026-10-17
 
 The town now defaults to real `/api/tool/{name}` calls through a contract-validating HTTP client.

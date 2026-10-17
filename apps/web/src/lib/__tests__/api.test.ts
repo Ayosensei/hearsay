@@ -83,5 +83,11 @@ it("loads the town adapter from real tool envelopes and preserves exact explanat
   expect(why.data?.hops.map((hop) => hop.confidence)).toEqual([1, 0.9, 0.63]);
   expect(why.data?.edgeIds?.every((id) => state.graphEdges.some((edge) => edge.id === id))).toBe(true);
   expect(state.npcs.find((npc) => npc.id === "garrick")?.attitudeScore).toBeCloseTo(-0.562464);
+  expect(state.gossipSteps).toEqual(expect.arrayContaining([
+    expect.objectContaining({ tellerId: "mira", listenerId: "garrick", credibility: 0.63 }),
+  ]));
+  expect(state.npcs.find((npc) => npc.id === "garrick")?.contributions).toEqual(expect.arrayContaining([
+    expect.objectContaining({ confidence: 0.63, effect: -0.562464 }),
+  ]));
   expect(state.graphNodes.some((node) => node.id === "NPC:brom")).toBe(true);
 }, 30000);

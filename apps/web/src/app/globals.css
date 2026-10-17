@@ -1,45 +1,45 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #05070B;
-  --color-surface-1: #0A0E15;
-  --color-surface-2: #0F141D;
-  --color-surface-3: #151B27;
+  --color-background: #1B1E3F;
+  --color-surface-1: #242447;
+  --color-surface-2: #302D50;
+  --color-surface-3: #3A3563;
   --color-border: #1A2030;
   --color-border-strong: #262E42;
-  --color-text-primary: #F2F4F8;
-  --color-text-secondary: #A6AEC0;
-  --color-text-tertiary: #7D869A;
-  
+  --color-text-primary: #F4E9D2;
+  --color-text-secondary: #D9C9A6;
+  --color-text-tertiary: #BFB6CE;
   --color-primary: #3150E9;
   --color-primary-hover: #4562F0;
   --color-primary-pressed: #2A44CC;
   --color-on-primary: #FFFFFF;
-  
   --color-signal: #8FA2FF;
   --color-gold: #E8C46A;
   --color-on-gold: #1A1405;
-  
   --color-danger: #FF5C6C;
   --color-success: #4ADE9A;
-  
   --color-attitude-hostile: #FF5C6C;
   --color-attitude-wary: #FFA35C;
   --color-attitude-neutral: #8C96A8;
   --color-attitude-friendly: #4ADE9A;
   --color-attitude-devoted: #3DD6EB;
-  
   --color-event-harm: #FF5C6C;
   --color-event-help: #4ADE9A;
-  
   --color-agent-scribe: #7DD3FC;
   --color-agent-gossip: #8FA2FF;
   --color-agent-npc: #F0ABFC;
   --color-agent-system: #8C96A8;
-  
   --color-faction-townsfolk: #7DD3FC;
   --color-faction-guard: #B79CFF;
   --color-faction-merchants: #5EEAD4;
+  --color-skyDeep: #1B1E3F;
+  --color-skyMid: #3A3563;
+  --color-skyGlow: #F2A65A;
+  --color-paperCream: #F4E9D2;
+  --color-paperShade: #D9C9A6;
+  --color-inkBlack: #1C1A24;
+  --color-woodBrown: #5A3E2B;
 
   --font-serif: var(--font-instrument-serif), Georgia, serif;
   --font-sans: var(--font-geist), system-ui, sans-serif;

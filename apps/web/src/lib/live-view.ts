@@ -14,9 +14,16 @@ export function mapEvents(snapshot: ToolOutput<"snapshot">): TownEvent[] {
     const placeId = snapshot.edges.find((edge) => edge.type === "HAPPENED_AT" && edge.from === node.id)?.to;
     const witness = snapshot.edges.find((edge) => edge.type === "KNOWS" && edge.to === node.id && edge.props.via === "witness")?.from;
     const name = snapshot.nodes.find((candidate) => candidate.id === witness)?.label ?? "Witness";
-    const title = `${String(node.props.type)} ${String(node.props.subject ?? "")}`.trim();
+    const subject = String(node.props.subject ?? "something");
+    const titles: Record<string, string> = {
+      stole: `${subject} stolen`, attacked: `Attacked ${subject}`, lied: `Lied about ${subject}`,
+      helped: `Helped with ${subject}`, donated: `Donated ${subject}`, saved: `Saved ${subject}`, traded: `Traded ${subject}`,
+    };
+    const sentence = titles[String(node.props.type)] ?? `${String(node.props.type)} ${subject}`;
+    const title = sentence.charAt(0).toUpperCase() + sentence.slice(1);
     return {
       id: node.id.slice("Event:".length), title, description: title,
+      weight: Number(node.props.weight),
       type: Number(node.props.weight) < 0 ? "harm" : "help",
       witnessId: witness?.slice("NPC:".length) ?? "", witnessName: name,
       placeName: snapshot.nodes.find((candidate) => candidate.id === placeId)?.label ?? "",
