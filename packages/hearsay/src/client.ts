@@ -14,6 +14,7 @@ import { createOpinion } from "./opinion-tools";
 import { createDialogue } from "./dialogue";
 import type { DialogueOptions } from "./dialogue";
 import { createPolicy } from "./policy";
+import { createNaive } from "./naive";
 
 type Handlers = {
   [K in ToolName]: (input: ToolInput<K>) => Promise<Envelope<ToolOutput<K>>>;
@@ -32,14 +33,7 @@ export function createHearsay(
     ...createOpinion(db, world),
     ...createDialogue(db, world, options),
     ...createPolicy(db, world),
-    sayNaive: async () => ({
-      ok: false,
-      error: {
-        code: "INTERNAL",
-        message: "Control dialogue is scheduled for G13.",
-      },
-      trace: [],
-    }),
+    ...createNaive(db, options),
   };
   const client: HearsayClient = {
     call: (name, input) => {

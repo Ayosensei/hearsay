@@ -11,7 +11,6 @@ export function checkFirewall(
 ) {
   const known = new Set(knownEventIds.map((id) => id.toLowerCase()));
   const text = reply.normalize("NFKC").toLowerCase();
-  const words = new Set(text.match(/[\p{L}\p{N}_]+/gu) ?? []);
   const violations = new Set<string>();
   const references = [
     ...referencedEventIds,
@@ -20,6 +19,19 @@ export function checkFirewall(
   for (const id of references)
     if (!known.has(id.toLowerCase()))
       violations.add(`referenced unknown event ${id}`);
+  for (const violation of scanUnknownVocabulary(reply, unknownEvents))
+    violations.add(violation);
+  return { passed: violations.size === 0, violations: [...violations] };
+}
+
+// Shared measurement only: the naive control reports these matches without blocking.
+export function scanUnknownVocabulary(
+  reply: string,
+  unknownEvents: readonly UnknownEvent[],
+) {
+  const text = reply.normalize("NFKC").toLowerCase();
+  const words = new Set(text.match(/[\p{L}\p{N}_]+/gu) ?? []);
+  const violations = new Set<string>();
   for (const event of unknownEvents) {
     const forbidden = [
       ...event.keywords,
@@ -40,5 +52,5 @@ export function checkFirewall(
         );
     }
   }
-  return { passed: violations.size === 0, violations: [...violations] };
+  return [...violations];
 }

@@ -14,6 +14,7 @@ export const GeneratedReply = z.object({
 export type GeneratedReply = z.infer<typeof GeneratedReply>;
 export interface LlmInput {
   system: string;
+  format?: "json" | "text";
   messages: { role: "user" | "model"; text: string }[];
 }
 export type LlmResult =
@@ -116,18 +117,22 @@ export function createLlm(options: LlmOptions = {}): Llm {
                   generationConfig: {
                     temperature: 0.3,
                     maxOutputTokens: 2048,
-                    responseMimeType: "application/json",
-                    responseJsonSchema: {
-                      type: "object",
-                      properties: {
-                        reply: { type: "string" },
-                        referencedEventIds: {
-                          type: "array",
-                          items: { type: "string" },
-                        },
-                      },
-                      required: ["reply", "referencedEventIds"],
-                    },
+                    ...(input.format === "text"
+                      ? {}
+                      : {
+                          responseMimeType: "application/json",
+                          responseJsonSchema: {
+                            type: "object",
+                            properties: {
+                              reply: { type: "string" },
+                              referencedEventIds: {
+                                type: "array",
+                                items: { type: "string" },
+                              },
+                            },
+                            required: ["reply", "referencedEventIds"],
+                          },
+                        }),
                   },
                 }),
               },
@@ -166,7 +171,11 @@ export function createLlm(options: LlmOptions = {}): Llm {
             .filter((p) => !p.thought)
             .map((p) => p.text ?? "")
             .join("");
-          const data = GeneratedReply.parse(JSON.parse(json));
+          const data = GeneratedReply.parse(
+            input.format === "text"
+              ? { reply: json, referencedEventIds: [] }
+              : JSON.parse(json),
+          );
           for (const [id, value] of cache)
             if (value.expires <= now()) cache.delete(id);
           if (cache.size >= 256) {
