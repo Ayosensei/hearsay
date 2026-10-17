@@ -32,6 +32,27 @@ Run `build-bundle.ps1 -GameDirectory <game-folder> -BuildDirectory <outside-repo
 
 `BuildBundle.cs` compiles against the installed Editor's `UnityEditor.dll` and `UnityEngine.dll`. This is compile evidence only. The current build is blocked before asset import by the installation/licensing errors above; no `.dfmod` success or in-game test is claimed.
 
+## Bind game NPCs and prepare the backend
+
+After installing `bundle/hearsay.dfmod` into `game/DaggerfallUnity_Data/StreamingAssets/Mods`, enable the mod in the launcher. Select `classic-data` as the game data folder. Open dialogue with three different static indoor NPCs and press F8; bind one to each slot. The slot IDs are opaque adapter IDs; their display names come from the actual game NPCs.
+
+The mod writes `Hearsay/profile.json` under the game's Unity persistent data directory (normally `%USERPROFILE%/AppData/LocalLow/Daggerfall Workshop/Daggerfall Unity`). Do not share or commit that profile after preparation: it contains the local HTTP bearer key.
+
+From this repository run:
+
+```powershell
+pnpm exec tsx integrations/daggerfall-unity/prepare.mts '<profile.json>' '<outside-repo-backend-directory>'
+# Optional third argument: a private env file holding FalkorDB connection settings.
+pnpm cli doctor --project '<outside-repo-backend-directory>'
+pnpm cli serve --project '<outside-repo-backend-directory>'
+```
+
+Preparation validates three distinct bindings before writing. It creates a separate seed with the captured names, generic resident traits and a controlled two-edge trust chain (second trusts first at 0.9; third trusts second at 0.7), not native Daggerfall relationships. It keeps the HTTP key private and leaves the production seed unchanged. It makes no database calls. Reload settings in the F8 panel after starting the backend. The game visibility rule uses bound, loaded static NPCs within ten Unity units and a clear linecast; it is not the native game's witness list. Crime capture ignores reports without a bound visible witness and caps event subjects at the contract's 60 characters.
+
+This initial profile is per test installation, not per native Daggerfall save. Use one character for the experiment. Dialogue uses template fallback with the default `HEARSAY_LLM=off`; live Gemini is a separate check. Only the adapter's Hearsay panel uses its memory; vanilla quests and NPC dialogue remain native.
+
+Checks: `pnpm exec tsx --test integrations/daggerfall-unity/prepare.test.mts` and `pnpm exec tsc --noEmit --module esnext --moduleResolution bundler --target es2022 --strict --esModuleInterop --skipLibCheck --allowImportingTsExtensions integrations/daggerfall-unity/prepare.mts integrations/daggerfall-unity/prepare.test.mts`. The preparation tests use explicitly synthetic binding names and no database; actual core integration tests require a live FalkorDB.
+
 ## Sources
 
 - [Official game repository](https://github.com/Interkarma/daggerfall-unity)
