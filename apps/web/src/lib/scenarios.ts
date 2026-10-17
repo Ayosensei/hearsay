@@ -26,7 +26,7 @@ export const scenarioChoices: ScenarioChoice[] = [
   { id: "watch-borrow", scenario: "watch", npc: "brom", label: "Borrow repair tools", hint: "Brom must be friendly. Help him first, or let good news reach him.", type: "traded", subject: "borrowed floodgate repair tools", requires: ["watch-survey"] },
   { id: "watch-steal", scenario: "watch", npc: "brom", label: "Steal repair tools", hint: "Saves a favour, but gives Brom a theft to report.", type: "stole", subject: "stolen floodgate repair tools", requires: ["watch-survey"] },
   { id: "watch-brief", scenario: "watch", npc: "oren", label: "Show Oren your survey", hint: "A direct briefing if the survey news has not reached him yet.", type: "traded", subject: "floodgate survey briefing", requires: ["watch-survey"] },
-  { id: "watch-repair", scenario: "watch", npc: "oren", label: "Repair the floodgate", hint: "Requires tools and Oren’s knowledge of the survey or briefing.", type: "helped", subject: "repairing the river floodgate" },
+  { id: "watch-repair", scenario: "watch", npc: "silas", label: "Repair the floodgate", hint: "Fit the repair at the docks. Requires tools and Oren’s knowledge of the survey or briefing.", type: "helped", subject: "repairing the river floodgate" },
   { id: "watch-warn", scenario: "watch", npc: "garrick", label: "Report the flood danger", hint: "Give Garrick an eyewitness warning. Earn trust as the report spreads.", type: "helped", subject: "warning the guard about the floodgate", requires: ["watch-survey"] },
 ];
 

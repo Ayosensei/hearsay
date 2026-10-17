@@ -114,6 +114,58 @@ spacing:
   3xl: 48px
   4xl: 64px
 components:
+  border-subtle:
+    backgroundColor: "{colors.border}"
+  border-emphasis:
+    backgroundColor: "{colors.border-strong}"
+  text-hint:
+    textColor: "{colors.text-tertiary}"
+  status-danger:
+    textColor: "{colors.danger}"
+  status-success:
+    textColor: "{colors.success}"
+  attitude-hostile:
+    textColor: "{colors.attitude-hostile}"
+  attitude-wary:
+    textColor: "{colors.attitude-wary}"
+  attitude-neutral:
+    textColor: "{colors.attitude-neutral}"
+  attitude-friendly:
+    textColor: "{colors.attitude-friendly}"
+  attitude-devoted:
+    textColor: "{colors.attitude-devoted}"
+  event-harm:
+    textColor: "{colors.event-harm}"
+  event-help:
+    textColor: "{colors.event-help}"
+  agent-scribe:
+    textColor: "{colors.agent-scribe}"
+  agent-gossip:
+    textColor: "{colors.agent-gossip}"
+  agent-npc:
+    textColor: "{colors.agent-npc}"
+  agent-system:
+    textColor: "{colors.agent-system}"
+  faction-townsfolk:
+    textColor: "{colors.faction-townsfolk}"
+  faction-guard:
+    textColor: "{colors.faction-guard}"
+  faction-merchants:
+    textColor: "{colors.faction-merchants}"
+  town-sky:
+    backgroundColor: "{colors.skyDeep}"
+  town-sky-surface:
+    backgroundColor: "{colors.skyMid}"
+  town-lantern:
+    textColor: "{colors.skyGlow}"
+  paper-sheet:
+    backgroundColor: "{colors.paperCream}"
+  paper-caption:
+    textColor: "{colors.paperShade}"
+  paper-ink:
+    textColor: "{colors.inkBlack}"
+  paper-heading:
+    textColor: "{colors.woodBrown}"
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
@@ -235,8 +287,9 @@ Responsive bottom sheets and location navigation keep the town usable on phones.
 
 User-requested minimal refinement: keep the town artwork but remove persistent
 hero text, decorative dock frames, floating deed cards and confidence chips.
-Main navigation is Hearsay, Your story and Menu. Free play has two controls:
-Take an action and Pause/Resume town. A visible clock advances gossip automatically.
+Main navigation is Hearsay, Town / Memory graph, Your story and Menu. Free play has
+two controls: Explore this location and Pause/Resume town. A visible clock advances
+gossip automatically. The location drawer offers witnessed local actions.
 Trace lives with character memories.
 Saves, lenses, accessibility, reset and engine tools use progressive disclosure
 inside Menu. Guided play shows only its current instruction and primary action.
@@ -256,7 +309,12 @@ Offer readable text mode, larger text and reduced motion. No unrequested audio.
 
 Use semantic tokens, existing Tailwind scale, named exports and small components.
 All new states appear on /styleguide. Run design lint and check:design, and save
-1440x900 screenshots. Never imply stealth, inventory, calendar, arrest, score,
-cloud accounts or unverified live dialogue. Nearby villagers witness actions within
+1440x900 screenshots. Never imply stealth, calendar, arrest, cloud accounts or
+unverified live dialogue. The user-requested scenarios display Garrick’s trust
+as the actual attitude score mapped from -1..1 to 0..100; this is not confidence.
+Trust at 20 or below ends play. Scenario medicine/tools derive from recorded events;
+there is no general inventory system. Each scenario choice or wait advances one
+gossip turn; walking and reading are free. The objective badge opens the brief,
+progress, relevant destinations, verdict and retry. Nearby villagers witness actions within
 240 world units, in the same district. Time pauses for drawers, hidden tabs,
 offline state, errors and confirmed reaction playback; no background catch-up.

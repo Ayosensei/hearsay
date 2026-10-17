@@ -6,6 +6,10 @@ import { browserPlayer } from "../../lib/live-town";
 import type { TownState, ToolEnvelope, ProvenanceChain } from "../../lib/types";
 import { readChallenge, saveChallenge } from "../../lib/challenge";
 import type { ChallengeSave } from "../../lib/challenge";
+import { runScenario } from "../../lib/scenario-client";
+import { scenarioFromPlayer } from "../../lib/scenarios";
+import type { ScenarioId } from "../../lib/scenarios";
+import type { TownPosition } from "../../lib/town-space";
 
 export interface Beat { id: string; text: string; from?: string; to?: string; eventId?: string; confidence?: number }
 export type Drawer = "objective" | "residents" | "ledger" | "character" | "evidence" | "attitude" | "engine" | "settings" | "reset" | "replay" | undefined;
@@ -73,22 +77,45 @@ export function useLivingTown() {
     const saved = nextSlot === "challenge" ? readChallenge() : undefined;
     const nextSave = nextSlot === "challenge" && !saved ? "a" : nextSlot;
     const next = await run(async () => {
-      const result = await liveTown.getTownState(saved?.playerId ?? browserPlayer(nextSave));
+      const questId = nextSlot === "scenario" ? localStorage.getItem("hearsay-scenario") : undefined;
+      const result = questId && scenarioFromPlayer(questId) ? await runScenario({ playerId: questId, action: "inspect" }) : await liveTown.getTownState(saved?.playerId ?? browserPlayer(nextSave === "scenario" ? "a" : nextSave));
       if (result.ok) result.data.dialogueHistory = chats.current.get(nextSlot) ?? {};
       return result;
     }, "Opening your story…");
     if (next) {
       setSlot(nextSave); setChallenge(saved); localStorage.setItem("hearsay-active-slot", nextSave); setEventId(saved?.targetEventId ?? next.events[0]?.id ?? ""); setDrawer(undefined); setLog([]); setLastBeats([]);
-      if (saved || next.events.length) { setTour(0); tell(saved ? "Earn Garrick’s trust before the theft reaches him." : "Hollowbrook remembers. Take an action, or speak to a villager."); }
+      if (scenarioFromPlayer(next.playerId)) { setTour(0); tell("Scenario restored from the town’s graph. Choose your next location."); }
+      else if (saved || next.events.length) { setTour(0); tell(saved ? "Earn Garrick’s trust before the theft reaches him." : "Hollowbrook remembers. Take an action, or speak to a villager."); }
       else { setTour(localStorage.getItem(`hearsay-tour-expanded-${nextSlot}`) === "done" ? 0 : -1); tell(`${next.npcs.length} villagers. A fresh story. Choose a deed, then follow who hears about it.`); }
     }
   }
-  useEffect(() => { const saved = localStorage.getItem("hearsay-active-slot"); void load(saved === "challenge" || saved === "b" ? saved : "a"); /* A single initial load; save switches are explicit. */
+  useEffect(() => { const saved = localStorage.getItem("hearsay-active-slot"); void load(saved === "scenario" || saved === "challenge" || saved === "b" ? saved : "a"); /* A single initial load; save switches are explicit. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   function finishTour() { setTour(0); localStorage.setItem(`hearsay-tour-expanded-${slot}`, "done"); }
   function select(id: string) { setSelected(id); setWhy(undefined); setDrawer("character"); }
   function focus(id: string) { setSelected(id); setWhy(undefined); }
+  async function startScenario(id: ScenarioId) {
+    const playerId = `quest_${id}_${crypto.randomUUID().replaceAll("-", "").slice(0, 20)}`;
+    const next = await run(() => runScenario({ playerId, action: "inspect" }), "Opening a new scenario…");
+    if (!next) return;
+    setSlot("scenario"); setChallenge(undefined); setTour(0); setDrawer(undefined); setSelected("garrick"); setEventId(""); setLog([]); setLastBeats([]);
+    localStorage.setItem("hearsay-scenario", playerId); localStorage.setItem("hearsay-active-slot", "scenario");
+    tell("Choose a location. Every committed choice costs one turn and spreads the news.");
+  }
+  async function scenarioCommand(action: "choose" | "wait" | "verdict" | "inspect", choiceId?: string, position?: TownPosition) {
+    if (!town?.playerId) return false;
+    const next = await run(() => runScenario({ playerId: town.playerId ?? "", action, choiceId, position }), action === "inspect" ? "Checking the saved story…" : "Resolving your choice and the next gossip round…");
+    if (!next) return false;
+    setDrawer(undefined); setLastBeats([]);
+    const event = next.events.find((event) => !town.events.some((old) => old.id === event.id) && !event.subject?.startsWith("Scenario verdict:"));
+    if (event) setEventId(event.id);
+    const steps = next.gossipSteps ?? [];
+    setBeats(steps.map((step) => ({ id: crypto.randomUUID(), eventId: step.eventId, from: step.tellerId, to: step.listenerId, confidence: step.credibility,
+      text: `${next.npcs.find((npc) => npc.id === step.tellerId)?.name} told ${next.npcs.find((npc) => npc.id === step.listenerId)?.name}. ${Math.round(step.credibility * 100)}% sure.` })));
+    tell(action === "inspect" ? "Saved story checked. No choice was repeated." : `Turn ${next.tick}. ${event?.title ?? "The town exchanged news."}`);
+    return true;
+  }
   async function startChallenge() {
     const playerId = `challenge_${crypto.randomUUID().replaceAll("-", "").slice(0, 20)}`;
     const next = await run(() => liveTown.getTownState(playerId), "Opening a fresh challenge…");
@@ -101,6 +128,7 @@ export function useLivingTown() {
 
   async function record(input: ToolInput<"recordEvent">) {
     if (!town) return false;
+    if (scenarioFromPlayer(town.playerId)) { setError("Use the choices available at your location in this scenario."); return false; }
     const next = await run(() => liveTown.recordEvent(input, town), "Recording your deed…");
     if (!next) return false;
     const event = next.events.find((e) => !town.events.some((old) => old.id === e.id));
@@ -120,6 +148,7 @@ export function useLivingTown() {
   }
   async function advance() {
     if (!town) return;
+    if (scenarioFromPlayer(town.playerId)) { await scenarioCommand("wait"); return; }
     const next = await run(() => liveTown.advanceTime(town), "Waiting for the town…");
     if (!next) return;
     const name = (id: string) => next.npcs.find((n) => n.id === id)?.name ?? id;
@@ -173,7 +202,7 @@ export function useLivingTown() {
     if (next) { if (challenge) { const saved = { playerId: challenge.playerId }; setChallenge(saved); saveChallenge(saved); } chats.current.delete(slot); setEventId(""); setDrawer(undefined); setTour(replay && !challenge ? 1 : 0); setLog([]); setLastBeats([]); tell("Nobody here knows your story yet."); }
   }
   function switchSave(next: string) { if (town) chats.current.set(slot, town.dialogueHistory); void load(next); }
-  return { town, slot, selected, eventId, drawer, busy, error, narration, log, beats, lastBeats, why, tour, reduced, textMode, largeText, offline, active, replayWhispers, challenge, startChallenge, focus,
+  return { town, slot, selected, eventId, drawer, busy, error, narration, log, beats, lastBeats, why, tour, reduced, textMode, largeText, offline, active, replayWhispers, challenge, startChallenge, startScenario, scenarioCommand, focus,
     clearError: () => setError(""),
     setDrawer, setSelected, setEventId, setTour, setReduced, setTextMode, setLargeText, tell, load, select, record, advance, speak, explain, reset, switchSave, finishTour };
 }

@@ -36,3 +36,12 @@ Inspect the saved story after an uncertain write. This demo does not claim
 distributed locking or tamper-proof multiplayer; the generic tool API remains
 available for developers. Production scenario authority across instances would
 need an approved core idempotency/transaction contract, not ad hoc Cypher here.
+
+Verification: 149 workspace tests pass (including six real-FalkorDB scenario
+tests), typecheck and design guard pass, and production build succeeds. The
+existing seed-loader filesystem tracing warning remains. Live browser play
+verified charity locked before helping Ayla, the unlocked medicine receipt,
+delivery at Lysa’s home, gossip after every choice, a turn-6 win and restoration
+in a second browser tab. Screenshots: scenario-town.png and
+scenario-medicine-win.png in screens/. DESIGN.md lint has zero errors/warnings;
+on Windows its npm script shell must be Git Bash to execute the .md-named bin.
