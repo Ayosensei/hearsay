@@ -104,6 +104,8 @@ G9 done 2026-10-17 05:55 WAT c23c727. Typecheck and 117 tests pass, including ac
 
 ## My "I can explain this" notes
 
+G10 done 2026-10-17 06:01 WAT d0597f8. All 1,280 measured tool calls pass at N=10/50/100, concurrency=5, with zero cleanup errors. Raw samples, machine and p50/p95/p99 are committed in loadtest/. Typecheck and 117 workspace tests pass. Current production stub has three NPCs; this is not a final-town capacity claim.
+
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
 - G2: Reads call `roQuery`; a live test proves an attempted write is rejected without adding a node. Database errors return safe envelopes and traces rather than raw Cypher or credentials.
 - G2: Q61 sorts and limits `path` in a WITH clause before converting it into lists. Sorting by a dropped path alias after RETURN fails on the tested FalkorDB image.
