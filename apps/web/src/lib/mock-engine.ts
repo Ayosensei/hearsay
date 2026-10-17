@@ -70,11 +70,11 @@ export function advanceSimulationTick(state: TownState): ToolEnvelope<TownState>
   }
 
   const traces: TraceStep[] = [
-    { agent: "system", tool: "advance_time", queryId: "Q33_advance_world_tick", args: { new_tick: newTick }, rows: 1, ms: 2.1 },
-    { agent: "gossip", tool: "spread_gossip", queryId: "Q40_gossip_candidates", args: { tick: newTick, min_confidence: MIN_CONFIDENCE }, rows: spreads.length, ms: 3.8 },
+    { agent: "system", tool: "advance_time", queryId: "Q21_set_tick", args: { new_tick: newTick }, rows: 1, ms: 2.1 },
+    { agent: "gossip", tool: "spread_gossip", queryId: "Q40_gossip_candidates_all", args: { tick: newTick, min_confidence: MIN_CONFIDENCE }, rows: spreads.length, ms: 3.8 },
   ];
   if (newHearings.length > 0) {
-    traces.push({ agent: "npc", tool: "update_attitude", queryId: "Q05_decay_credibility", args: { listeners: newHearings.map((s) => s.toId) }, rows: newHearings.length, ms: 1.6 });
+    traces.push({ agent: "npc", tool: "update_attitude", queryId: "Q51_attitude_inputs", args: { listeners: newHearings.map((s) => s.toId) }, rows: newHearings.length, ms: 1.6 });
   }
 
   const data: TownState = {
@@ -110,11 +110,11 @@ export function sendMockDialogue(
   // The firewall decides what this NPC may talk about before any reply is written.
   const answer = answerFor(npc, userMessage, state.events);
   const traces: TraceStep[] = [
-    { agent: "scribe", tool: "resolve_npc", queryId: "Q01_resolve_npc", args: { npc_id: npcId }, rows: 1, ms: 1.2 },
+    { agent: "scribe", tool: "resolve_npc", queryId: "Q24_resolve_npcs", args: { npc_id: npcId }, rows: 1, ms: 1.2 },
     {
       agent: "npc",
       tool: "filter_knowledge",
-      queryId: "Q22_filter_knowledge_firewall",
+      queryId: "Q92_dialogue_known",
       args: { npc_id: npcId, asked_about: answer.topics },
       rows: answer.rumor ? 1 : 0,
       ms: 2.4,
@@ -253,7 +253,7 @@ export function recordPlayerAction(
   const trace: TraceStep = {
     agent: "scribe",
     tool: "record_event",
-    queryId: "Q15_record_witnessed_event",
+    queryId: "Q30_record_event",
     args: { event_id: eventId, action_type: actionType, witness_id: witness.id, place: placeName },
     rows: 1,
     ms: 1.5,
