@@ -130,12 +130,16 @@ namespace HearsayDfu
                     RaycastHit hit;
                     Vector3 target = npc.transform.position + Vector3.up;
                     bool blocked = Physics.Linecast(camera.transform.position, target, out hit, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
-                    if (!blocked || hit.transform == npc.transform || hit.transform.IsChildOf(npc.transform)) witnesses.Add(binding.slot);
+                    if ((!blocked || hit.transform == npc.transform || hit.transform.IsChildOf(npc.transform)) && !witnesses.Contains(binding.slot)) witnesses.Add(binding.slot);
                 }
             }
+            if (witnesses.Count == 0) { status = "Reported crime had no bound NPC in the test visibility range; no event sent."; return; }
+            string location = GameManager.Instance.PlayerGPS.CurrentLocation.Name ?? "unknown area";
+            string subject = "reported " + crime + " in " + location;
+            if (subject.Length > 60) subject = subject.Substring(0, 60);
             Enqueue("recordEvent", new EventInput {
                 playerId = profile.playerId, type = type,
-                subject = "reported " + crime + " in " + GameManager.Instance.PlayerGPS.CurrentLocation.Name,
+                subject = subject,
                 witnesses = witnesses.ToArray()
             });
         }
@@ -143,7 +147,7 @@ namespace HearsayDfu
         void Enqueue(string tool, object input)
         {
             if (!profile.worldPrepared || profile.apiKey == null || profile.apiKey.Length < 24)
-            { status = "Run prepare.mjs and reload settings before connecting."; return; }
+            { status = "Run prepare.mts and reload settings before connecting."; return; }
             if (pending.Count >= 32) { status = "Adapter queue full; this action was not sent."; return; }
             pending.Enqueue(new Pending { tool = tool, input = input });
             if (!busy) StartCoroutine(Process());
