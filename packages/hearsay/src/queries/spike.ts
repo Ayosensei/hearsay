@@ -12,12 +12,7 @@ export {
 
 export { Q61_explain_chain } from "./opinion";
 
-// Planned query from docs/shared/05-queries.md, exercised on the G2 scratch graph.
-export const Q70_gossip_hubs = `CALL algo.pageRank('NPC', 'TRUSTS')
-YIELD node, score
-RETURN node.id AS npc, node.name AS name, score
-ORDER BY score DESC
-LIMIT $limit`;
+export { Q70_gossip_hubs } from "./policy";
 
 // Seed the six locked NPC identities and traits on a disposable graph.
 export const QG2_seed_npcs = `UNWIND $npcs AS n

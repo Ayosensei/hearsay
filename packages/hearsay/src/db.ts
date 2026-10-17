@@ -13,6 +13,7 @@ export interface DatabaseConfig {
   password?: string;
   connectTimeoutMs?: number;
   queryTimeoutMs?: number;
+  copyRetryMs?: number;
 }
 export type QueryContext = Pick<TraceStep, "agent" | "tool">;
 type Execute = <T extends Row = Row>(
@@ -164,17 +165,46 @@ export async function connectDatabase(
           () => client.list(),
           (data) => data.length,
         ),
-      copy: (source, destination) =>
-        tracked(
+      copy: async (source, destination) => {
+        let attempts = 0;
+        const result = await tracked(
           "Q01_graph_copy",
           { source, destination },
           context,
           async () => {
-            await client.selectGraph(source).copy(destination);
+            const deadline = Date.now() + (config.copyRetryMs ?? 5000);
+            while (true) {
+              attempts++;
+              try {
+                await client.selectGraph(source).copy(destination);
+                break;
+              } catch (error) {
+                // The server rejected the copy before forking; never replay an ambiguous write failure.
+                if (
+                  !(error instanceof Error) ||
+                  !/could not fork/i.test(error.message) ||
+                  Date.now() >= deadline
+                )
+                  throw error;
+                await new Promise((resolve) =>
+                  setTimeout(
+                    resolve,
+                    Math.min(
+                      250,
+                      25 * attempts,
+                      Math.max(0, deadline - Date.now()),
+                    ),
+                  ),
+                );
+              }
+            }
             return null;
           },
           () => 0,
-        ),
+        );
+        for (const step of result.trace) step.args.attempts = attempts;
+        return result;
+      },
       delete: (graph) =>
         tracked(
           "Q02_graph_delete",

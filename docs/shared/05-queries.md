@@ -204,6 +204,7 @@ MATCH (n:NPC {id: $nid})-[f:FOLLOWS]->(pol:Policy {id: $polId})
 SET pol.markup = $markup, f.tries = f.tries + 1, f.wins = f.wins + $winInc
 RETURN pol.markup AS markup, f.tries AS tries, f.wins AS wins
 ```
+G8's canonical Q81 additionally checks `abs(pol.markup-$previousMarkup)<0.000000001 AND f.tries=$previousTries AND f.wins=$previousWins` before SET. The markup tolerance handles decimal return precision; the integer counters detect intervening adaptations. Zero rows returns an explicit INTERNAL conflict. Q70/Q80/Q81 now live in `packages/hearsay/src/queries/policy.ts`; Q80 returns the existing policy bounds and counters. `createPolicy` exposes the contract tools. The locked-network PageRank order is verified live, with Mira first. See `docs/goodness/G8-policy.md`.
 
 ## Visualisation
 

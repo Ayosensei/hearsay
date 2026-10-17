@@ -1,0 +1,5 @@
+# Bounded graph-copy contention mitigation
+
+G8's first full suite hit the existing copy/background-save failure in four reset hooks. The database helper now retries only a server error matching `could not fork`, for at most five seconds of retry waiting (configurable copyRetryMs), with capped backoff. This error means the server rejected the copy before starting its fork. Network errors, destination conflicts and ambiguous failures are not replayed. Q01 traces include attempt count and total measured time. Individual server command duration is additional to the retry-wait bound.
+
+This approach matches the official FalkorDB Rust client's [documented copy-operation waiting behavior](https://github.com/FalkorDB/FalkorDB-rs#waiting-for-background-operations), which retries transient fork rejection. It does not disable persistence or make reset transactional. If contention lasts beyond the bound, callers still receive a sanitized failure. The complete workspace suite passed after this change; that is not proof of arbitrary-duration infrastructure reliability.

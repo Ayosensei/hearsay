@@ -11,3 +11,4 @@ export { createDialogue } from "./dialogue";
 export type { DialogueOptions } from "./dialogue";
 export { createLlm } from "./llm";
 export type { Llm, LlmOptions, LlmInput, LlmResult } from "./llm";
+export { createPolicy } from "./policy";
