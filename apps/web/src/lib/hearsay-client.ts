@@ -80,7 +80,7 @@ export class MockHearsayClient implements IHearsayClient {
         {
           agent: "scribe",
           tool: "explain_path",
-          queryId: "Q12_explain_provenance",
+          queryId: "Q60_explain_knows",
           args: { npc_id: npcId, event_id: eventId },
           rows: provenance?.hopCount || 1,
           ms: 1.8,

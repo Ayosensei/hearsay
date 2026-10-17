@@ -134,14 +134,14 @@ export function ControlVsHearsayModal({ isOpen, onClose }: ControlVsHearsayModal
                   <span>Graph-Grounded NPC Response:</span>
                 </div>
                 <p className="text-text-primary leading-relaxed">
-                  &quot;Martha Finch witnessed someone near the vault, then told Garrick at the forge. Word reached me with 64% confidence. I wasn&apos;t there myself.&quot;
+                  &quot;Brom witnessed someone at the forge, then told Mira at the inn. Word reached me with 63% confidence. I wasn&apos;t there myself.&quot;
                 </p>
               </div>
 
               <div className="space-y-2 pt-2 text-xs font-mono text-text-tertiary">
                 <div className="flex items-center justify-between">
                   <span>Provenance:</span>
-                  <span className="text-gold font-semibold">Martha Finch [Eyewitness 100%]</span>
+                  <span className="text-gold font-semibold">Brom [Eyewitness 100%]</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Knowledge Firewall:</span>
@@ -149,11 +149,11 @@ export function ControlVsHearsayModal({ isOpen, onClose }: ControlVsHearsayModal
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Social Path:</span>
-                  <span className="text-signal">Martha → Garrick → Capt. Vane</span>
+                  <span className="text-signal">Brom → Mira → Garrick</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Explain-path query:</span>
-                  <span className="text-text-primary">Q12_explain_provenance</span>
+                  <span className="text-text-primary">Q60_explain_knows</span>
                 </div>
               </div>
             </div>

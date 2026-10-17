@@ -17,15 +17,15 @@ interface PlayerActionModalProps {
 }
 
 const PRESET_HELPFUL = [
-  "Donate 50 gold to the apothecary",
-  "Help Garrick forge city gate hinges",
-  "Rescue the courier from road bandits",
+  "Help Brom forge iron gate hinges",
+  "Donate 50 gold to Sister Ayla's chapel",
+  "Help Garrick patrol the town square",
 ];
 
 const PRESET_HARMFUL = [
-  "Pickpocket the tavern patron's pouch",
-  "Poison the Guard armory well",
-  "Smuggle contraband through the city gate",
+  "Pickpocket patron at The Copper Kettle",
+  "Poison the Guard Barracks well",
+  "Smuggle contraband through Market Row",
 ];
 
 // Matches MAX_ACTION_TITLE in mock-engine.ts so nothing is truncated silently.
