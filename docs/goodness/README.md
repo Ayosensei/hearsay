@@ -86,6 +86,12 @@ Bugs only. Support DuroT on integration issues. Review the README graph sections
 
 Add a line per finished task: `G5 done <date/time> <commit>`.
 
+G2 done 2026-10-17 04:06 WAT ff6e1bf (helper: 142ca76). Live helper and query spike pass; Browser-first exception approved by Goodness. See `spike-results.md` for the Q61 correction and test evidence.
+
 ## My "I can explain this" notes
 
-(fill in)
+- G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
+- G2: Reads call `roQuery`; a live test proves an attempted write is rejected without adding a node. Database errors return safe envelopes and traces rather than raw Cypher or credentials.
+- G2: Q61 sorts and limits `path` in a WITH clause before converting it into lists. Sorting by a dropped path alias after RETURN fails on the tested FalkorDB image.
+- G2: The golden gossip spike chooses one best candidate per listener between read/write rounds. New knowers cannot spread until the next round; the production implementation remains G5.
+- G2: GRAPH.COPY preserved all four operational ID range indexes on the recorded image digest. PageRank ranks Mira highest in the locked trust network.
