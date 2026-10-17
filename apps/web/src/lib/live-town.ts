@@ -65,7 +65,7 @@ export class LiveTownClient {
       });
       return {
         id: person.id, name: person.name, role: person.role, faction: faction(person.faction),
-        avatarInitials: initials(person.name), attitude: attitude.label, attitudeScore: attitude.score,
+        avatarInitials: initials(person.name), attitude: attitude.label, attitudeScore: attitude.score, contributions: attitude.contributions,
         rumors, primaryRumor: rumors[0], knowledgeState: !rumors.length ? "none" : rumors.some((r) => r.hops === 0) ? "eyewitness" : "heard",
       };
     }));
@@ -101,6 +101,7 @@ export class LiveTownClient {
       const playerId = state.playerId ?? browserPlayer();
       const advanced = await call("advanceTime", { playerId });
       const next = await this.refresh(call, playerId, state);
+      next.gossipSteps = advanced.steps;
       next.activePathEdgeIds = advanced.steps.map((step) => `TOLD:NPC:${step.tellerId}->NPC:${step.listenerId}:${step.eventId}`);
       return next;
     }), state);
