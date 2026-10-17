@@ -2,7 +2,7 @@ import { ErrorBody, TOOLS, TraceStep } from "@hearsay/contract";
 import type { Envelope, HearsayClient, ToolInput, ToolName, ToolOutput } from "@hearsay/contract";
 
 export class HttpHearsay implements HearsayClient {
-  constructor(private readonly endpoint = "/api/tool/", private readonly transport = fetch) {}
+  constructor(private readonly endpoint = "/api/tool/", private readonly transport: typeof fetch = (...args) => fetch(...args)) {}
 
   async call<N extends ToolName>(name: N, input: ToolInput<N>): Promise<Envelope<ToolOutput<N>>> {
     const invalid = (code: "BAD_ARGS" | "INTERNAL" | "DB_UNAVAILABLE", message: string): Envelope<ToolOutput<N>> =>

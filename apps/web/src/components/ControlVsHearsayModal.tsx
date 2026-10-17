@@ -1,169 +1,61 @@
-import { X, ShieldAlert, ShieldCheck, Sparkles, Database, Bot } from "lucide-react";
+"use client";
+import { useState } from "react";
+import type { ToolOutput } from "@hearsay/contract";
+import { liveTown } from "../lib/hearsay-client";
 import { useEscapeKey } from "../lib/use-escape-key";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
-interface ControlVsHearsayModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface Props {
+  isOpen: boolean; onClose: () => void; playerId?: string; npcId?: string;
 }
-
-export function ControlVsHearsayModal({ isOpen, onClose }: ControlVsHearsayModalProps) {
-  useEscapeKey(isOpen, onClose);
+export function ControlVsHearsayModal({ isOpen, onClose, playerId, npcId }: Props) {
+  const [text, setText] = useState("Do you know what I did at the forge?");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [control, setControl] = useState<ToolOutput<"sayNaive">>();
+  const [guarded, setGuarded] = useState<ToolOutput<"say">>();
+  useEscapeKey(isOpen && !busy, onClose);
   if (!isOpen) return null;
-
-  return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-enter"
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Control versus Hearsay comparison"
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-4xl rounded-2xl bg-surface-1 border border-border card-elevation overflow-hidden shadow-2xl relative"
-      >
-        {/* Chrome metallic accent line */}
-        <div className="absolute top-0 left-0 right-0 h-1 chrome-ring opacity-90" />
-
-        {/* Modal Header */}
-        <div className="p-6 border-b border-border flex items-start justify-between">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-3 text-signal text-xs font-mono border border-signal/30 mb-2">
-              <Sparkles className="h-3 w-3" />
-              <span>Same question, two memories</span>
-            </div>
-            <h2 className="font-serif text-3xl text-text-primary tracking-tight">
-              Control <span className="font-sans text-text-tertiary text-xl font-normal">vs</span>{" "}
-              <em className="italic text-signal font-serif">Hearsay</em>
-            </h2>
-            <p className="text-xs text-text-secondary mt-1">
-              Comparing standard naive LLM game memory against FalkorDB graph-grounded provenance.
-            </p>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="h-8 w-8 rounded-full bg-surface-2 text-text-tertiary hover:text-text-primary flex items-center justify-center transition-colors hover:bg-surface-3"
-            title="Close comparison"
-            aria-label="Close comparison"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* Comparison Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
-          {/* Column 1: Control (Standard Game AI) */}
-          <div className="p-6 bg-surface-1/50 flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Bot className="h-4 w-4 text-text-tertiary" />
-                  <span className="font-sans font-semibold text-sm text-text-primary">
-                    Control: Standard Game AI
-                  </span>
-                </div>
-                <span className="font-mono text-xs px-2 py-0.5 rounded bg-surface-3 text-text-tertiary">
-                  No Graph
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-surface-2 border border-border/60 text-xs text-text-secondary space-y-2">
-                <span className="text-text-tertiary font-mono block">Player Question:</span>
-                <p className="italic text-text-primary font-medium">
-                  &quot;What happened to the ancient Sun-Stone relic at the chapel?&quot;
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-surface-2 border border-border space-y-2 text-xs">
-                <div className="flex items-center gap-1.5 text-danger font-mono font-semibold">
-                  <ShieldAlert className="h-3.5 w-3.5" />
-                  <span>Omniscient / Hallucinated NPC Response:</span>
-                </div>
-                <p className="text-text-primary leading-relaxed">
-                  &quot;You stole it! Everyone across the town knows you entered the vault at twilight and took the stone! The guards are coming!&quot;
-                </p>
-              </div>
-
-              <div className="space-y-2 pt-2 text-xs font-mono text-text-tertiary">
-                <div className="flex items-center justify-between">
-                  <span>Provenance:</span>
-                  <span className="text-text-tertiary font-semibold">None (Blackbox LLM)</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Knowledge Firewall:</span>
-                  <span className="text-danger font-semibold">Bypassed (Psychic Guard)</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Explainable Graph Path:</span>
-                  <span className="text-text-tertiary">None</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-lg bg-surface-2/60 border border-border/40 text-xs text-text-tertiary">
-              Problem: Breaks player immersion. NPCs psychic knowledge without origin or proof.
-            </div>
-          </div>
-
-          {/* Column 2: Hearsay (FalkorDB Graph) */}
-          <div className="p-6 bg-surface-2/30 flex flex-col justify-between space-y-6 signal-glow">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Database className="h-4 w-4 text-signal" />
-                  <span className="font-sans font-semibold text-sm text-signal">
-                    Hearsay: Graph Memory Layer
-                  </span>
-                </div>
-                <span className="font-mono text-xs px-2 py-0.5 rounded bg-surface-3 text-gold font-semibold border border-gold/30">
-                  FalkorDB Grounded
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-surface-2 border border-border/60 text-xs text-text-secondary space-y-2">
-                <span className="text-text-tertiary font-mono block">Player Question:</span>
-                <p className="italic text-text-primary font-medium">
-                  &quot;What happened to the ancient Sun-Stone relic at the chapel?&quot;
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-surface-2 border border-signal/40 space-y-2 text-xs card-elevation">
-                <div className="flex items-center gap-1.5 text-gold font-mono font-semibold">
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                  <span>Graph-Grounded NPC Response:</span>
-                </div>
-                <p className="text-text-primary leading-relaxed">
-                  &quot;Brom witnessed someone at the forge, then told Mira at the inn. Word reached me with 63% confidence. I wasn&apos;t there myself.&quot;
-                </p>
-              </div>
-
-              <div className="space-y-2 pt-2 text-xs font-mono text-text-tertiary">
-                <div className="flex items-center justify-between">
-                  <span>Provenance:</span>
-                  <span className="text-gold font-semibold">Brom [Eyewitness 100%]</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Knowledge Firewall:</span>
-                  <span className="text-success font-semibold">Enforced (Prompt restricted)</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Social Path:</span>
-                  <span className="text-signal">Brom → Mira → Garrick</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Explain-path query:</span>
-                  <span className="text-text-primary">Q60_explain_knows</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-lg bg-surface-3 border border-signal/30 text-xs text-signal font-medium">
-              Advantage: 100% explainable, zero psychic NPCs, realistic trust decay per hop.
-            </div>
-          </div>
-        </div>
+  async function compare() {
+    if (!playerId || !npcId || busy) return;
+    setBusy(true); setError(""); setControl(undefined); setGuarded(undefined);
+    try {
+      const args = { playerId, npcId, text };
+      const [left, right] = await Promise.all([liveTown.tools.call("sayNaive", args), liveTown.tools.call("say", args)]);
+      if (!left.ok || !right.ok) {
+        setError(!left.ok ? left.error.message : !right.ok ? right.error.message : "");
+      }
+      if (left.ok) setControl(left.data);
+      if (right.ok) setGuarded(right.data);
+    } finally { setBusy(false); }
+  }
+  return <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+    <section role="dialog" aria-modal="true" aria-label="Control versus Hearsay comparison" className="w-full max-w-4xl rounded-xl bg-surface-2 p-6 space-y-6 card-elevation">
+      <div className="flex justify-between items-center">
+        <h2 className="font-serif text-3xl text-balance">Two different <em>memories</em></h2>
+        <Button variant="secondary" disabled={busy} onClick={onClose}>Close</Button>
       </div>
-    </div>
-  );
+      <p className="text-text-secondary text-sm">Ask the same NPC through both backend tools. Control receives the complete event log; Hearsay receives only its known events.</p>
+      <form className="flex gap-3" onSubmit={(event) => { event.preventDefault(); void compare(); }}>
+        <Input aria-label="Comparison question" value={text} maxLength={400} onChange={(event) => setText(event.target.value)} disabled={busy} />
+        <Button disabled={busy || !text.trim() || !playerId}>{busy ? "Comparing…" : "Ask both"}</Button>
+      </form>
+      {error && <p role="alert" className="text-danger">{error}</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <article className="rounded-lg bg-surface-1 p-4 space-y-3">
+          <h3 className="text-text-primary">Control · told everything</h3>
+          <p className="text-sm text-text-secondary">{control?.reply ?? (busy ? "Waiting for the backend…" : "Ask a question to compare.")}</p>
+          {control && <p className="text-xs font-mono text-text-secondary">{control.source === "llm" ? "Gemini" : "Template fallback"} · {control.leaked ? "Unknown-event vocabulary detected" : "No vocabulary leak detected"}</p>}
+        </article>
+        <article className="rounded-lg bg-surface-1 p-4 space-y-3">
+          <h3 className="text-signal">Hearsay · graph-scoped knowledge</h3>
+          <p className="text-sm text-text-secondary">{guarded?.reply ?? (busy ? "Waiting for the backend…" : "Ask a question to compare.")}</p>
+          {guarded && <p className="text-xs font-mono text-gold">{guarded.source === "llm" ? "Gemini" : "Template fallback"} · {guarded.firewall.passed ? "Firewall passed" : "Firewall blocked; safe fallback"}</p>}
+        </article>
+      </div>
+      <p className="text-xs text-text-tertiary">With generation off, both tools use prepared replies. A generic control fallback may show no leak.</p>
+    </section>
+  </div>;
 }
+

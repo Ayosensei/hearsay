@@ -6,6 +6,6 @@
 export type EngineMode = "mock" | "live";
 
 // Cast keeps the type wide; otherwise TS narrows to "mock" and flags the isLive comparison.
-export const ENGINE_MODE = "mock" as EngineMode;
+export const ENGINE_MODE: EngineMode = process.env.NEXT_PUBLIC_HEARSAY_MODE === "mock" ? "mock" : "live";
 
 export const isLive = ENGINE_MODE === "live";

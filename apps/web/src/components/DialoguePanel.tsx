@@ -13,7 +13,7 @@ interface DialoguePanelProps {
   onInspectProvenance: (provenance: ProvenanceChain) => void;
 }
 
-const MAX_MESSAGE = 280;
+const MAX_MESSAGE = 400;
 
 export function DialoguePanel({
   selectedNpc,
@@ -126,7 +126,8 @@ export function DialoguePanel({
                   {!isPlayer && msg.groundedInKnowledge && (
                     <>
                       <span>·</span>
-                      <span className="text-signal">Graph-grounded</span>
+                      <span className="text-signal">{msg.source === "template_fallback" ? "Template fallback" : msg.source === "llm" ? "Gemini" : "Graph-grounded"}</span>
+                      {msg.firewall && <span title={msg.firewall.violations.join("; ")}>{msg.firewall.passed ? "Firewall passed" : "Firewall blocked · safe fallback"}</span>}
                     </>
                   )}
                 </div>

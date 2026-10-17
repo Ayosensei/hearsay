@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CodeCard } from "../../components/CodeCard";
+import { LiveSpecimens } from "../../components/hearsay/LiveSpecimens";
 import {
   ArrowLeft,
   Sparkles,
@@ -62,6 +63,7 @@ export default function StyleguidePage() {
         </div>
       </header>
 
+      <LiveSpecimens />
       {/* 01. Color Palette */}
       <section className="space-y-6">
         <div className="flex items-center gap-2 font-mono text-xs text-text-tertiary tracking-wider uppercase">

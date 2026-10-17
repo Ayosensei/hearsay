@@ -2,8 +2,6 @@ import { TOOLS } from "@hearsay/contract";
 import type { ToolName, ToolInput } from "@hearsay/contract";
 import { getHearsay, reconnectHearsay } from "../../../../server/hearsay";
 
-export const runtime = "nodejs";
-
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ name: string }> },
