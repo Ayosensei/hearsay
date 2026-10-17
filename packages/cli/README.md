@@ -2,7 +2,7 @@
 
 Run the real Hearsay memory engine from a game project's directory: initialize a world, call tools, serve a local HTTP API or expose MCP.
 
-**Publication status:** this package is not published. The unscoped npm name `hearsay` already belongs to an unrelated library. `@hearsay/cli` is a provisional workspace name, not a claimed npm organization. Once the owner creates an npm account, choose a scope they control and confirm the release license before publishing. `private:true` currently prevents accidental publication.
+**Publication status:** this package is not published. The unscoped npm name `hearsay` already belongs to an unrelated library. The owner selected `@goodynessdev/hearsay` and the MIT license; npm authentication is pending. `private:true` currently prevents accidental publication.
 
 ## Requirements
 
@@ -31,13 +31,13 @@ From the Hearsay repository, add `--project C:/path/to/my-game` to subsequent `p
 npm pack
 
 # In an unrelated game project; replace the archive path
-npx --yes --package C:/path/to/hearsay-cli-0.1.0.tgz hearsay init
-npx --yes --package C:/path/to/hearsay-cli-0.1.0.tgz hearsay doctor
+npx --yes --package C:/path/to/goodynessdev-hearsay-0.1.0.tgz hearsay init
+npx --yes --package C:/path/to/goodynessdev-hearsay-0.1.0.tgz hearsay doctor
 ```
 
 You can also install the archive as a development dependency, then use `npx hearsay`. Do not run plain `npx hearsay` before installing our archive: npm would fetch the unrelated public package.
 
-After publication under an account you control, the intended syntax will be `npx @YOUR_NPM_USERNAME/hearsay init`, with your actual package name in place of the placeholder. This command is not available publicly yet.
+After publication, the command will be `npx @goodynessdev/hearsay init`. This command is not available publicly yet.
 
 ## Commands
 

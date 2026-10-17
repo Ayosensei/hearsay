@@ -22,6 +22,6 @@ The first archive verification's cleanup helper resolved a pnpm junction as a sy
 
 ## Publication remains pending
 
-Registry inspection found an unrelated `hearsay@3.0.0`; we must not direct developers to install that package. `@hearsay/cli` is only a provisional local name. Goodness is creating an npm account. Once its username/scope and release license are confirmed, rename the package, repeat packing checks, and publish under an account they control. `private:true` and `UNLICENSED` deliberately remain until that decision. No npm account secrets are needed in chat, and no publication was attempted.
+Registry inspection found an unrelated `hearsay@3.0.0`; we must not direct developers to install that package. The initial `@hearsay/cli` name was provisional. Goodness supplied the npm username `goodynessdev` and explicitly selected MIT, so the package is now named `@goodynessdev/hearsay` with its MIT license included in the archive. A public registry read returned 404 for that package name; authenticated publication rights are not established by that alone. This machine's `npm whoami` reported ENEEDAUTH. `private:true` remains until authentication and the release step are ready. No npm account secrets are needed in chat, and no publication was attempted.
 
 This does not claim an existing Unity game integration or website integration. It supplies the local transport a future native game adapter can call.
