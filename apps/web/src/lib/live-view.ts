@@ -30,7 +30,8 @@ export function mapGraph(snapshot: ToolOutput<"snapshot">, npcs: NPC[]) {
     const npc = npcs.find((candidate) => `NPC:${candidate.id}` === node.id);
     const point = coordinates[npc?.id ?? ""] ?? [80 + (index % 5) * 100, node.kind === "Player" ? 410 : 45];
     return {
-      id: node.id, label: node.label, type: node.kind === "NPC" ? "npc" : node.kind === "Player" ? "player" : "event",
+      id: node.id, label: node.kind === "Event" ? `${String(node.props.type)} ${String(node.props.subject ?? "")}`.trim() : node.label,
+      type: node.kind === "NPC" ? "npc" : node.kind === "Player" ? "player" : "event",
       avatarInitials: npc?.avatarInitials, faction: npc?.faction, attitude: npc?.attitude,
       eventType: Number(node.props.weight) < 0 ? "harm" : "help", x: point[0], y: point[1],
     };

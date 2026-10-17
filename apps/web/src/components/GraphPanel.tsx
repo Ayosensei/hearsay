@@ -204,6 +204,10 @@ export function GraphPanel({
 
             const nodeOpacity = isHighlightMode && !isInActivePath ? "opacity-30" : "opacity-100";
 
+            if (node.type === "player") return <g key={node.id} transform={`translate(${x}, ${y})`}>
+              <circle r="6" fill="var(--color-primary)" />
+              <text y="20" textAnchor="middle" fill="var(--color-text-secondary)" className="font-mono text-xs">Player</text>
+            </g>;
             if (isEvent) {
               const isHelp = node.eventType === "help";
               return (

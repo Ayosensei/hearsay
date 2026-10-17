@@ -16,6 +16,7 @@ import { WhyCard } from "../components/WhyCard";
 import { EventForm } from "../components/hearsay/EventForm";
 import { ControlVsHearsayModal } from "../components/ControlVsHearsayModal";
 import { Button } from "../components/ui/button";
+import { PlayerActionModal } from "../components/PlayerActionModal";
 
 export default function TownApp() {
   const [town, setTown] = useState<TownState>();
@@ -28,25 +29,27 @@ export default function TownApp() {
   const savedChats = useRef(new Map<string, TownState["dialogueHistory"]>());
 
   async function run(work: () => Promise<ToolEnvelope<TownState>>, label: string) {
-    if (inFlight.current) return;
+    if (inFlight.current) return false;
     inFlight.current = true;
     setBusy(label);
     setNotice("");
     try {
       const result = await work();
-      if (!result.ok) { setNotice(result.error.code + ": " + result.error.message); return; }
+      if (!result.ok) { setNotice(result.error.code + ": " + result.error.message); return false; }
       setTown((previous) => ({ ...result.data,
         selectedNpcId: previous && previous.playerId === result.data.playerId ? previous.selectedNpcId : result.data.selectedNpcId }));
-    } catch { setNotice("Could not reach the town. Retry the request."); }
+      return true;
+    } catch { setNotice("Could not reach the town. Retry the request."); return false; }
     finally { inFlight.current = false; setBusy(""); }
   }
 
   async function load(player = slot) {
-    await run(async () => {
+    const loaded = await run(async () => {
       const result = isLive ? await liveTown.getTownState(browserPlayer(player)) : await hearsayClient.getTownState();
       if (result.ok) result.data.dialogueHistory = savedChats.current.get(player) ?? {};
       return result;
     }, "Loading town");
+    if (loaded) setSlot(player);
   }
 
   useEffect(() => {
@@ -80,8 +83,8 @@ export default function TownApp() {
 
   async function submit(input: ToolInput<"recordEvent">) {
     if (!town) return;
-    await run(() => liveTown.recordEvent(input, town), "Recording event");
-    setActionOpen(false);
+    const recorded = await run(() => liveTown.recordEvent(input, town), "Recording event");
+    if (recorded) setActionOpen(false);
   }
 
   return <div className="h-screen w-screen flex flex-col bg-background text-text-primary overflow-hidden">
@@ -95,7 +98,7 @@ export default function TownApp() {
     <div className="flex items-center gap-3 px-4 py-2 border-b border-border bg-surface-1 text-xs font-mono">
       <span>Player</span>
       {["a", "b"].map((player) => <Button key={player} variant={slot === player ? "default" : "secondary"} disabled={Boolean(busy)}
-        onClick={() => { savedChats.current.set(slot, town.dialogueHistory); setSlot(player); void load(player); }}>Player {player.toUpperCase()}</Button>)}
+        onClick={() => { savedChats.current.set(slot, town.dialogueHistory); void load(player); }}>Player {player.toUpperCase()}</Button>)}
       <span className="text-text-tertiary truncate">{town.playerId ?? "Mock session"}</span>
       <Button variant="secondary" disabled={Boolean(busy) || !town.events.length} onClick={() => void explain()}>Why does {selected.name} know?</Button>
       <span role="status" className="text-signal">{busy}</span>
@@ -119,8 +122,10 @@ export default function TownApp() {
         }, "Speaking")} />
     </div>
     <TracePanel traces={town.recentTraces} />
-    {actionOpen && <EventForm npcs={town.npcs} places={town.places ?? []} playerId={town.playerId ?? ""}
+    {actionOpen && isLive && <EventForm npcs={town.npcs} places={town.places ?? []} playerId={town.playerId ?? ""}
       busy={Boolean(busy)} onClose={() => setActionOpen(false)} onSubmit={(input) => void submit(input)} />}
+    <PlayerActionModal isOpen={actionOpen && !isLive} npcs={town.npcs} onClose={() => setActionOpen(false)}
+      onSubmitAction={(title, type, witness, place) => void run(() => hearsayClient.recordAction(title, type, witness, place, town), "Recording event")} />
     <ControlVsHearsayModal isOpen={compareOpen} playerId={town.playerId} npcId={selected.id} onClose={() => setCompareOpen(false)} />
   </div>;
 }

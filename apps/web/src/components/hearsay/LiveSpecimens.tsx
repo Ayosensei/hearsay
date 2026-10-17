@@ -8,6 +8,7 @@ import { DialoguePanel } from "../DialoguePanel";
 import { GraphPanel } from "../GraphPanel";
 import { ControlVsHearsayModal } from "../ControlVsHearsayModal";
 import { PLACES } from "../../lib/places";
+import { WhyCard } from "../WhyCard";
 
 export function LiveSpecimens() {
   const state = getInitialTownState();
@@ -26,6 +27,7 @@ export function LiveSpecimens() {
       <Button disabled>Recording…</Button><Button variant="ghost">Player B</Button>
     </div>
     <Input aria-label="Input specimen" placeholder="Item or detail" />
+    {state.activeProvenance && <WhyCard provenance={state.activeProvenance} targetNpcName="Garrick" onClose={() => {}} />}
     <p role="status" className="rounded-lg bg-surface-2 p-4 text-text-secondary">No path exists. Garrick has heard nothing about this.</p>
     <p role="alert" className="rounded-lg bg-surface-2 p-4 text-danger">DB_UNAVAILABLE: Start FalkorDB and retry.</p>
     {[[], state.activePathEdgeIds].map((highlight, index) => <div key={index} className="h-96 flex">

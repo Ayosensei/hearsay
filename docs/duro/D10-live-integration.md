@@ -30,3 +30,21 @@ temporary umbrella Radix dependency was removed. No new design, animation or ico
 API tests use the actual handler and real FalkorDB, including the complete two-tick gossip path,
 exact attitude and snapshot-matching explanation IDs. UI specimens are on `/styleguide` and
 screenshots are in `screens/D10-*.png`.
+
+## Browser verification
+
+Verified at 1440x900 on the actual Next server and local FalkorDB:
+
+- Record `stole / iron sword / forge / brom`: Brom becomes hostile; Garrick remains unaware.
+- Ask Garrick `I stole the iron sword. Did you hear?`: safe abstention, template source and passed firewall.
+- Explain before gossip: explicit `No path exists` state.
+- Advance once: Mira learns at 90%; Garrick remains unaware. Advance twice: Garrick is wary,
+  score -0.56 in the UI (exact backend score -0.562464), confidence 63%.
+- Explain after gossip: actual Brom → Mira → Garrick path at 100%, 90%, 63%, with Q61 provenance.
+- Player B: tick zero, no events or memories. Return/reload A: tick two and knowledge preserved.
+- Comparison: actual sayNaive/say replies, both accurately labeled template fallback.
+- Reset A: tick zero, all three NPCs neutral and unaware. Repeating the action/gossip flow succeeds.
+- Styleguide renders the new form, source/firewall metadata and graph states.
+
+The full workspace suite passes 136 tests. Production build passes with the existing dynamic
+seed-file tracing warning; no live Gemini or Cloud-browser result is claimed.
