@@ -19,7 +19,7 @@ export interface TraceStep {
 
 export type ToolEnvelope<T> =
   | { ok: true; data: T; trace: TraceStep[] }
-  | { ok: false; error: { code: string; message: string } };
+  | { ok: false; error: { code: string; message: string }; trace?: TraceStep[] };
 
 export interface RumorKnowledge {
   eventId: string;

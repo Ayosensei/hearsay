@@ -4,6 +4,8 @@ import { connectDatabase } from "@hearsay/core";
 import { TOOLS } from "@hearsay/contract";
 import { POST } from "../../app/api/tool/[name]/route";
 import { reconnectHearsay } from "../../server/hearsay";
+import { HttpHearsay } from "../http-client";
+import { LiveTownClient } from "../live-town";
 
 const playerId = `web_${randomUUID().replaceAll("-", "")}`;
 const call = async (name: string, input: unknown) => {
@@ -58,3 +60,28 @@ it("rejects unknown tools and invalid inputs before any graph operation", async 
     expect(result.body.trace).toEqual([]);
   }
 });
+
+it("loads the town adapter from real tool envelopes and preserves exact explanation edge IDs", async () => {
+  const transport: typeof fetch = async (input, init) => {
+    const url = new URL(String(input), "http://localhost");
+    const name = url.pathname.split("/").at(-1) ?? "";
+    return POST(new Request(url, init), { params: Promise.resolve({ name }) });
+  };
+  const client = new LiveTownClient(new HttpHearsay("/api/tool/", transport));
+  const loaded = await client.getTownState(playerId);
+  if (!loaded.ok) throw new Error(loaded.error.message);
+  const recorded = await client.recordEvent({ playerId, type: "stole", placeId: "forge", witnesses: ["brom"], subject: "iron sword" }, loaded.data);
+  if (!recorded.ok) throw new Error(recorded.error.message);
+  let state = recorded.data;
+  for (let tick = 0; tick < 2; tick++) {
+    const advanced = await client.advanceTime(state);
+    if (!advanced.ok) throw new Error(advanced.error.message);
+    state = advanced.data;
+  }
+  const why = await client.explainProvenance("garrick", state.events[0]?.id ?? "", state);
+  if (!why.ok) throw new Error(why.error.message);
+  expect(why.data?.hops.map((hop) => hop.confidence)).toEqual([1, 0.9, 0.63]);
+  expect(why.data?.edgeIds?.every((id) => state.graphEdges.some((edge) => edge.id === id))).toBe(true);
+  expect(state.npcs.find((npc) => npc.id === "garrick")?.attitudeScore).toBeCloseTo(-0.562464);
+  expect(state.graphNodes.some((node) => node.id === "NPC:brom")).toBe(true);
+}, 30000);
