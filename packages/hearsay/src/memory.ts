@@ -9,8 +9,16 @@ import {
   resolveNpcs,
   resolvePlace,
   resolvePlayer,
+  resolveEvent,
 } from "./memory-context";
-import { Q30_record_event, Q50_recall } from "./queries/memory";
+import {
+  Q30_record_event,
+  Q50_recall,
+  Q42_who_knows,
+  Q90_snapshot_nodes,
+  Q90_snapshot_edges,
+} from "./queries/memory";
+import { mapSnapshot } from "./snapshot-map";
 
 export function createMemory(db: Database, world = createWorld(db)) {
   const recordEvent = (input: ToolInput<"recordEvent">) =>
@@ -73,5 +81,56 @@ export function createMemory(db: Database, world = createWorld(db)) {
         return { status: items.length ? "known" : "not_in_graph", items };
       },
     );
-  return { recordEvent, recall };
+  const whoKnows = (input: ToolInput<"whoKnows">) =>
+    executeMemoryTool(
+      db,
+      "whoKnows",
+      TOOLS.whoKnows,
+      input,
+      async (scope, args) => {
+        const { graph } = await resolvePlayer(db, scope, args.playerId);
+        await resolveEvent(scope, graph, args.playerId, args.eventId);
+        scope.take(await world.ensureWorld());
+        const rows = await scope.ro(graph, "Q42_who_knows", Q42_who_knows, {
+          eid: args.eventId,
+        });
+        return {
+          witnesses: rows.filter((r) => r.via === "witness").map((r) => r.npc),
+          heardFrom: rows
+            .filter((r) => r.via != null && r.via !== "witness")
+            .map((r) => ({
+              npcId: r.npc,
+              from: r.via,
+              confidence: r.confidence,
+              hop: r.hop,
+            })),
+          unaware: rows.filter((r) => r.via == null).map((r) => r.npc),
+        };
+      },
+    );
+  const snapshot = (input: ToolInput<"snapshot">) =>
+    executeMemoryTool(
+      db,
+      "snapshot",
+      TOOLS.snapshot,
+      input,
+      async (scope, args) => {
+        const { graph, tick } = await resolvePlayer(db, scope, args.playerId);
+        if (args.focusEventId)
+          await resolveEvent(scope, graph, args.playerId, args.focusEventId);
+        scope.take(await world.ensureWorld());
+        const nodes = await scope.ro(
+          graph,
+          "Q90_snapshot_nodes",
+          Q90_snapshot_nodes,
+        );
+        const edges = await scope.ro(
+          graph,
+          "Q90_snapshot_edges",
+          Q90_snapshot_edges,
+        );
+        return { tick, ...mapSnapshot(nodes, edges) };
+      },
+    );
+  return { recordEvent, recall, whoKnows, snapshot };
 }
