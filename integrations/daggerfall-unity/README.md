@@ -53,6 +53,12 @@ This initial profile is per test installation, not per native Daggerfall save. U
 
 Checks: `pnpm exec tsx --test integrations/daggerfall-unity/prepare.test.mts` and `pnpm exec tsc --noEmit --module esnext --moduleResolution bundler --target es2022 --strict --esModuleInterop --skipLibCheck --allowImportingTsExtensions integrations/daggerfall-unity/prepare.mts integrations/daggerfall-unity/prepare.test.mts`. The preparation tests use explicitly synthetic binding names and no database; actual core integration tests require a live FalkorDB.
 
+## Live backend smoke evidence
+
+`backend-smoke.mts` passed against live FalkorDB through an actual local HTTP server on October 17, 2026. It checked bearer authentication (unauthenticated requests return 401), prepared NPC names, player creation, event recording, initial absence of knowledge, two gossip steps, recall at confidence 0.63, the Brom → Mira → Garrick explanation chain, and template dialogue grounded in that event. It removed and verified removal of its own unique player and template graphs afterward. The safe result is recorded in `docs/goodness/daggerfall-backend-results.json`.
+
+Reproduce with `pnpm exec tsx integrations/daggerfall-unity/backend-smoke.mts <private-connection.env> <result.json>`. This deliberately uses synthetic NPC bindings and a synthetic event. It proves the backend path, not Unity crime capture, actual game bindings, bundle loading, or live Gemini generation. The full repository suite still needs its local Docker database.
+
 ## Sources
 
 - [Official game repository](https://github.com/Interkarma/daggerfall-unity)
