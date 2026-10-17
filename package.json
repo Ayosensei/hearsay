@@ -2,13 +2,20 @@
   "name": "hearsay",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
+  },
+  "packageManager": "pnpm@11.14.0",
   "scripts": {
-    "dev": "pnpm --filter web dev",
+    "dev": "pnpm --filter web dev --port 3001",
     "build": "pnpm --filter web build",
     "typecheck": "pnpm -r typecheck",
     "check:design": "pnpm --filter web check:design",
     "test": "pnpm -r --if-present test",
-    "lint": "pnpm -r --if-present lint"
+    "lint": "pnpm -r --if-present lint",
+    "mcp": "pnpm --filter @hearsay/mcp start",
+    "loadtest": "node scripts/pending-task.mjs G10",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "devDependencies": {
     "prettier": "^3.5.0",

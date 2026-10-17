@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+pnpm -s typecheck
+if git diff --cached --name-only | grep -q '^apps/web/'; then
+  pnpm -s check:design
+fi
+if git diff --cached --name-only | grep -qx 'DESIGN.md'; then
+  npx -y @google/design.md lint DESIGN.md
+fi
+# Inspect added assignments only; blank examples and removed keys are safe.
+if git diff --cached -U0 | grep -E '^\+[^+].*AIza[0-9A-Za-z_-]{20,}|^\+(export )?(FALKORDB_PASSWORD|GEMINI_API_KEY)=[^[:space:]]+' >/dev/null; then
+  echo "Possible secret staged. Remove it and use .env."
+  exit 1
+fi
