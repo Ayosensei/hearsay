@@ -7,12 +7,16 @@ export class WorldFailure extends Error {
     super(error.message);
   }
 }
-export function createScope(db: Database, tool: string) {
+export function createScope(
+  db: Database,
+  tool: string,
+  agent: TraceStep["agent"] = "system",
+) {
   const trace: TraceStep[] = [];
   const record = (steps: TraceStep[]) =>
     trace.push(
       ...steps.map((step) =>
-        step.tool === "database" ? { ...step, tool } : step,
+        step.tool === "database" ? { ...step, tool, agent } : step,
       ),
     );
   function take<T>(result: Envelope<T>): T {
@@ -20,7 +24,7 @@ export function createScope(db: Database, tool: string) {
     if (!result.ok) throw new WorldFailure(result.error);
     return result.data;
   }
-  const context = { agent: "system", tool } as const;
+  const context = { agent, tool };
   return {
     trace,
     record,
@@ -45,8 +49,9 @@ export async function worldOperation<T>(
   db: Database,
   tool: string,
   work: (scope: WorldScope) => Promise<T>,
+  agent: TraceStep["agent"] = "system",
 ): Promise<Envelope<T>> {
-  const scope = createScope(db, tool);
+  const scope = createScope(db, tool, agent);
   try {
     return { ok: true, data: await work(scope), trace: scope.trace };
   } catch (error) {
