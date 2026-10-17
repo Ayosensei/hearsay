@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+msg=$(head -n1 "$1")
+case "$msg" in Merge*|Revert*) exit 0 ;; esac
+if [ "${#msg}" -gt 72 ] || ! printf '%s\n' "$msg" | grep -Eq '^(contract|hearsay|mcp|web|seed|docs|infra|loadtest|chore|wip)\([A-Za-z0-9_.-]+\): .{3,}$'; then
+  echo "Commit message must be area(task): summary, at most 72 characters."
+  exit 1
+fi
