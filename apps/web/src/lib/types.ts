@@ -11,7 +11,7 @@ export type EventType = "harm" | "help";
 export interface TraceStep {
   agent: AgentType;
   tool: string;
-  queryId: string;
+  queryId?: string;
   args: Record<string, unknown>;
   rows: number;
   ms: number;
@@ -19,7 +19,7 @@ export interface TraceStep {
 
 export type ToolEnvelope<T> =
   | { ok: true; data: T; trace: TraceStep[] }
-  | { ok: false; error: { code: string; message: string } };
+  | { ok: false; error: { code: string; message: string }; trace?: TraceStep[] };
 
 export interface RumorKnowledge {
   eventId: string;
@@ -69,7 +69,7 @@ export interface GraphEdge {
   id: string;
   source: string;
   target: string;
-  type: "TRUSTS" | "WITNESSED" | "HEARD";
+  type: "TRUSTS" | "WITNESSED" | "HEARD" | "KNOWS" | "TOLD" | "PERFORMED" | "HAPPENED_AT" | "MEMBER_OF" | "BELIEVES" | "FOLLOWS" | "ALLIED_WITH" | "HOSTILE_TO";
   weight?: number;
   confidence?: number;
 }
@@ -86,6 +86,7 @@ export interface ProvenanceHop {
 }
 
 export interface ProvenanceChain {
+  edgeIds?: string[];
   eventId: string;
   eventTitle: string;
   eventType: EventType;
@@ -97,6 +98,9 @@ export interface ProvenanceChain {
 }
 
 export interface DialogueMessage {
+  source?: "llm" | "template_fallback";
+  firewall?: { passed: boolean; violations: string[] };
+  conversationId?: string;
   id: string;
   sender: "player" | "npc";
   npcId?: string;
@@ -118,6 +122,8 @@ export interface TownEvent {
 }
 
 export interface TownState {
+  playerId?: string;
+  places?: { id: string; name: string }[];
   tick: number;
   selectedNpcId: string;
   npcs: NPC[];

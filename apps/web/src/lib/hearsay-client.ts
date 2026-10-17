@@ -6,6 +6,9 @@ import {
 } from "./types";
 import { getInitialTownState } from "./mock-data";
 import { advanceSimulationTick, recordPlayerAction, sendMockDialogue } from "./mock-engine";
+import { HttpHearsay } from "./http-client";
+import { LiveTownClient } from "./live-town";
+import { isLive } from "./engine-mode";
 
 export interface IHearsayClient {
   getTownState(): Promise<ToolEnvelope<TownState>>;
@@ -102,4 +105,5 @@ export class MockHearsayClient implements IHearsayClient {
 }
 
 // Singleton export based on env (mock mode by default)
-export const hearsayClient: IHearsayClient = new MockHearsayClient();
+export const liveTown = new LiveTownClient(new HttpHearsay());
+export const hearsayClient: IHearsayClient = isLive ? liveTown : new MockHearsayClient();

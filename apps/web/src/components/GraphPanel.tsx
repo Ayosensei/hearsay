@@ -117,7 +117,7 @@ export function GraphPanel({
                     y2={y2}
                     stroke="var(--color-border-strong)"
                     strokeWidth={1.5}
-                    strokeDasharray={edge.type === "WITNESSED" ? "4 4" : undefined}
+                    strokeDasharray={edge.type === "WITNESSED" || edge.type === "KNOWS" ? "4 4" : undefined}
                   />
                 )}
 
@@ -192,8 +192,9 @@ export function GraphPanel({
 
           {/* Nodes */}
           {nodes.map((node) => {
-            const isSelected = node.id === selectedNpcId;
-            const isWitness = node.id === activeWitnessId;
+            const npcId = node.id.startsWith("NPC:") ? node.id.slice(4) : node.id;
+            const isSelected = npcId === selectedNpcId;
+            const isWitness = npcId === activeWitnessId;
             const x = node.x || 0;
             const y = node.y || 0;
             const isEvent = node.type === "event";
@@ -203,6 +204,10 @@ export function GraphPanel({
 
             const nodeOpacity = isHighlightMode && !isInActivePath ? "opacity-30" : "opacity-100";
 
+            if (node.type === "player") return <g key={node.id} transform={`translate(${x}, ${y})`}>
+              <circle r="6" fill="var(--color-primary)" />
+              <text y="20" textAnchor="middle" fill="var(--color-text-secondary)" className="font-mono text-xs">Player</text>
+            </g>;
             if (isEvent) {
               const isHelp = node.eventType === "help";
               return (
@@ -259,11 +264,11 @@ export function GraphPanel({
                 tabIndex={0}
                 aria-label={`Select ${node.label}`}
                 aria-pressed={isSelected}
-                onClick={() => onSelectNode(node.id)}
+                onClick={() => node.type === "npc" && onSelectNode(npcId)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    onSelectNode(node.id);
+                    if (node.type === "npc") onSelectNode(npcId);
                   }
                 }}
                 className={`cursor-pointer group transition-opacity duration-320 ${nodeOpacity}`}

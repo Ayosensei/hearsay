@@ -4,6 +4,16 @@
 Hackathon: Graph Hacks (Track 02: Agent Memory & Coordination)  
 Target: Win. Correctness, explainability, and adherence to `DESIGN.md`.
 
+## D10 live integration — 2026-10-17
+
+The town now defaults to real `/api/tool/{name}` calls through a contract-validating HTTP client.
+The route reuses the core engine and a server-only database connection; credentials never reach
+the browser. NPCs, places, events, confidence and attitude scores come from the graph. Why? uses
+the actual explain path and snapshot edge IDs. Advance Time, explicit event types, template/LLM
+metadata, player A/B isolation and player reset are connected. Comparison calls sayNaive and say.
+The current production seed has three NPCs; six-NPC content remains R-003. No live Gemini pass
+is claimed without a configured key/model. See `D10-live-integration.md` for verification.
+
 ---
 
 ## 1. Overview of Delivered Frontend Scope
