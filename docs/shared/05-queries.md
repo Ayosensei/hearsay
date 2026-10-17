@@ -1,6 +1,6 @@
 # 05 — Queries (Goodness owns)
 
-Every query used by the product, with an id, purpose and parameters. These are the queries the hackathon submission must list. Mirror them in the repo's `queries/` folder (one `.cypher` file per query, plus a one-line comment).
+Every query used by the product, with an id, purpose and parameters. These are the queries the hackathon submission must list. G12 generates exact production text into `queries/*.cypher` and a source/hash manifest. Run `pnpm queries:generate` then `pnpm queries:check`. Test-only queries and duplicate reexports are excluded. Source constants remain the implementation authority; generated files verify precise final syntax. See `docs/goodness/G12-judge-notes.md` for Q40/Q41/Q61 explanations and evidence limits.
 
 ## Read this before writing any query
 
@@ -201,6 +201,7 @@ RETURN pol.markup AS markup, pol.minMarkup AS minMarkup, pol.maxMarkup AS maxMar
 **Q81_policy_update** — new markup computed in TypeScript (see `06-behaviour-specs.md`).
 ```
 MATCH (n:NPC {id: $nid})-[f:FOLLOWS]->(pol:Policy {id: $polId})
+WHERE abs(pol.markup-$previousMarkup)<0.000000001 AND f.tries=$previousTries AND f.wins=$previousWins
 SET pol.markup = $markup, f.tries = f.tries + 1, f.wins = f.wins + $winInc
 RETURN pol.markup AS markup, f.tries AS tries, f.wins AS wins
 ```
