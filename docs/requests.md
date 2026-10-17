@@ -27,3 +27,9 @@ Why: existing web `@types/node` 20.19.43 does not satisfy Vitest 5.0.4's peer ra
 Proposed change: update the web-owned Node types to the Node 24 line and regenerate the root lockfile. G1 documents the actual runtime requirement rather than promising Node 20 support.
 Needed by: clean dependency audit before submission.
 Resolution: pending DuroT's dependency change.
+
+## R-003 [open] Goodness -> DuroT: replace the temporary G3 seed with D1 content
+Why: no `seed/hollowbrook.json` was delivered at G3 start. G3 explicitly permits a three-NPC stub, now provided with Brom, Mira and Garrick.
+Proposed change: deliver the complete six-NPC seed, facts, policies and voices using `docs/shared/03-graph-model.md`. The loader validates the same format; no loader edits should be needed. Existing graph copies are intentionally not overwritten when the file changes; coordinate publishing the complete template before integration.
+Needed by: G5's full six-NPC production golden path and UI integration.
+Resolution: pending DuroT's D1 content.
