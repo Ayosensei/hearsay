@@ -102,3 +102,5 @@ house, butcher shop and fishing dock. Both backgrounds exclude people and labels
   search by `fisherman` returned Silas and opened his details.
 - Tested 1440x900 desktop and 390x844 mobile. The mobile district selector stays
   fixed while the panorama scrolls. Screenshots are in `docs/duro/screens/expanded-*`.
+- `pnpm build` succeeds. The existing core seed loader still emits the known
+  dynamic-filesystem tracing warning; no build error or new dependency was added.
