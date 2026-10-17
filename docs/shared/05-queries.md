@@ -340,4 +340,3 @@ Conversation/Utterance IDs are application-generated UUID strings. Per-conversat
 ## G13 control implementation
 
 Q98 is now active in `queries/naive.ts`: all player events, ordered by tick and application event ID, with no NPC knowledge filter. Q99 additionally returns `e.type AS type` so control leak measurement can report event types; guarded dialogue still keeps this server-only input out of its prompt. Both use read-only queries and bound parameters. The control writes no conversation data and is not registered in MCP. `pnpm queries:generate` now emits 49 source/hash-checked mirrors, including Q98.
-
