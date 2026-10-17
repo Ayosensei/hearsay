@@ -39,3 +39,9 @@ Why: the unchanged scoring formula yields Garrick -0.562464 and Brom -0.7632 at 
 Proposed change: retain the authoritative formula and contract; correct the behavior example to exact values and test those values with numeric tolerance.
 Needed by: G6 scoring implementation.
 Resolution: implemented within Goodness's G6 scope and explained in chat. Garrick remains wary; Brom remains hostile. No formula or schema change.
+
+## R-005 [open] Goodness -> DuroT: complete G11 Cloud/app smoke
+Why: local clean-restart persistence and isolated template self-healing pass, but no Cloud endpoint/credentials or live website integration are configured in this workspace. A local check cannot establish Cloud behavior.
+Proposed change: configure the free Cloud instance through private environment settings, connect the live app/core to it and verify ensureWorld reseeds a fresh empty instance. Use synthetic disposable data and do not wipe another user's graphs. Record actual result and cleanup; never commit credentials.
+Needed by: final external validation of G11.
+Resolution: pending endpoint/access and DuroT's live integration. Local evidence is in G11-results.json; the overall G11 acceptance remains partial.
