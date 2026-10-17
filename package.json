@@ -14,6 +14,7 @@
     "test": "pnpm -r --if-present test",
     "lint": "pnpm -r --if-present lint",
     "mcp": "pnpm --filter @hearsay/mcp start",
+    "cli": "tsx packages/cli/src/index.ts",
     "loadtest": "tsx --env-file-if-exists=.env loadtest/run.ts",
     "queries:generate": "node scripts/query-mirror.mjs",
     "queries:check": "node scripts/query-mirror.mjs --check",
