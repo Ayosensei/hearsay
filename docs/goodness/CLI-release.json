@@ -1,0 +1,20 @@
+{
+  "package": "@goodynessdev/hearsay",
+  "version": "0.1.0",
+  "license": "MIT",
+  "npmUserVerified": "goodynessdev",
+  "status": "blocked_by_npm_2fa",
+  "publishAttemptDate": "2026-10-17",
+  "publishErrorCode": "E403",
+  "publishErrorReason": "Two-factor authentication or authorized bypass token required",
+  "registryVersionLookup": "404 after rejected publish",
+  "archiveShasum": "19ccc1659ff503a5a9ab6e59284beec9a819223c",
+  "archiveFiles": ["package.json", "README.md", "LICENSE", "dist/cli.mjs", "dist/world.json"],
+  "freshCacheArchiveNpxVersion": "0.1.0",
+  "publishDryRun": "passed",
+  "currentTypecheck": "passed",
+  "queryMirrors": 49,
+  "lastPassingFullSuiteTests": 133,
+  "freshDatabaseSuite": "not run: Docker Linux engine unavailable",
+  "publicRegistryNpx": "not run: package not published"
+}

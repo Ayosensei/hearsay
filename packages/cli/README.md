@@ -2,7 +2,21 @@
 
 Run the real Hearsay memory engine from a game project's directory: initialize a world, call tools, serve a local HTTP API or expose MCP.
 
-**Publication status:** this package is not published. The unscoped npm name `hearsay` already belongs to an unrelated library. The owner selected `@goodynessdev/hearsay` and the MIT license; npm authentication is pending. `private:true` currently prevents accidental publication.
+The npm package is **`@goodynessdev/hearsay`**, licensed under MIT. The unscoped npm name `hearsay` belongs to an unrelated library; use the scoped command below.
+
+## Quick start
+
+Run these commands in your game project's directory:
+
+```powershell
+npx @goodynessdev/hearsay init
+docker compose -f hearsay.compose.yml up -d
+npx @goodynessdev/hearsay doctor
+npx @goodynessdev/hearsay call getWorld
+npx @goodynessdev/hearsay serve
+```
+
+You can use an existing FalkorDB instance instead of starting the generated Docker service. Configure its settings privately in `.env.hearsay.local`.
 
 ## Requirements
 
@@ -24,7 +38,7 @@ The initializer creates `hearsay.config.json`, `hearsay/world.json`, `hearsay.co
 
 From the Hearsay repository, add `--project C:/path/to/my-game` to subsequent `pnpm cli` commands. An installed `hearsay` command uses the current directory by default.
 
-## Try the actual package before npm publication
+## Test a local release archive
 
 ```powershell
 # In packages/cli; prepack builds the standalone executable and includes its starter world
@@ -37,7 +51,7 @@ npx --yes --package C:/path/to/goodynessdev-hearsay-0.1.0.tgz hearsay doctor
 
 You can also install the archive as a development dependency, then use `npx hearsay`. Do not run plain `npx hearsay` before installing our archive: npm would fetch the unrelated public package.
 
-After publication, the command will be `npx @goodynessdev/hearsay init`. This command is not available publicly yet.
+For reproducible installs, pin the version: `npx @goodynessdev/hearsay@0.1.0 init`. To pass flags like `--version` to Hearsay rather than npm, use `npx -- @goodynessdev/hearsay@0.1.0 --version`.
 
 ## Commands
 
