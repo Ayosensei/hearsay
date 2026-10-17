@@ -13,8 +13,8 @@ import {
  * exercised against realistic behaviour until packages/hearsay is wired in.
  */
 
-/** Rumors weaker than this are not worth repeating (mirrors the gossip cutoff). */
-export const MIN_CONFIDENCE = 0.5;
+/** Rumors weaker than this are not worth repeating (mirrors the contract minCredibility cutoff). */
+export const MIN_CONFIDENCE = 0.25;
 
 /** How strongly a freshly heard rumor moves an attitude (confidence x this). */
 export const ATTITUDE_SHIFT = 0.7;
@@ -64,8 +64,14 @@ export function syncNodeAttitudes(nodes: GraphNode[], npcs: NPC[]): GraphNode[] 
   });
 }
 
-function trustWeight(edges: GraphEdge[], from: string, to: string): number {
-  const edge = edges.find((e) => e.type === "TRUSTS" && e.source === from && e.target === to);
+function trustWeight(edges: GraphEdge[], tellerId: string, listenerId: string): number {
+  // In the contract graph: (listener)-[:TRUSTS {weight}]->(teller). Listener trusts teller.
+  const edge = edges.find(
+    (e) =>
+      e.type === "TRUSTS" &&
+      ((e.source === listenerId && e.target === tellerId) ||
+       (e.source === tellerId && e.target === listenerId))
+  );
   return edge?.weight ?? 1;
 }
 
@@ -108,9 +114,13 @@ export function buildProvenance(
 
 /** TRUSTS edges that connect consecutive hops, for highlighting the path in the graph. */
 export function edgeIdsForPath(path: string[], edges: GraphEdge[]): string[] {
-  return path.slice(1).flatMap((to, i) => {
+  return path.slice(1).flatMap((listenerId, i) => {
+    const tellerId = path[i];
     const edge = edges.find(
-      (e) => e.type === "TRUSTS" && e.source === path[i] && e.target === to
+      (e) =>
+        e.type === "TRUSTS" &&
+        ((e.source === listenerId && e.target === tellerId) ||
+         (e.source === tellerId && e.target === listenerId))
     );
     return edge ? [edge.id] : [];
   });
@@ -128,7 +138,7 @@ export interface Spread {
 /**
  * One gossip tick. Tellers speak from their pre-tick knowledge (one hop per tick);
  * each hop multiplies confidence by the TRUSTS weight and drops anything under
- * MIN_CONFIDENCE. A listener keeps the strongest version of each event.
+ * MIN_CONFIDENCE (0.25). A listener keeps the strongest version of each event.
  */
 export function propagate(npcs: NPC[], edges: GraphEdge[]): { npcs: NPC[]; spreads: Spread[] } {
   const next = npcs.map((n) => ({ ...n, rumors: [...n.rumors] }));
@@ -136,8 +146,10 @@ export function propagate(npcs: NPC[], edges: GraphEdge[]): { npcs: NPC[]; sprea
 
   for (const edge of edges) {
     if (edge.type !== "TRUSTS" || edge.weight === undefined) continue;
-    const teller = npcs.find((n) => n.id === edge.source);
-    const listener = next.find((n) => n.id === edge.target);
+    // Canonical edge is (listener)-[:TRUSTS]->(teller).
+    // The listener trusts teller, so the teller shares gossip with the listener.
+    const listener = next.find((n) => n.id === edge.source);
+    const teller = npcs.find((n) => n.id === edge.target);
     if (!teller || !listener) continue;
 
     for (const rumor of teller.rumors) {

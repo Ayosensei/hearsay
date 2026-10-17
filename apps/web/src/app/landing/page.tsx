@@ -24,14 +24,14 @@ const INTEGRATION_SNIPPET: CodeLine[] = [
   [["const ", "kw"], ["hearsay = ", "text"], ["await ", "kw"], ["openWorld({ player: ", "text"], ['"042"', "str"], [" });", "text"]],
   [],
   [["// 2. The player does something in front of a witness", "cmt"]],
-  [["await ", "kw"], ["hearsay.recordAction({ witness: ", "text"], ['"bartholomew"', "str"], [", kind: ", "text"], ['"help"', "str"], [" });", "text"]],
+  [["await ", "kw"], ["hearsay.recordAction({ witness: ", "text"], ['"brom"', "str"], [", kind: ", "text"], ['"help"', "str"], [" });", "text"]],
   [],
   [["// 3. Time passes: rumors travel along TRUSTS edges", "cmt"]],
   [["await ", "kw"], ["hearsay.advanceTime();", "text"]],
   [],
   [["// 4. The NPC answers from what it knows, and can say why", "cmt"]],
   [["const ", "kw"], ["reply = ", "text"], ["await ", "kw"], ["hearsay.talk({ npc: ", "text"], ['"garrick"', "str"], [" });", "text"]],
-  [["const ", "kw"], ["why = ", "text"], ["await ", "kw"], ["hearsay.explain(reply.id); ", "text"], ["// Martha → Garrick (0.85)", "cmt"]],
+  [["const ", "kw"], ["why = ", "text"], ["await ", "kw"], ["hearsay.explain(reply.id); ", "text"], ["// Brom → Mira → Garrick (0.63)", "cmt"]],
 ];
 
 export default function LandingPage() {
@@ -119,7 +119,7 @@ export default function LandingPage() {
         {/* Facts that hold by construction (AGENTS.md hard rules), not benchmarks */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl">
           <div className="p-4 rounded-xl bg-surface-1 border border-border/80 flex flex-col items-center">
-            <span className="font-mono text-2xl font-bold text-text-primary tabular-nums">5</span>
+            <span className="font-mono text-2xl font-bold text-text-primary tabular-nums">6</span>
             <span className="text-xs text-text-tertiary mt-1">NPCs in Hollowbrook</span>
           </div>
           <div className="p-4 rounded-xl bg-surface-1 border border-border/80 flex flex-col items-center">
@@ -144,7 +144,7 @@ export default function LandingPage() {
               <span className="h-2.5 w-2.5 rounded-full bg-danger/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-gold/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-success/80" />
-              <span className="ml-3 text-text-secondary">hearsay-inspector • Hollowbrook (5 NPCs)</span>
+              <span className="ml-3 text-text-secondary">hearsay-inspector • Hollowbrook (6 NPCs)</span>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-signal">mock engine</span>
@@ -160,16 +160,16 @@ export default function LandingPage() {
             <div className="p-4 rounded-lg bg-surface-2 border border-border/60 flex flex-col gap-3">
               <div className="flex items-center justify-between text-xs font-mono text-text-tertiary">
                 <span>NPC DIRECTORY</span>
-                <span className="text-signal">5 Active</span>
+                <span className="text-signal">6 Active</span>
               </div>
               <div className="p-2.5 rounded-md bg-surface-3 border border-signal/40 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-surface-2 flex items-center justify-center font-mono text-xs font-bold text-signal">
-                    MF
+                    B
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-text-primary">Martha Finch</div>
-                    <div className="text-xs text-text-tertiary">Tavernkeeper</div>
+                    <div className="text-xs font-semibold text-text-primary">Brom</div>
+                    <div className="text-xs text-text-tertiary">Blacksmith</div>
                   </div>
                 </div>
                 <span className="text-xs font-mono text-gold px-1.5 py-0.5 rounded bg-surface-2">
@@ -179,11 +179,11 @@ export default function LandingPage() {
               <div className="p-2.5 rounded-md bg-surface-2 border border-border/40 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-surface-3 flex items-center justify-center font-mono text-xs font-bold text-text-secondary">
-                    GV
+                    M
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-text-primary">Garrick Vance</div>
-                    <div className="text-xs text-text-tertiary">Blacksmith</div>
+                    <div className="text-xs font-semibold text-text-primary">Mira</div>
+                    <div className="text-xs text-text-tertiary">Tavernkeeper</div>
                   </div>
                 </div>
                 <span className="text-xs font-mono text-signal px-1.5 py-0.5 rounded bg-surface-3">
@@ -193,10 +193,10 @@ export default function LandingPage() {
               <div className="p-2.5 rounded-md bg-surface-2 border border-border/40 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-surface-3 flex items-center justify-center font-mono text-xs font-bold text-text-secondary">
-                    CV
+                    G
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-text-primary">Captain Vane</div>
+                    <div className="text-xs font-semibold text-text-primary">Garrick</div>
                     <div className="text-xs text-text-tertiary">Town Guard</div>
                   </div>
                 </div>
@@ -218,18 +218,20 @@ export default function LandingPage() {
                 </h3>
                 <div className="mt-4 p-3 rounded-md bg-surface-3 border border-border flex items-center justify-between font-mono text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="text-gold font-bold">Martha</span>
+                    <span className="text-gold font-bold">Brom</span>
+                    <span className="text-text-tertiary">→</span>
+                    <span className="text-signal font-bold">Mira</span>
                     <span className="text-text-tertiary">→</span>
                     <span className="text-signal font-bold">Garrick</span>
                   </div>
-                  <span className="text-gold tabular-nums">Conf: 0.85</span>
+                  <span className="text-gold tabular-nums">Conf: 0.63</span>
                 </div>
                 <p className="mt-3 text-xs text-text-secondary leading-relaxed">
-                  1.00 × 0.85 trust on the TRUSTS edge. Event: &ldquo;Theft of the Sun-Stone Relic&rdquo;.
+                  1.00 × 0.90 × 0.70 trust along the TRUSTS edges. Event: &ldquo;Poison Guard Well&rdquo;.
                 </p>
               </div>
               <div className="pt-3 border-t border-border flex items-center justify-between text-xs font-mono text-text-tertiary">
-                <span>Decay: -15%</span>
+                <span>Decay: -37%</span>
                 <span className="text-success">Verified Graph Path</span>
               </div>
             </div>
@@ -242,10 +244,10 @@ export default function LandingPage() {
                   <span>KNOWLEDGE FIREWALL</span>
                 </div>
                 <div className="p-2.5 rounded bg-surface-3 text-xs text-text-secondary leading-relaxed font-sans italic border-l-2 border-signal">
-                  &ldquo;Martha told me someone slipped out of the vault with the relic. If it was you, keep your hands off my forge tools.&rdquo;
+                  &ldquo;Brom told me someone was spotted near the barracks. If it was you, keep your hands off my forge tools.&rdquo;
                 </div>
                 <div className="mt-3 text-xs text-text-tertiary font-mono">
-                  <span className="text-text-primary font-semibold">LLM prompt:</span> only what Garrick knows. Captain Vane has heard nothing yet, so he cannot mention it.
+                  <span className="text-text-primary font-semibold">LLM prompt:</span> only what Garrick knows. Fenn has heard nothing yet, so he cannot mention it.
                 </div>
               </div>
               <div className="pt-3 border-t border-border">
@@ -320,7 +322,7 @@ export default function LandingPage() {
                   <span className="block mt-2 font-mono text-xs text-text-primary bg-surface-3 p-2 rounded">
                     c_hop = c_prev × w_trust
                   </span>
-                  Anything that fades below 0.50 stops spreading.
+                  Anything that fades below 0.25 stops spreading.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-border flex items-center gap-2 text-xs font-mono text-text-tertiary">
@@ -492,7 +494,7 @@ export default function LandingPage() {
             Step into <span className="italic text-signal">Hollowbrook</span>.
           </h2>
           <p className="mt-4 text-base text-text-secondary max-w-xl mx-auto">
-            Interact with the live 5-NPC graph, commit deeds, advance simulation ticks, and audit the Why? provenance card in real-time.
+            Interact with the live 6-NPC graph, commit deeds, advance simulation ticks, and audit the Why? provenance card in real-time.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">

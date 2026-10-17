@@ -138,7 +138,7 @@ export default function StyleguidePage() {
           <div className="border-t border-border pt-4">
             <span className="font-mono text-xs text-text-tertiary block mb-1">Geist Sans (UI & Dialogue)</span>
             <p className="text-sm text-text-secondary max-w-2xl leading-relaxed">
-              &quot;I didn&apos;t see anything myself, but Martha told me the player was spotted outside the tavern at midnight.&quot;
+              &quot;I didn&apos;t see anything myself, but Mira told me the player was spotted outside the inn at midnight.&quot;
             </p>
           </div>
 
@@ -191,7 +191,7 @@ export default function StyleguidePage() {
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-3 text-xs text-signal border border-signal/30">
               <Ear className="h-3 w-3" />
-              <span>Heard via Martha (0.63)</span>
+              <span>Heard via Mira (0.63)</span>
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-3 text-xs text-gold border border-gold/30">
               <Eye className="h-3 w-3" />
@@ -231,14 +231,14 @@ export default function StyleguidePage() {
               >
                 <div className="flex items-center gap-3">
                   <div className={`h-11 w-11 rounded-full bg-surface-3 border-2 ${f.border} flex items-center justify-center font-serif text-lg text-text-primary relative`}>
-                    {i === 0 ? "G" : i === 1 ? "M" : "B"}
+                    {i === 0 ? "B" : i === 1 ? "G" : "T"}
                     {i === 0 && (
                       <div className="absolute -inset-0.5 rounded-full chrome-ring opacity-90 -z-10" />
                     )}
                   </div>
                   <div>
                     <h3 className="font-sans font-semibold text-text-primary text-sm">
-                      {i === 0 ? "Garrick Vance" : i === 1 ? "Martha Finch" : "Bartholomew"}
+                      {i === 0 ? "Brom" : i === 1 ? "Garrick" : "Tilda"}
                     </h3>
                     <span className="text-xs text-text-tertiary">{f.name}</span>
                   </div>
@@ -277,7 +277,7 @@ export default function StyleguidePage() {
             <div className="flex items-center justify-between p-2 rounded-md bg-surface-2 text-text-secondary border border-border/40">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-agent-scribe" />
-                <span className="text-text-primary font-medium">Q12_explain_provenance</span>
+                <span className="text-text-primary font-medium">Q60_explain_knows</span>
                 <span className="text-text-tertiary">[event: &quot;theft_relic&quot;]</span>
               </div>
               <div className="flex items-center gap-4 tabular-nums">
@@ -305,7 +305,7 @@ export default function StyleguidePage() {
                 <span>FalkorDB Provenance Trace</span>
               </div>
               <h2 className="font-serif text-3xl text-text-primary tracking-tight">
-                How Garrick Vance <em className="italic text-signal font-serif">learned</em> about it
+                How Garrick <em className="italic text-signal font-serif">learned</em> about it
               </h2>
               <p className="text-xs text-text-secondary mt-1">
                 Topic: <span className="text-text-primary font-medium">Theft of the Sun-Stone Relic</span>
@@ -320,32 +320,32 @@ export default function StyleguidePage() {
                 <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-gold text-on-gold flex items-center justify-center">
                   <Eye className="h-2.5 w-2.5" strokeWidth={2.5} />
                 </div>
-                MF
+                B
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-sans font-semibold text-xs text-text-primary">Martha Finch</span>
+                  <span className="font-sans font-semibold text-xs text-text-primary">Brom</span>
                   <span className="font-mono text-xs text-gold uppercase tracking-wider font-semibold">[Origin]</span>
                 </div>
-                <span className="text-xs text-text-tertiary block">Tavernkeeper</span>
+                <span className="text-xs text-text-tertiary block">Blacksmith</span>
                 <span className="text-xs font-mono text-gold font-semibold">100% confidence</span>
               </div>
             </div>
 
             <div className="flex flex-col items-center gap-0.5 px-1">
-              <span className="font-mono text-xs text-text-tertiary tabular-nums">×0.85</span>
+              <span className="font-mono text-xs text-text-tertiary tabular-nums">×0.90</span>
               <ArrowRight className="h-4 w-4 text-signal translate-x-px" />
             </div>
 
             {/* Step 2: Listener */}
             <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-3 border border-signal/50">
               <div className="h-10 w-10 rounded-full bg-surface-1 text-text-primary border border-border flex items-center justify-center font-serif text-sm font-semibold shrink-0">
-                GV
+                M
               </div>
               <div>
-                <span className="font-sans font-semibold text-xs text-text-primary block">Garrick Vance</span>
-                <span className="text-xs text-text-tertiary block">Blacksmith</span>
-                <span className="text-xs font-mono text-signal font-semibold">85% confidence</span>
+                <span className="font-sans font-semibold text-xs text-text-primary block">Mira</span>
+                <span className="text-xs text-text-tertiary block">Tavernkeeper</span>
+                <span className="text-xs font-mono text-signal font-semibold">90% confidence</span>
               </div>
             </div>
           </div>
@@ -355,7 +355,7 @@ export default function StyleguidePage() {
               <Shield className="h-3.5 w-3.5" />
               <span>Eyewitness Provenance Verified</span>
             </span>
-            <span className="text-signal">Graph Path: Q12_explain_provenance</span>
+            <span className="text-signal">Graph Path: Q60_explain_knows</span>
           </div>
         </div>
       </section>
@@ -379,14 +379,14 @@ export default function StyleguidePage() {
           {/* NPC message with Why trigger */}
           <div className="flex flex-col items-start">
             <div className="max-w-xs rounded-xl rounded-bl-xs p-3 text-xs bg-surface-2 text-text-primary border-l-2 border-l-faction-townsfolk card-elevation">
-              <p>Martha told me someone was spotted fleeing the vault with the relic. Keep your hands off my forge.</p>
+              <p>Mira told me someone was spotted at the forge. Keep your hands off my anvil.</p>
               <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-3 text-xs font-mono text-gold border border-gold/40">
                 <Eye className="h-3 w-3 text-gold" />
                 <span>Why do you know this?</span>
                 <Sparkles className="h-2.5 w-2.5 text-signal" />
               </div>
             </div>
-            <span className="mt-1 px-1 text-xs font-mono text-text-tertiary">Garrick Vance · Graph-grounded</span>
+            <span className="mt-1 px-1 text-xs font-mono text-text-tertiary">Garrick · Graph-grounded</span>
           </div>
         </div>
       </section>

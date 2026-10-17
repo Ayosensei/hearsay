@@ -10,97 +10,128 @@ import {
 } from "./types";
 import { buildProvenance, deriveNpc, edgeIdsForPath } from "./gossip";
 
-/** Synthetic Hollowbrook fixtures. Behaviour lives in mock-engine.ts / gossip.ts. */
+/**
+ * Locked Hollowbrook fixtures matching docs/shared/03-graph-model.md.
+ * 6 NPCs, 6 places, locked TRUSTS weights, and canonical provenance paths.
+ */
 
-const RELIC_BY_MARTHA: RumorKnowledge = {
+const RELIC_BY_BROM: RumorKnowledge = {
   eventId: "event_relic_theft",
   eventTitle: "Theft of the Sun-Stone Relic",
   eventType: "harm",
   confidence: 1.0,
   hops: 0,
-  eyewitnessId: "martha",
-  eyewitnessName: "Martha Finch",
-  path: ["martha"],
+  eyewitnessId: "brom",
+  eyewitnessName: "Brom",
+  path: ["brom"],
   tickOccurred: 1,
 };
 
-const HERBS_BY_BARTHOLOMEW: RumorKnowledge = {
+const HERBS_BY_AYLA: RumorKnowledge = {
   eventId: "event_herbs_help",
   eventTitle: "Delivery of Fever-Herbs",
   eventType: "help",
   confidence: 1.0,
   hops: 0,
-  eyewitnessId: "bartholomew",
-  eyewitnessName: "Bartholomew",
-  path: ["bartholomew"],
+  eyewitnessId: "ayla",
+  eyewitnessName: "Sister Ayla",
+  path: ["ayla"],
   tickOccurred: 2,
 };
 
-/** Rumor as heard second-hand from Martha over a TRUSTS edge. */
-const relicHeardBy = (npcId: string, confidence: number): RumorKnowledge => ({
-  ...RELIC_BY_MARTHA,
-  confidence,
-  hops: 1,
-  heardFromId: "martha",
-  heardFromName: "Martha Finch",
-  path: ["martha", npcId],
-});
-
 export const INITIAL_NPCS: NPC[] = [
   {
-    id: "martha",
-    name: "Martha Finch",
-    role: "Tavernkeeper (The Stumbling Badger)",
+    id: "brom",
+    name: "Brom",
+    role: "Town Blacksmith (Brom's Forge)",
     faction: "townsfolk",
-    avatarInitials: "MF",
+    avatarInitials: "BR",
     attitude: "wary",
-    attitudeScore: -0.4,
+    attitudeScore: -0.45,
     knowledgeState: "eyewitness",
-    rumors: [RELIC_BY_MARTHA],
+    rumors: [RELIC_BY_BROM],
+  },
+  {
+    id: "mira",
+    name: "Mira",
+    role: "Innkeeper (The Copper Kettle)",
+    faction: "townsfolk",
+    avatarInitials: "MI",
+    attitude: "wary",
+    attitudeScore: -0.36,
+    knowledgeState: "heard",
+    rumors: [
+      {
+        ...RELIC_BY_BROM,
+        confidence: 0.9,
+        hops: 1,
+        heardFromId: "brom",
+        heardFromName: "Brom",
+        path: ["brom", "mira"],
+      },
+    ],
   },
   {
     id: "garrick",
-    name: "Garrick Vance",
-    role: "Town Blacksmith",
-    faction: "townsfolk",
-    avatarInitials: "GV",
+    name: "Garrick",
+    role: "Guard Captain (Guard Barracks)",
+    faction: "guard",
+    avatarInitials: "GA",
     attitude: "wary",
-    attitudeScore: -0.32,
+    attitudeScore: -0.28,
     knowledgeState: "heard",
-    rumors: [relicHeardBy("garrick", 0.85)],
+    rumors: [
+      {
+        ...RELIC_BY_BROM,
+        confidence: 0.63,
+        hops: 2,
+        heardFromId: "mira",
+        heardFromName: "Mira",
+        path: ["brom", "mira", "garrick"],
+      },
+    ],
   },
   {
-    id: "captain_vane",
-    name: "Captain Vane",
-    role: "City Watch Commander",
-    faction: "guard",
-    avatarInitials: "CV",
+    id: "fenn",
+    name: "Old Fenn",
+    role: "Informant & Beggar (Town Square)",
+    faction: "townsfolk",
+    avatarInitials: "OF",
+    attitude: "wary",
+    attitudeScore: -0.3,
+    knowledgeState: "heard",
+    rumors: [
+      {
+        ...RELIC_BY_BROM,
+        confidence: 0.72,
+        hops: 2,
+        heardFromId: "mira",
+        heardFromName: "Mira",
+        path: ["brom", "mira", "fenn"],
+      },
+    ],
+  },
+  {
+    id: "tilda",
+    name: "Tilda",
+    role: "Market Merchant (Market Row)",
+    faction: "merchants",
+    avatarInitials: "TI",
     attitude: "neutral",
     attitudeScore: 0.0,
     knowledgeState: "none",
     rumors: [],
   },
   {
-    id: "bartholomew",
-    name: "Bartholomew",
-    role: "Master Herbalist",
-    faction: "merchants",
-    avatarInitials: "BA",
+    id: "ayla",
+    name: "Sister Ayla",
+    role: "Chapel Healer (Chapel of Ash)",
+    faction: "townsfolk",
+    avatarInitials: "SA",
     attitude: "friendly",
     attitudeScore: 0.55,
     knowledgeState: "eyewitness",
-    rumors: [HERBS_BY_BARTHOLOMEW],
-  },
-  {
-    id: "lyra",
-    name: "Lyra Swift",
-    role: "Guild Courier",
-    faction: "merchants",
-    avatarInitials: "LS",
-    attitude: "neutral",
-    attitudeScore: 0.1,
-    knowledgeState: "heard",
-    rumors: [relicHeardBy("lyra", 0.9)],
+    rumors: [HERBS_BY_AYLA],
   },
 ];
 
@@ -108,73 +139,88 @@ export const INITIAL_EVENTS: TownEvent[] = [
   {
     id: "event_relic_theft",
     title: "Theft of the Sun-Stone Relic",
-    description: "An ancient glowing artifact was pilfered from the sanctuary altar at twilight.",
+    description: "An ancient glowing artifact was stolen from Brom's Forge altar at twilight.",
     type: "harm",
-    witnessId: "martha",
-    witnessName: "Martha Finch",
-    placeName: "Chapel Vault",
+    witnessId: "brom",
+    witnessName: "Brom",
+    placeName: "Brom's Forge",
     tickOccurred: 1,
   },
   {
     id: "event_herbs_help",
     title: "Delivery of Fever-Herbs",
-    description: "The player gathered and delivered rare swamp herbs to save sick town children.",
+    description: "The player gathered and delivered rare marsh herbs to save feverish town children.",
     type: "help",
-    witnessId: "bartholomew",
-    witnessName: "Bartholomew",
-    placeName: "Apothecary Lab",
+    witnessId: "ayla",
+    witnessName: "Sister Ayla",
+    placeName: "Chapel of Ash",
     tickOccurred: 2,
   },
 ];
 
 export const INITIAL_GRAPH_NODES: GraphNode[] = [
-  { id: "martha", label: "Martha", avatarInitials: "MF", type: "npc", faction: "townsfolk", attitude: "wary", x: 180, y: 140 },
-  { id: "garrick", label: "Garrick", avatarInitials: "GV", type: "npc", faction: "townsfolk", attitude: "wary", x: 340, y: 160 },
-  { id: "captain_vane", label: "Capt. Vane", avatarInitials: "CV", type: "npc", faction: "guard", attitude: "neutral", x: 500, y: 220 },
-  { id: "bartholomew", label: "Bartholomew", avatarInitials: "BA", type: "npc", faction: "merchants", attitude: "friendly", x: 260, y: 320 },
-  { id: "lyra", label: "Lyra", avatarInitials: "LS", type: "npc", faction: "merchants", attitude: "neutral", x: 120, y: 270 },
-  { id: "event_relic_theft", label: "Relic Stolen", type: "event", eventType: "harm", x: 140, y: 60 },
-  { id: "event_herbs_help", label: "Herbs Delivered", type: "event", eventType: "help", x: 380, y: 360 },
+  { id: "brom", label: "Brom", avatarInitials: "BR", type: "npc", faction: "townsfolk", attitude: "wary", x: 150, y: 150 },
+  { id: "mira", label: "Mira", avatarInitials: "MI", type: "npc", faction: "townsfolk", attitude: "wary", x: 310, y: 180 },
+  { id: "garrick", label: "Garrick", avatarInitials: "GA", type: "npc", faction: "guard", attitude: "wary", x: 480, y: 150 },
+  { id: "ayla", label: "Ayla", avatarInitials: "SA", type: "npc", faction: "townsfolk", attitude: "friendly", x: 150, y: 310 },
+  { id: "fenn", label: "Fenn", avatarInitials: "OF", type: "npc", faction: "townsfolk", attitude: "wary", x: 310, y: 330 },
+  { id: "tilda", label: "Tilda", avatarInitials: "TI", type: "npc", faction: "merchants", attitude: "neutral", x: 480, y: 310 },
+  { id: "event_relic_theft", label: "Relic Stolen", type: "event", eventType: "harm", x: 80, y: 80 },
+  { id: "event_herbs_help", label: "Herbs Delivered", type: "event", eventType: "help", x: 80, y: 380 },
 ];
 
 export const INITIAL_GRAPH_EDGES: GraphEdge[] = [
-  { id: "e1", source: "martha", target: "garrick", type: "TRUSTS", weight: 0.85 },
-  { id: "e2", source: "garrick", target: "captain_vane", type: "TRUSTS", weight: 0.75 },
-  { id: "e3", source: "martha", target: "lyra", type: "TRUSTS", weight: 0.9 },
-  { id: "e4", source: "lyra", target: "bartholomew", type: "TRUSTS", weight: 0.8 },
-  { id: "e5", source: "bartholomew", target: "garrick", type: "TRUSTS", weight: 0.6 },
-  { id: "e_wit_1", source: "martha", target: "event_relic_theft", type: "WITNESSED", weight: 1.0 },
-  { id: "e_wit_2", source: "bartholomew", target: "event_herbs_help", type: "WITNESSED", weight: 1.0 },
+  // Locked TRUSTS edges (listener -> teller : weight)
+  { id: "e_mira_brom", source: "mira", target: "brom", type: "TRUSTS", weight: 0.9 },
+  { id: "e_brom_mira", source: "brom", target: "mira", type: "TRUSTS", weight: 0.8 },
+  { id: "e_fenn_mira", source: "fenn", target: "mira", type: "TRUSTS", weight: 0.8 },
+  { id: "e_mira_fenn", source: "mira", target: "fenn", type: "TRUSTS", weight: 0.6 },
+  { id: "e_garrick_mira", source: "garrick", target: "mira", type: "TRUSTS", weight: 0.7 },
+  { id: "e_mira_garrick", source: "mira", target: "garrick", type: "TRUSTS", weight: 0.6 },
+  { id: "e_tilda_fenn", source: "tilda", target: "fenn", type: "TRUSTS", weight: 0.5 },
+  { id: "e_fenn_tilda", source: "fenn", target: "tilda", type: "TRUSTS", weight: 0.3 },
+  { id: "e_ayla_mira", source: "ayla", target: "mira", type: "TRUSTS", weight: 0.6 },
+  { id: "e_mira_ayla", source: "mira", target: "ayla", type: "TRUSTS", weight: 0.7 },
+  { id: "e_tilda_garrick", source: "tilda", target: "garrick", type: "TRUSTS", weight: 0.5 },
+  { id: "e_garrick_tilda", source: "garrick", target: "tilda", type: "TRUSTS", weight: 0.4 },
+  { id: "e_ayla_brom", source: "ayla", target: "brom", type: "TRUSTS", weight: 0.5 },
+  // Eyewitness WITNESSED links
+  { id: "e_wit_brom", source: "brom", target: "event_relic_theft", type: "WITNESSED", weight: 1.0 },
+  { id: "e_wit_ayla", source: "ayla", target: "event_herbs_help", type: "WITNESSED", weight: 1.0 },
 ];
 
-/** Opening lines. Provenance is derived from what each NPC actually knows. */
+/** Canonical seed lines grounded in graph knowledge. */
 const SEED_LINES: Record<string, { text: string; timestamp: string }> = {
-  martha: {
-    text: "I keep my taproom doors open to all, stranger, but I saw what happened at the chapel vault. I don't forget faces.",
+  brom: {
+    text: "Keep your distance from my forge fire. I saw what you took from the altar with my own eyes.",
     timestamp: "10:14 PM",
   },
-  garrick: {
-    text: "Look, Martha told me someone slipped out of the vault with the relic. If it was you, keep your hands off my forge tools.",
+  mira: {
+    text: "Brom stopped by the tavern right after it happened. If you took that relic, you've brought trouble to our town.",
     timestamp: "10:18 PM",
   },
-  captain_vane: {
-    text: "State your business in Hollowbrook. Keep the peace and we won't have problems. I haven't heard anything to suspect you yet.",
+  garrick: {
+    text: "Mira reported the theft to the guard. If word reaches me that you're holding stolen goods, I'll have you in chains.",
     timestamp: "10:20 PM",
   },
-  bartholomew: {
-    text: "Bless you, friend! The children would not have survived the fever without those Blackwood marsh-herbs you brought.",
+  fenn: {
+    text: "Old Fenn hears everything through the tavern shutters. Mira says you crossed Brom. Best watch your step.",
     timestamp: "10:22 PM",
   },
-  lyra: {
-    text: "Packages, gossip, letters—everything moves through me. Martha mentioned some trouble at the chapel. Best watch your step.",
+  tilda: {
+    text: "Welcome to Market Row. State your business, stranger. I haven't heard anything about you yet.",
     timestamp: "10:24 PM",
+  },
+  ayla: {
+    text: "Bless you, friend. The fever children in the chapel would not have lasted the night without those herbs.",
+    timestamp: "10:26 PM",
   },
 };
 
 export const INITIAL_TRACES: TraceStep[] = [
-  { agent: "scribe", tool: "load_world_state", queryId: "Q01_load_player_graph", args: { player_id: "player_default" }, rows: 12, ms: 4.2 },
-  { agent: "gossip", tool: "gossip_step", queryId: "Q40_gossip_candidates", args: { max_hops: 2, min_confidence: 0.6 }, rows: 8, ms: 3.1 },
-  { agent: "npc", tool: "check_knowledge_firewall", queryId: "Q22_filter_knowledge_firewall", args: { npc_id: "garrick", topic: "theft" }, rows: 1, ms: 1.9 },
+  { agent: "scribe", tool: "load_world_state", queryId: "Q10_get_npcs", args: { player_id: "player_default" }, rows: 6, ms: 3.2 },
+  { agent: "gossip", tool: "gossip_step", queryId: "Q40_gossip_candidates_all", args: { max_hops: 2, min_confidence: 0.25 }, rows: 8, ms: 2.8 },
+  { agent: "npc", tool: "check_knowledge_firewall", queryId: "Q60_explain_knows", args: { npc_id: "garrick", event_id: "event_relic_theft" }, rows: 1, ms: 1.9 },
 ];
 
 export function getInitialTownState(): TownState {

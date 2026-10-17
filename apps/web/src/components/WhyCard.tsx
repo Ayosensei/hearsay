@@ -134,7 +134,7 @@ export function WhyCard({ provenance, targetNpcName, onClose, onSelectNpc }: Why
           <span>·</span>
           <span className="tabular-nums">Decay Loss: {(provenance.totalDecay * 100).toFixed(0)}%</span>
         </div>
-        <div className="text-signal font-medium">Graph Path: Q12_explain_provenance</div>
+        <div className="text-signal font-medium">Graph Path: Q60_explain_knows</div>
       </div>
     </div>
   );
