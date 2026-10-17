@@ -30,6 +30,9 @@ it("records exactly the nearby villagers and excludes distant people and other d
   await call("newPlayer", { playerId: nearbyPlayer });
   const world = await call("getWorld", {});
   expect(observeAt(approach("brom"), world).witnesses.map((n) => n.id)).toEqual(["brom"]);
+  const square = observeAt(approach("fenn"), world);
+  expect(square.place?.id).toBe("square");
+  expect(square.witnesses.map((n) => n.id)).toEqual(["ayla", "fenn"]);
   expect(observeAt({ district: "oldtown", x: 120, y: 660 }, world).witnesses.map((n) => n.id)).toEqual(["brom"]);
   expect(observeAt({ district: "oldtown", x: 119, y: 660 }, world).witnesses).toEqual([]);
   const nearby = observeAt({ district: "vale", x: 915, y: 660 }, world);

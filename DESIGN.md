@@ -236,14 +236,15 @@ Responsive bottom sheets and location navigation keep the town usable on phones.
 User-requested minimal refinement: keep the town artwork but remove persistent
 hero text, decorative dock frames, floating deed cards and confidence chips.
 Main navigation is Hearsay, Your story and Menu. Free play has two controls:
-Take an action and Let the town talk. Trace lives with character memories.
+Take an action and Pause/Resume town. A visible clock advances gossip automatically.
+Trace lives with character memories.
 Saves, lenses, accessibility, reset and engine tools use progressive disclosure
 inside Menu. Guided play shows only its current instruction and primary action.
 Ambient idles are off in the minimal view; confirmed whispers still play.
 
 ## Motion and accessibility
 
-Ambient work/walking is decoration and never creates memories. One-shot whisper
+Walking determines proximity witnesses; only confirmed actions create memories. One-shot whisper
 flights (up to 1600ms) and witness reactions require confirmed tool results.
 Queue results in response order. UI transitions use 120/200/320ms; no transition-all.
 Reduced motion removes parallax, flicker and flights; use static paths and narration.
@@ -256,4 +257,6 @@ Offer readable text mode, larger text and reduced motion. No unrequested audio.
 Use semantic tokens, existing Tailwind scale, named exports and small components.
 All new states appear on /styleguide. Run design lint and check:design, and save
 1440x900 screenshots. Never imply stealth, inventory, calendar, arrest, score,
-cloud accounts or unverified live dialogue. Walking has no gameplay consequences.
+cloud accounts or unverified live dialogue. Nearby villagers witness actions within
+240 world units, in the same district. Time pauses for drawers, hidden tabs,
+offline state, errors and confirmed reaction playback; no background catch-up.

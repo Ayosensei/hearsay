@@ -6,7 +6,7 @@ export interface TownPosition { x: number; y: number; district: District }
 export const SIGHT_RADIUS = 240;
 export function approach(id: string): TownPosition {
   const home = homeOf(id);
-  return { x: home.x - 140, y: home.y + 20, district: home.district };
+  return { x: home.x - 120, y: home.y + 20, district: home.district };
 }
 // Local game geometry chooses observers; the core resolves every submitted ID
 // and owns all persistent memories, opinions and gossip in FalkorDB.

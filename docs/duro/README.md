@@ -6,12 +6,16 @@ Target: Win. Correctness, explainability, and adherence to `DESIGN.md`.
 
 ## Living Town — user-requested redesign
 
+Autonomous play: walking determines witnesses; deeds use your current location.
+Gossip advances automatically during visible exploration, with Pause/Resume town
+and pauses during reading and reaction playback. See autonomous-town.md.
+
 Cinematic refinement: a closer panorama, confirmed whisper handoffs, listener
 focus and replay of the last round without advancing time. See cinematic-flow.md.
 
 Expanded edition: thirteen villagers across Old Town, Vale Lane and Riverside.
 Use the district picker or Menu → Meet the villagers. The Vale family has four
-members; deeds support 1–6 witnesses and a family selection shortcut. Forty-one
+members; nearby villagers automatically witness actions. Forty-one
 directional trust edges produce competing routes, weak-link cutoffs and five-hop
 evidence. Earlier saves remain separate. See `expanded-town.md`.
 
