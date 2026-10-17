@@ -4,3 +4,4 @@ export { connectDatabase } from "./db";
 export type { Database, DatabaseConfig, QueryParams, Row } from "./db";
 export { createWorld } from "./world";
 export type { WorldOptions, WorldTemplate } from "./world";
+export { createMemory } from "./memory";

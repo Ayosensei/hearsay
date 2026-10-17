@@ -90,6 +90,8 @@ G2 done 2026-10-17 04:06 WAT ff6e1bf (helper: 142ca76). Live helper and query sp
 
 G3 done 2026-10-17 04:25 WAT 1563afc (seed validation: e9b2e23). World initialization, reads, isolated player creation/reset and publication races pass live tests. Uses the explicitly allowed three-NPC seed pending D1; see `G3-world.md` and R-003.
 
+G4 done 2026-10-17 04:42 WAT 94ef432 (record/recall: 9e8f377). Four live memory tools, stable snapshots and the six-NPC golden witness check pass. Full workspace: typecheck and 57 tests pass. Production content remains the three-NPC stub; UI integration remains pending. See `G4-memory.md`.
+
 ## My "I can explain this" notes
 
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
@@ -100,3 +102,6 @@ G3 done 2026-10-17 04:25 WAT 1563afc (seed validation: e9b2e23). World initializ
 - G3: Validate references before writing, then publish a fully seeded temporary graph. Existing template graphs are never silently replaced when seed content changes.
 - G3: Initialize the Player node in a temporary template copy before publishing `player:{id}`. Another creator sees a complete save, and gameplay never writes the template.
 - G3: Reset rebuilds one player's graph from template values. The tests change tick, events, traits and a policy in A, prove B/template unchanged, then verify reset restores the defaults.
+- G4: Validate all witness/place IDs before Q30. The query binds values and creates the Event and its direct-witness KNOWS edges; duplicate witnesses are removed first.
+- G4: Successful empty recall means this NPC has no graph knowledge of this player's events. An unknown NPC is a separate error, not empty knowledge.
+- G4: Graph snapshots use `kind:id` from our properties; KNOWS/TOLD edge IDs include the event ID. Metadata nodes and their incident edges stay hidden. Separate reads are not a transactional snapshot during concurrent writes.

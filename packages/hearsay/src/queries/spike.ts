@@ -1,13 +1,8 @@
-// Planned query from docs/shared/05-queries.md, exercised on the G2 scratch graph.
-export const Q30_record_event = `MATCH (p:Player {id: $pid}), (pl:Place {id: $place})
-CREATE (e:Event {id: $eid, type: $type, weight: $weight, tick: $tick, at: $at, subject: $subject})
-CREATE (p)-[:PERFORMED]->(e)
-CREATE (e)-[:HAPPENED_AT]->(pl)
-WITH e
-UNWIND $witnesses AS wid
-MATCH (n:NPC {id: wid})
-CREATE (n)-[:KNOWS {via: 'witness', root: wid, hop: 0, confidence: 1.0, tick: $tick}]->(e)
-RETURN n.id AS witness`;
+export {
+  Q30_record_event,
+  Q90_snapshot_nodes,
+  Q90_snapshot_edges,
+} from "./memory";
 
 // Planned query from docs/shared/05-queries.md, exercised on the G2 scratch graph.
 export const Q40_gossip_candidates_all = `MATCH (a:NPC)-[k:KNOWS]->(e:Event)
@@ -50,14 +45,6 @@ YIELD node, score
 RETURN node.id AS npc, node.name AS name, score
 ORDER BY score DESC
 LIMIT $limit`;
-
-// Which visible nodes can the UI draw, excluding conversation/type metadata?
-export const Q90_snapshot_nodes = `MATCH (n)
-WHERE NOT n:Utterance AND NOT n:Conversation AND NOT n:EventType RETURN n`;
-// Which visible relationships connect those nodes, with stable application IDs?
-export const Q90_snapshot_edges = `MATCH (a)-[r]->(b)
-WHERE NOT a:Utterance AND NOT b:Utterance AND NOT a:Conversation AND NOT b:Conversation
-RETURN a.id AS fromId, labels(a) AS fromLabels, r, b.id AS toId, labels(b) AS toLabels`;
 
 // Seed the six locked NPC identities and traits on a disposable graph.
 export const QG2_seed_npcs = `UNWIND $npcs AS n

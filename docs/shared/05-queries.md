@@ -67,7 +67,7 @@ CREATE (p:Player {id: $pid, name: $name, tick: 0, createdAt: $at})
 
 ## Episodic memory: recording events
 
-**Q30_record_event** — one event, one place, N witnesses. Witness ids must be validated first (Q10).
+**Q30_record_event** — one event, one place, N witnesses. Validate all witness IDs with Q24 and the place with Q25 before writing. Q20 checks the player's node first.
 ```
 MATCH (p:Player {id: $pid}), (pl:Place {id: $place})
 CREATE (e:Event {id: $eid, type: $type, weight: $weight, tick: $tick, at: $at, subject: $subject})
@@ -194,7 +194,10 @@ RETURN pol.markup AS markup, f.tries AS tries, f.wins AS wins
 MATCH (n) WHERE NOT n:Utterance AND NOT n:Conversation AND NOT n:EventType RETURN n
 ```
 ```
-MATCH (a)-[r]->(b) WHERE NOT a:Utterance AND NOT b:Utterance AND NOT a:Conversation AND NOT b:Conversation RETURN a.id AS fromId, labels(a) AS fromLabels, r, b.id AS toId, labels(b) AS toLabels
+MATCH (a)-[r]->(b)
+WHERE NOT a:Utterance AND NOT b:Utterance AND NOT a:Conversation AND NOT b:Conversation
+  AND NOT a:EventType AND NOT b:EventType
+RETURN a.id AS fromId, labels(a) AS fromLabels, r, b.id AS toId, labels(b) AS toLabels
 ```
 (verify label predicates in WHERE and return shapes in the Node client; map entities to `GraphNode`/`GraphEdge` using our own `id` property, never FalkorDB's internal ids.) `focusEventId` only changes which edges the UI highlights; the server may ignore it.
 
@@ -261,3 +264,26 @@ Canonical constants are in `packages/hearsay/src/queries/seed.ts` and `world.ts`
 | Q04_seed_hostile | Resolve faction IDs and create fixed HOSTILE_TO edges. |
 
 Q10/Q11/Q12 read template world data. Q20 checks a player's node. Q22 initializes the Player node inside a temporary template copy before publishing the final player graph. GRAPH.LIST/COPY/DELETE remain Q00/Q01/Q02; they are traced via the official client methods. Staging ensures failed seed loading cannot publish a partial template or player; see `docs/goodness/G3-world.md` for reset and concurrency limits.
+
+## G4 memory implementation
+
+Canonical constants for Q24/Q25/Q26/Q30/Q42/Q50/Q90 are in `packages/hearsay/src/queries/memory.ts`; G2's spike imports the same Q30/Q90 constants. All are covered by live tool integration tests. Goodness's approved direct-client exception to Browser-first verification still applies.
+
+**Q24_resolve_npcs** — resolve every requested witness or recall subject, including missing IDs.
+```
+UNWIND $ids AS requested
+OPTIONAL MATCH (n:NPC {id:requested}) RETURN requested, n.id AS id
+```
+
+**Q25_resolve_place** — resolve an event's location.
+```
+MATCH (pl:Place {id:$id}) RETURN pl.id AS id
+```
+
+**Q26_resolve_event** — validate an event belongs to this player before whoKnows or a focused snapshot.
+```
+MATCH (:Player {id:$pid})-[:PERFORMED]->(e:Event {id:$eid})
+RETURN e.id AS id
+```
+
+Snapshots use application properties for IDs: `NPC:brom`, `Event:ev_...`. Edge IDs are `${type}:${from}->${to}` with `:${eventId}` appended for KNOWS/TOLD. KNOWS gets the event ID from its destination; TOLD gets it from its `event` property. Internal database entity IDs are never exposed as graph IDs. Hidden metadata is excluded at both edge endpoints. `focusEventId` is validated when present; the full visible graph is returned for client highlighting.
