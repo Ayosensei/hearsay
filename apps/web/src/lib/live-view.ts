@@ -23,6 +23,7 @@ export function mapEvents(snapshot: ToolOutput<"snapshot">): TownEvent[] {
     const title = sentence.charAt(0).toUpperCase() + sentence.slice(1);
     return {
       id: node.id.slice("Event:".length), title, description: title,
+      subject, actionType: String(node.props.type),
       weight: Number(node.props.weight),
       type: Number(node.props.weight) < 0 ? "harm" : "help",
       witnessId: witness?.slice("NPC:".length) ?? "", witnessName: name,
