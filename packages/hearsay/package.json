@@ -5,9 +5,15 @@
   "type": "module",
   "exports": "./src/index.ts",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@hearsay/contract": "workspace:*"
+    "@hearsay/contract": "workspace:*",
+    "falkordb": "6.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "vitest": "5.0.4"
   }
 }

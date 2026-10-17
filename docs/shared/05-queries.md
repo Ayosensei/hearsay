@@ -28,7 +28,7 @@ CREATE INDEX FOR (e:Event) ON (e.id)
 CREATE INDEX FOR (p:Player) ON (p.id)
 CREATE INDEX FOR (pl:Place) ON (pl.id)
 ```
-(verify exact DDL in the Indexing docs; if copies do not carry indexes, create them in `newPlayer`.)
+G2 verified this DDL and that `GRAPH.COPY` preserves all four operational range indexes on the tested local image. `db.indexes()` returns `label`, `properties`, `types`, `entitytype` and `status` among other columns. See `docs/goodness/spike-results.md` for versions and evidence.
 
 ## World and player
 
@@ -150,13 +150,14 @@ Zero rows -> `status: 'not_in_graph'`, `chain: []`.
 ```
 MATCH path = (o:NPC {id: $root})-[:TOLD*1..4]->(n:NPC {id: $nid})
 WHERE all(r IN relationships(path) WHERE r.event = $eid)
+WITH path, length(path) AS hops
+ORDER BY hops
+LIMIT 1
 RETURN [x IN nodes(path) | x.id] AS ids,
        [x IN nodes(path) | x.name] AS names,
        [r IN relationships(path) | r.confidence] AS confidences
-ORDER BY length(path)
-LIMIT 1
 ```
-(verify: `all()` over `relationships(path)`, list comprehension over `nodes(path)`. Fallback: walk `k.via` repeatedly using Q60 in TypeScript until `via = 'witness'`, building the chain. Both must produce identical output; keep a test for each if you implement both.) If `hop = 0` (the NPC witnessed it) the chain is just `[root]`.
+G2 verified `all()` and both list comprehensions. The original `ORDER BY length(path)` after the projected RETURN failed at runtime (`Unable to locate a value with alias path within the record`). Sort and limit while `path` is still in scope, as above. The output columns are unchanged. Fallback if needed on another version: walk `k.via` repeatedly using Q60 until `via = 'witness'`. If `hop = 0`, the chain is just `[root]`.
 
 ## Algorithms as tools
 
