@@ -100,6 +100,8 @@ G7 done 2026-10-17 05:24 WAT 7f7a719 (pipeline: 2f12bac; REST wrapper: 431b6bc; 
 
 ## My "I can explain this" notes
 
+G8 done 2026-10-17 05:37 WAT 65eafb9 (copy contention mitigation cb8e57a). Typecheck and 115 tests pass. Live Tilda policy sequence/floor/counters and PageRank order verified; see G8-policy.md and copy-retry.md. Full production seed/UI remain pending.
+
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
 - G2: Reads call `roQuery`; a live test proves an attempted write is rejected without adding a node. Database errors return safe envelopes and traces rather than raw Cypher or credentials.
 - G2: Q61 sorts and limits `path` in a WITH clause before converting it into lists. Sorting by a dropped path alias after RETURN fails on the tested FalkorDB image.
