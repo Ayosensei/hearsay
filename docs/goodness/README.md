@@ -106,6 +106,8 @@ G10 done 2026-10-17 06:01 WAT d0597f8. All 1,280 measured tool calls pass at N=1
 
 G11 local verification 2026-10-17 06:05 WAT f9b9272. Actual container restart preserves event, gossip, tick and conversation; local template self-healing passes. Typecheck and 117 tests pass. Full G11 remains pending Cloud/app validation under R-005; see G11-persistence.md and G11-results.json.
 
+G11 Cloud core verified 2026-10-17 08:27 WAT (username support a9e9caf). Actual empty Cloud instance initialization, template recreation, event roundtrip and fresh-connection recall pass; cleanup returns zero graphs. Typecheck, 125 tests and 49 query mirrors pass. See G11-cloud.md and G11-cloud-results.json. Only live website integration/recovery remains under R-005; full G11 is still partial.
+
 G12 done 2026-10-17 06:12 WAT 77a3817. All 48 query mirrors and their hashes match canonical source, intentional drift is rejected, typecheck and 117 tests pass. See G12-judge-notes.md for line-by-line explanations.
 
 G13 done 2026-10-17 06:16 WAT 650923a (plain-text wrapper 9a63ffc). Control dialogue reads all player events, measures leaks without blocking, writes no conversation history and remains excluded from MCP. Typecheck, 124 tests and all 49 query mirrors pass. See G13-control.md and G8-G13-results.md for the final handoff and remaining external checks.

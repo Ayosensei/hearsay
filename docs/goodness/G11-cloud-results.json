@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-10-17T07:27:39.420Z",
+  "templateGraph": "cloud_template_4faff04cfa40485eb14b0ee47c5cb218",
+  "playerId": "cloud_4faff04cfa40485eb14b0ee47c5cb218",
+  "status": "passed",
+  "appValidated": false,
+  "llmMode": "off",
+  "initialGraphCount": 0,
+  "templateCreated": true,
+  "npcCount": 3,
+  "idempotent": true,
+  "templateRecreated": true,
+  "eventRecalled": true,
+  "reconnectedRecall": true,
+  "cleanup": "passed",
+  "finalGraphCount": 0,
+  "finishedAt": "2026-10-17T07:27:56.770Z"
+}

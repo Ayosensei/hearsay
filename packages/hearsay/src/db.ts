@@ -10,6 +10,7 @@ export interface QueryParams {
 export interface DatabaseConfig {
   host?: string;
   port?: number;
+  username?: string;
   password?: string;
   connectTimeoutMs?: number;
   queryTimeoutMs?: number;
@@ -76,6 +77,7 @@ export async function connectDatabase(
 ): Promise<Envelope<Database>> {
   const host = config.host ?? process.env.FALKORDB_HOST ?? "localhost";
   const port = config.port ?? Number(process.env.FALKORDB_PORT ?? 6379);
+  const username = config.username ?? process.env.FALKORDB_USERNAME;
   const password = config.password ?? process.env.FALKORDB_PASSWORD;
   if (!host || !Number.isInteger(port) || port < 1 || port > 65535) {
     return failure(false, []);
@@ -91,6 +93,7 @@ export async function connectDatabase(
     };
     client = await FalkorDB.connect({
       socket,
+      ...(username ? { username } : {}),
       ...(password ? { password } : {}),
     });
   } catch {
