@@ -114,6 +114,8 @@ G13 done 2026-10-17 06:16 WAT 650923a (plain-text wrapper 9a63ffc). Control dial
 
 ## My "I can explain this" notes
 
+Developer CLI added by Goodness request on 2026-10-17: init/doctor/tools/call/serve/mcp, standalone packed-package verification, 133 passing tests and unchanged 49-query mirrors. Package scope @goodynessdev/hearsay and MIT license are confirmed; npm publication awaits account login. See CLI.md and packages/cli/README.md.
+
 - G2: Node client `data` already contains alias-keyed rows. The helper normalizes missing write-only data to `[]` and measures the whole explicit operation.
 - G2: Reads call `roQuery`; a live test proves an attempted write is rejected without adding a node. Database errors return safe envelopes and traces rather than raw Cypher or credentials.
 - G2: Q61 sorts and limits `path` in a WITH clause before converting it into lists. Sorting by a dropped path alias after RETURN fails on the tested FalkorDB image.
