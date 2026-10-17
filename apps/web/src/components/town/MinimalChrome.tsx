@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface Props {
+  flow?: React.ReactNode;
   tour: number;
   cue?: [string, string, string];
   narration: string;
@@ -25,6 +26,7 @@ export function MinimalChrome(props: Props) {
         <Button variant="ghost" onClick={props.onMenu} aria-label="Open menu"><MoreHorizontal size={22} /></Button>
       </nav>
     </header>
+    {props.tour !== -1 && <div className="flow-overlay">{props.flow}</div>}
     {props.tour === -1 ? <section className="minimal-welcome" aria-label="Begin your story">
       <h1>A town that <em>remembers.</em></h1>
       <p>Do one thing. Discover how word gets around.</p>

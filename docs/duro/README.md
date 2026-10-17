@@ -6,6 +6,9 @@ Target: Win. Correctness, explainability, and adherence to `DESIGN.md`.
 
 ## Living Town — user-requested redesign
 
+Cinematic refinement: a closer panorama, confirmed whisper handoffs, listener
+focus and replay of the last round without advancing time. See cinematic-flow.md.
+
 Expanded edition: thirteen villagers across Old Town, Vale Lane and Riverside.
 Use the district picker or Menu → Meet the villagers. The Vale family has four
 members; deeds support 1–6 witnesses and a family selection shortcut. Forty-one

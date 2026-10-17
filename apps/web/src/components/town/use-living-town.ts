@@ -19,6 +19,7 @@ export function useLivingTown() {
   const [narration, setNarration] = useState("Nobody here knows your story yet.");
   const [log, setLog] = useState<string[]>([]);
   const [beats, setBeats] = useState<Beat[]>([]);
+  const [lastBeats, setLastBeats] = useState<Beat[]>([]);
   const [why, setWhy] = useState<ProvenanceChain>();
   const [tour, setTour] = useState<number>(-1);
   const [reduced, setReduced] = useState(false);
@@ -49,7 +50,7 @@ export function useLivingTown() {
   useEffect(() => {
     if (!beats.length) return;
     tell(beats[0].text);
-    const timer = window.setTimeout(() => setBeats((old) => old.slice(1)), reduced ? 650 : 1900);
+    const timer = window.setTimeout(() => setBeats((old) => old.slice(1)), reduced ? 1100 : 2600);
     return () => window.clearTimeout(timer);
   }, [beats, reduced, tell]);
 
@@ -72,7 +73,7 @@ export function useLivingTown() {
       return result;
     }, "Opening your story…");
     if (next) {
-      setSlot(nextSlot); localStorage.setItem("hearsay-active-slot", nextSlot); setEventId(next.events[0]?.id ?? ""); setDrawer(undefined); setLog([]);
+      setSlot(nextSlot); localStorage.setItem("hearsay-active-slot", nextSlot); setEventId(next.events[0]?.id ?? ""); setDrawer(undefined); setLog([]); setLastBeats([]);
       if (next.events.length) { setTour(0); tell("Hollowbrook remembers. Take an action, or speak to a villager."); }
       else { setTour(localStorage.getItem(`hearsay-tour-expanded-${nextSlot}`) === "done" ? 0 : -1); tell(`${next.npcs.length} villagers. A fresh story. Choose a deed, then follow who hears about it.`); }
     }
@@ -88,7 +89,7 @@ export function useLivingTown() {
     const next = await run(() => liveTown.recordEvent(input, town), "Recording your deed…");
     if (!next) return false;
     const event = next.events.find((e) => !town.events.some((old) => old.id === e.id));
-    setEventId(event?.id ?? ""); setDrawer(undefined);
+    setEventId(event?.id ?? ""); setDrawer(undefined); setLastBeats([]);
     setBeats(input.witnesses.map((id) => {
       const witness = next.npcs.find((n) => n.id === id);
       return { id: crypto.randomUUID(), text: `${witness?.name ?? "Your witness"} witnessed your deed and is ${witness?.attitude ?? "remembering it"}.`, to: id, eventId: event?.id, confidence: 1 };
@@ -105,14 +106,20 @@ export function useLivingTown() {
     if (!next) return;
     const name = (id: string) => next.npcs.find((n) => n.id === id)?.name ?? id;
     const steps = next.gossipSteps ?? [];
-    setBeats(steps.length ? steps.map((s) => ({ id: crypto.randomUUID(), from: s.tellerId, to: s.listenerId,
+    const confirmed = steps.map((s) => ({ id: crypto.randomUUID(), from: s.tellerId, to: s.listenerId,
       eventId: s.eventId, confidence: s.credibility,
-      text: `${name(s.tellerId)} told ${name(s.listenerId)} about ${next.events.find((e) => e.id === s.eventId)?.title ?? "a deed"}. ${name(s.listenerId)} is ${Math.round(s.credibility * 100)}% sure.` }))
+      text: `${name(s.tellerId)} told ${name(s.listenerId)} about ${next.events.find((e) => e.id === s.eventId)?.title ?? "a deed"}. ${name(s.listenerId)} is ${Math.round(s.credibility * 100)}% sure.` }));
+    setLastBeats(confirmed);
+    setBeats(confirmed.length ? confirmed
       : [{ id: crypto.randomUUID(), text: "No new rumours spread this turn. The town is quiet." }]);
     if (tour === 3 || tour === 4) {
       if (next.npcs.find((n) => n.id === "garrick")?.rumors.some((r) => r.eventId === eventId)) setTour(5);
       else if (next.npcs.find((n) => n.id === "mira")?.rumors.some((r) => r.eventId === eventId)) setTour(4);
     }
+  }
+  function replayWhispers() {
+    // Replays confirmed presentation data only; it never advances time or calls a tool.
+    if (!active && !offline) setBeats(lastBeats.map((beat) => ({ ...beat, id: crypto.randomUUID() })));
   }
   async function speak(text: string) {
     if (!town) return false;
@@ -145,10 +152,10 @@ export function useLivingTown() {
   async function reset(replay = false) {
     if (!town) return;
     const next = await run(() => liveTown.resetTown(town), "Resetting this story…");
-    if (next) { chats.current.delete(slot); setEventId(""); setDrawer(undefined); setTour(replay ? 1 : 0); setLog([]); tell("Nobody here knows your story yet."); }
+    if (next) { chats.current.delete(slot); setEventId(""); setDrawer(undefined); setTour(replay ? 1 : 0); setLog([]); setLastBeats([]); tell("Nobody here knows your story yet."); }
   }
   function switchSave(next: string) { if (town) chats.current.set(slot, town.dialogueHistory); void load(next); }
-  return { town, slot, selected, eventId, drawer, busy, error, narration, log, beats, why, tour, reduced, textMode, largeText, offline, active,
+  return { town, slot, selected, eventId, drawer, busy, error, narration, log, beats, lastBeats, why, tour, reduced, textMode, largeText, offline, active, replayWhispers,
     setDrawer, setSelected, setEventId, setTour, setReduced, setTextMode, setLargeText, tell, load, select, record, advance, speak, explain, reset, switchSave, finishTour };
 }
 export type LivingTown = ReturnType<typeof useLivingTown>;

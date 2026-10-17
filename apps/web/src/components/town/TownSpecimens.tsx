@@ -13,6 +13,8 @@ import { EngineSheet } from "./EngineSheet";
 import { MinimalChrome } from "./MinimalChrome";
 import { TownMenu } from "./TownMenu";
 import "./minimal.css";
+import "./cinematic.css";
+import { WhisperFlow } from "./WhisperFlow";
 import expandedSeed from "../../../../../seed/hollowbrook-expanded.json";
 import { faction, initials } from "../../lib/live-view";
 import type { NPC } from "../../lib/types";
@@ -32,9 +34,11 @@ export function TownSpecimens() {
     attitude: moods[(i + mood) % moods.length], attitudeScore: 0, rumors: [], knowledgeState: "none",
   })) };
   return <section className="space-y-4">
-    <h2 className="font-serif text-4xl">Minimal town</h2>
+    <h2 className="font-serif text-4xl">Cinematic town</h2>
+    <p>Confirmed handoffs, static reduced-motion paths, and replay without advancing time.</p>
+    <div className="flex flex-wrap gap-4">{[true, false].map((playing) => <WhisperFlow key={String(playing)} npcs={town.npcs} tick={2} busy={false} remaining={1} beat={playing ? { id: "specimen", from: "mira", to: "garrick", confidence: .63, text: "Mira told Garrick." } : undefined} lastBeats={[{ id: "specimen", from: "mira", to: "garrick", confidence: .63, text: "Mira told Garrick." }]} onReplay={() => {}} />)}<WhisperFlow npcs={town.npcs} tick={0} busy={false} remaining={1} lastBeats={[]} beat={{ id: "witness", to: "brom", confidence: 1, text: "Brom saw it happen." }} onReplay={() => {}} /></div>
     <div className="flex flex-wrap gap-2">{["Free exploration", "Welcome", "Guided", "Waiting"].map((name, i) => <Button key={name} variant="secondary" onClick={() => setChrome(i)}>{name}</Button>)}<Button onClick={() => setSheet("menu")}>Menu specimen</Button><Button onClick={() => setSheet("residents")}>13 villagers</Button></div>
-    <div className="living-town minimal-town relative h-180 overflow-hidden rounded-xl" style={{ minHeight: 0 }}>
+    <div className="living-town minimal-town cinematic-specimen relative h-180 overflow-hidden rounded-xl" style={{ minHeight: 0 }}>
       <TownStage quiet showSword={false} town={town} eventId={town.events[0]?.id ?? ""} selected="garrick" lens="none" reduced paused={false} onSelect={() => setSheet("character")} onSword={() => {}} />
       <MinimalChrome tour={chrome === 1 ? -1 : chrome === 2 ? 3 : 0} cue={chrome === 2 ? ["Let word spread", "Give the town a chance to share what it knows.", "Let the town talk"] : undefined} narration={chrome === 3 ? "Waiting for the town…" : "Mira told Garrick. He is 63% sure."} busy={chrome === 3} onMenu={() => setSheet("menu")} onLedger={() => setSheet("ledger")} onBegin={() => setChrome(2)} onSkip={() => setChrome(0)} onNext={() => setChrome(0)} onAction={() => setSheet("form")} onAdvance={() => setChrome(3)} />
     </div>
