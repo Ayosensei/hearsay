@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { CampaignTools, DemoHelp } from "./DemoHelp";
 import { CampaignHome } from "./CampaignHome";
+import { MissionLaunchBrief } from "./MissionLaunchBrief";
 import { GossipWave } from "./GossipWave";
 import { Button } from "../ui/button";
 import { useLivingTown } from "./use-living-town";
@@ -47,6 +48,7 @@ export function LivingTownApp() {
   const { town } = game;
   const [reviewingEnding, setReviewingEnding] = useState("");
   const [demoOpen, setDemoOpen] = useState(false);
+  const [pendingMission, setPendingMission] = useState<ScenarioId>();
   const scenario = town ? scenarioState(town) : undefined;
   const endingKey = scenario?.stage === "won" || scenario?.stage === "lost" ? `${town?.playerId}:${scenario.stage}` : "";
   const goal = town && game.challenge ? challengeStage(town, game.challenge.targetEventId) : undefined;
@@ -66,10 +68,11 @@ export function LivingTownApp() {
   if (!npc) return <main className="town-loading">There are no villagers in this world.</main>;
   const deed = town.events.find((e) => e.id === game.eventId);
   const frozen = game.active || game.offline;
-  const home = () => { setAction(undefined); setCompare(false); setDemoOpen(false); setReviewingEnding(""); game.setDrawer("scenarios"); };
+  const home = () => { setPendingMission(undefined); setAction(undefined); setCompare(false); setDemoOpen(false); setReviewingEnding(""); game.setDrawer("scenarios"); };
   const shortcuts = <CampaignTools onHome={home} onDemo={() => setDemoOpen(true)} />;
   const help = <DemoHelp open={demoOpen} onClose={() => setDemoOpen(false)} onComplete={home} />;
-  if (game.drawer === "scenarios" || (endingKey && reviewingEnding !== endingKey)) return <><CampaignHome town={town} busy={frozen} error={game.error} onStart={(id) => void startScenario(id)} onReturn={() => { setAction(undefined); setReviewingEnding(endingKey); game.setDrawer("objective"); }} />{shortcuts}{help}</>;
+  const briefing = pendingMission && <MissionLaunchBrief id={pendingMission} busy={frozen} error={game.error} onBegin={() => void beginMission(pendingMission)} onClose={() => { if (!frozen) setPendingMission(undefined); }} />;
+  if (game.drawer === "scenarios" || (endingKey && reviewingEnding !== endingKey)) return <><div inert={Boolean(pendingMission)}><CampaignHome town={town} busy={frozen} error={game.error} onStart={(id) => void startScenario(id)} onReturn={() => { setAction(undefined); setReviewingEnding(endingKey); game.setDrawer("objective"); }} />{shortcuts}{help}</div>{briefing}</>;
   const close = () => { if (!game.busy) { game.setDrawer(undefined); setAction(undefined); } };
   function openAction(kind: "sword" | "free" | "good") {
     if (finished) return;
@@ -79,7 +82,8 @@ export function LivingTownApp() {
   }
   function selectResident(id: string) { setPosition(approach(id)); game.select(id); }
   async function startQuest() { await game.startChallenge(); setView("town"); setClockPaused(false); }
-  async function startScenario(id: ScenarioId) { await game.startScenario(id); setView("town"); setAction(undefined); }
+  function startScenario(id: ScenarioId) { setPendingMission(id); }
+  async function beginMission(id: ScenarioId) { if (await game.startScenario(id)) { setPendingMission(undefined); setView("town"); setAction(undefined); } }
   function showGraph() { if (game.tour === -1) game.finishTour(); setView("graph"); game.setDrawer(undefined); }
   function goalGraph() { if (game.challenge?.targetEventId) game.setEventId(game.challenge.targetEventId); game.focus("garrick"); showGraph(); }
   const guard = town.npcs.find((person) => person.id === "garrick");
@@ -106,7 +110,7 @@ export function LivingTownApp() {
     else { game.setDrawer(undefined); game.finishTour(); }
   }
   return <main className={`living-town minimal-town has-objective has-campaign-tools ${town.puzzle ? "has-pulse" : ""} ${town.puzzle?.crossing || town.puzzle?.story ? "living-dilemma" : ""} ${game.drawer === "character" || action === "location" ? "chat-open" : ""} ${game.tour === -1 ? "tour-arrival" : ""} ${game.reduced ? "reduce-motion" : ""} ${game.largeText ? "large-text" : ""}`}>
-    <div inert={Boolean(game.drawer || action || compare || demoOpen)}>
+    <div inert={Boolean(game.drawer || action || compare || demoOpen || pendingMission)}>
       {view === "town" && !game.textMode && <TownStage town={town} eventId={game.beats[0]?.eventId ?? game.eventId} selected={game.selected} beat={game.beats[0]} why={game.why}
         position={position} onPosition={setPosition} quiet showSword={game.tour === 1} lens={fog && lens === "whispers" ? "none" : lens} reduced={game.reduced} paused={Boolean(game.busy)} onFocus={game.setSelected} onSelect={selectResident} onSword={() => !frozen && openAction("sword")} />}
       {(town.puzzle?.crossing || town.puzzle?.story) && <div className="dusk-shade" style={{ opacity: Math.min(.36, town.tick * .06) }} aria-hidden="true" />}
@@ -129,7 +133,7 @@ export function LivingTownApp() {
     {game.error && !action && <p className="status-banner" role="alert">{game.error}</p>}
     {!demoOpen && action === "location" && <PaperDrawer compact title={town.puzzle?.crossing ? "At the crossing" : "What will you do here?"} onClose={close}><LocationChoices onAsk={(npcId) => void game.scenarioCommand("ask", undefined, position, { npcId })} town={town} position={position} busy={frozen} error={game.error} onChoose={(id) => { void game.scenarioCommand("choose", id, position).then((ok) => { if (ok && !town.puzzle?.crossing && !town.puzzle?.story) setAction(undefined); }); }} onFreeAction={(input) => { void game.record(input).then((ok) => { if (ok) setAction(undefined); }); }} onCustom={() => setAction("free")} onInspect={() => { void game.scenarioCommand("inspect").then((ok) => { if (ok) setAction(undefined); }); }} /></PaperDrawer>}
     {!demoOpen && action && action !== "location" && <DeedForm town={town} prepared={action === "sword"} locked={Boolean(game.challenge) && goal === "briefing"} goodDeed={action === "good"} position={position} busy={Boolean(game.busy)} error={game.error} onClose={close} onSubmit={async (input) => { const observation = observeAt(position, town); const ok = await game.record({ ...input, placeId: observation.place?.id ?? "", witnesses: observation.witnesses.map((n) => n.id) }); if (ok) setAction(undefined); return ok; }} />}
-    {!demoOpen && game.drawer && <PaperDrawer title={game.drawer === "objective" ? "Your objective" : game.drawer === "residents" ? "Meet the villagers" : game.drawer === "character" ? npc.name : game.drawer === "ledger" ? "The Ledger" : game.drawer === "evidence" ? "Follow the whisper" : game.drawer === "attitude" ? "The weight of a memory" : game.drawer === "engine" ? "Under the hood" : game.drawer === "settings" ? "Menu" : "Begin again?"} onClose={close} dark={game.drawer === "engine"} compact={game.drawer === "character"}>
+    {!pendingMission && !demoOpen && game.drawer && <PaperDrawer title={game.drawer === "objective" ? "Your objective" : game.drawer === "residents" ? "Meet the villagers" : game.drawer === "character" ? npc.name : game.drawer === "ledger" ? "The Ledger" : game.drawer === "evidence" ? "Follow the whisper" : game.drawer === "attitude" ? "The weight of a memory" : game.drawer === "engine" ? "Under the hood" : game.drawer === "settings" ? "Menu" : "Begin again?"} onClose={close} dark={game.drawer === "engine"} compact={game.drawer === "character"}>
       {game.drawer === "objective" && objective}
       {game.drawer === "residents" && <ResidentsSheet npcs={town.npcs} onSelect={selectResident} />}
       {game.drawer === "character" && (town.puzzle?.story ? <MissionChat town={town} npcId={npc.id} busy={frozen} onChoose={(id) => void game.scenarioCommand("choose", id, position)} onAsk={() => void game.scenarioCommand("ask", undefined, position, { npcId: npc.id })} /> : town.puzzle?.crossing ? <CrossingChat town={town} npcId={npc.id} busy={frozen} onChoose={(id) => void game.scenarioCommand("choose", id, position)} /> : fog ? <PuzzleInterview key={`${town.playerId}-${npc.id}`} town={town} npc={npc} eventId={game.eventId} busy={frozen} onAsk={() => void game.scenarioCommand("ask", undefined, position, { npcId: npc.id, eventId: game.eventId || town.puzzle?.caseEventId })} onSpeak={(text) => game.speak(text, position)} /> : <CharacterSheet key={npc.id} town={town} npc={npc} eventId={game.eventId} busy={frozen || Boolean(town.puzzle)} onSpeak={(text) => game.speak(text, position)} onExplain={() => void game.explain()} onAttitude={() => game.setDrawer("attitude")} />)}
@@ -141,6 +145,6 @@ export function LivingTownApp() {
       {(game.drawer === "reset" || game.drawer === "replay") && <div className="space-y-5"><h3 className="font-serif text-3xl">Reset story {game.slot.toUpperCase()}?</h3><p>This removes its actions, memories and reputation changes. The other traveller’s history is unaffected.</p><Button variant="destructive" disabled={frozen} onClick={() => void game.reset(game.drawer === "replay")}>{game.busy || `Reset story ${game.slot.toUpperCase()}${game.drawer === "replay" ? " and replay" : ""}`}</Button><Button variant="secondary" disabled={frozen} onClick={close}>Keep my story</Button></div>}
     </PaperDrawer>}
     <ControlVsHearsayModal isOpen={compare && !fog && !demoOpen} playerId={town.playerId} npcId={npc.id} onClose={() => setCompare(false)} />
-    {shortcuts}{help}
+    {shortcuts}{help}{briefing}
   </main>;
 }

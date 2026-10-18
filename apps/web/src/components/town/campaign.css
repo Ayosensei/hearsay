@@ -49,3 +49,18 @@
   .map-level { max-width: none; min-height: 160px; }
 }
 @media (prefers-reduced-motion: reduce) { .map-level { transition: none; } }
+.mission-result-overlay { position: fixed; inset: 0; z-index: 75; display: grid; place-items: center; padding: 24px; background: color-mix(in srgb, var(--color-skyDeep) 82%, transparent); backdrop-filter: blur(8px); }
+.mission-result-overlay .paper-drawer { position: relative; inset: auto; width: min(560px, 100%); min-width: 0; height: auto; max-height: calc(100svh - 48px); border-radius: 24px; border: 1px solid var(--color-gold); box-shadow: 0 24px 80px color-mix(in srgb, var(--color-inkBlack) 50%, transparent); overflow: auto; }
+.mission-result-overlay .drawer-heading { border-bottom: 0; }
+.mission-result-overlay .drawer-heading h2 { font-size: 16px; }
+.mission-result-overlay .drawer-body { overflow: visible; }
+.mission-result-content { display: grid; gap: 16px; text-align: center; padding: 0 8px 16px; }
+.mission-result-medal { width: 88px; height: 88px; margin: 0 auto; display: grid; place-items: center; border: 1px solid var(--color-gold); border-radius: 50%; color: var(--color-gold); background: var(--color-skyDeep); box-shadow: 0 0 0 8px color-mix(in srgb, var(--color-gold) 14%, transparent); }
+.mission-result-title { font-family: var(--font-serif); font-size: clamp(44px, 8vw, 68px); line-height: 1; }
+.mission-result-ending { font-family: var(--font-serif); font-size: 24px; }
+.mission-result-actions { display: grid; gap: 12px; margin-top: 8px; }
+.mission-result-actions button { min-height: 48px; white-space: normal; }
+.mission-result-actions button:first-child { background: var(--color-skyDeep); color: var(--color-paperCream); }
+.mission-result-overlay[data-outcome=lost] .paper-drawer { border-color: var(--color-danger); }
+.mission-result-overlay[data-outcome=lost] .mission-result-medal { color: var(--color-danger); border-color: var(--color-danger); box-shadow: 0 0 0 8px color-mix(in srgb, var(--color-danger) 12%, transparent); }
+@media (max-width: 600px) { .mission-result-overlay { padding: 16px; } .mission-result-overlay .paper-drawer { max-height: calc(100svh - 32px); } }

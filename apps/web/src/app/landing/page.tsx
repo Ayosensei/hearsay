@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { GameplayImage } from "../../components/GameplayImage";
 import { CodeCard, type CodeLine } from "../../components/CodeCard";
 import {
   Sparkles,
@@ -92,9 +93,9 @@ export default function LandingPage() {
 
         {/* Subline */}
         <p className="mt-6 text-base sm:text-lg md:text-xl text-text-secondary max-w-2xl leading-relaxed">
-          An explainable, graph-native memory layer for game agents. NPCs witness events,
-          propagate rumors across social trust networks with credibility decay, and ground
-          every dialogue reply in verifiable FalkorDB Cypher paths.
+          An explainable, graph-native memory layer for game agents. Villagers witness your actions and
+          spread rumors through trust networks. FalkorDB records their memories and the paths
+          that explain how each story travelled.
         </p>
 
         {/* CTA Buttons */}
@@ -119,7 +120,7 @@ export default function LandingPage() {
         {/* Facts that hold by construction (AGENTS.md hard rules), not benchmarks */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl">
           <div className="p-4 rounded-xl bg-surface-1 border border-border/80 flex flex-col items-center">
-            <span className="font-mono text-2xl font-bold text-text-primary tabular-nums">6</span>
+            <span className="font-mono text-2xl font-bold text-text-primary tabular-nums">13</span>
             <span className="text-xs text-text-tertiary mt-1">NPCs in Hollowbrook</span>
           </div>
           <div className="p-4 rounded-xl bg-surface-1 border border-border/80 flex flex-col items-center">
@@ -136,131 +137,18 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Framed Product Preview Hero */}
-        <div className="mt-16 w-full max-w-5xl rounded-2xl p-2 bg-surface-2 border border-border signal-glow relative overflow-hidden text-left">
-          {/* Header Bar of Preview */}
-          <div className="h-10 px-4 bg-surface-1 rounded-t-xl border-b border-border flex items-center justify-between text-xs font-mono text-text-tertiary">
-            <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-danger/80" />
-              <span className="h-2.5 w-2.5 rounded-full bg-gold/80" />
-              <span className="h-2.5 w-2.5 rounded-full bg-success/80" />
-              <span className="ml-3 text-text-secondary">hearsay-inspector • Hollowbrook (6 NPCs)</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-signal">mock engine</span>
-              <span className="text-text-primary bg-surface-3 px-2 py-0.5 rounded tabular-nums">
-                Tick: 0003
-              </span>
-            </div>
-          </div>
-
-          {/* Inner Simulated Viewport */}
-          <div className="p-6 bg-surface-1/90 rounded-b-xl grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Left Column: NPC Trust Directory */}
-            <div className="p-4 rounded-lg bg-surface-2 border border-border/60 flex flex-col gap-3">
-              <div className="flex items-center justify-between text-xs font-mono text-text-tertiary">
-                <span>NPC DIRECTORY</span>
-                <span className="text-signal">6 Active</span>
-              </div>
-              <div className="p-2.5 rounded-md bg-surface-3 border border-signal/40 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-7 w-7 rounded-full bg-surface-2 flex items-center justify-center font-mono text-xs font-bold text-signal">
-                    B
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-text-primary">Brom</div>
-                    <div className="text-xs text-text-tertiary">Blacksmith</div>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-gold px-1.5 py-0.5 rounded bg-surface-2">
-                  Eye-Witness
-                </span>
-              </div>
-              <div className="p-2.5 rounded-md bg-surface-2 border border-border/40 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-7 w-7 rounded-full bg-surface-3 flex items-center justify-center font-mono text-xs font-bold text-text-secondary">
-                    M
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-text-primary">Mira</div>
-                    <div className="text-xs text-text-tertiary">Tavernkeeper</div>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-signal px-1.5 py-0.5 rounded bg-surface-3">
-                  Heard (1 hop)
-                </span>
-              </div>
-              <div className="p-2.5 rounded-md bg-surface-2 border border-border/40 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-7 w-7 rounded-full bg-surface-3 flex items-center justify-center font-mono text-xs font-bold text-text-secondary">
-                    G
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-text-primary">Garrick</div>
-                    <div className="text-xs text-text-tertiary">Town Guard</div>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-text-tertiary px-1.5 py-0.5 rounded bg-surface-3">
-                  Unaware
-                </span>
-              </div>
-            </div>
-
-            {/* Center Column: Why? Signature Provenance Teaser */}
-            <div className="p-4 rounded-lg bg-surface-2 border border-border/60 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-mono text-gold mb-2">
-                  <HelpCircle className="h-3.5 w-3.5" />
-                  <span>SIGNATURE: WHY? CARD</span>
-                </div>
-                <h3 className="font-serif text-lg text-text-primary">
-                  How Garrick <span className="italic text-signal">learned</span> about it:
-                </h3>
-                <div className="mt-4 p-3 rounded-md bg-surface-3 border border-border flex items-center justify-between font-mono text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="text-gold font-bold">Brom</span>
-                    <span className="text-text-tertiary">→</span>
-                    <span className="text-signal font-bold">Mira</span>
-                    <span className="text-text-tertiary">→</span>
-                    <span className="text-signal font-bold">Garrick</span>
-                  </div>
-                  <span className="text-gold tabular-nums">Conf: 0.63</span>
-                </div>
-                <p className="mt-3 text-xs text-text-secondary leading-relaxed">
-                  1.00 × 0.90 × 0.70 trust along the TRUSTS edges. Event: &ldquo;Poison Guard Well&rdquo;.
-                </p>
-              </div>
-              <div className="pt-3 border-t border-border flex items-center justify-between text-xs font-mono text-text-tertiary">
-                <span>Decay: -37%</span>
-                <span className="text-success">Verified Graph Path</span>
-              </div>
-            </div>
-
-            {/* Right Column: Knowledge Firewall & Grounded Reply */}
-            <div className="p-4 rounded-lg bg-surface-2 border border-border/60 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-mono text-signal mb-2">
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                  <span>KNOWLEDGE FIREWALL</span>
-                </div>
-                <div className="p-2.5 rounded bg-surface-3 text-xs text-text-secondary leading-relaxed font-sans italic border-l-2 border-signal">
-                  &ldquo;Brom told me someone was spotted near the barracks. If it was you, keep your hands off my forge tools.&rdquo;
-                </div>
-                <div className="mt-3 text-xs text-text-tertiary font-mono">
-                  <span className="text-text-primary font-semibold">LLM prompt:</span> only what Garrick knows. Fenn has heard nothing yet, so he cannot mention it.
-                </div>
-              </div>
-              <div className="pt-3 border-t border-border">
-                <Link
-                  href="/"
-                  className="w-full h-8 rounded bg-primary/20 hover:bg-primary/30 text-signal border border-signal/30 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <span>Test in Live Simulator</span>
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-            </div>
-          </div>
+        <div className="mt-16 w-full max-w-5xl text-text-secondary">
+          <GameplayImage kind="conversation" priority />
+        </div>
+      </section>
+      <section aria-labelledby="how-to-play" className="px-6 md:px-12 pb-20 max-w-6xl mx-auto">
+        <h2 id="how-to-play" className="font-serif text-3xl sm:text-5xl text-center">A town that remembers your choices</h2>
+        <p className="mt-4 mb-10 text-center text-text-secondary max-w-2xl mx-auto">Solve a mission before its deadline. Spend two action points per turn, follow villagers' clues, and account for what the town hears about you.</p>
+        <div className="grid gap-8 md:grid-cols-2">
+          <div><h3 className="font-serif text-2xl mb-3">1. Choose your next chapter</h3><GameplayImage kind="campaign" /></div>
+          <div><h3 className="font-serif text-2xl mb-3">2. Talk, investigate, decide</h3><GameplayImage kind="medicine" /></div>
+          <div><h3 className="font-serif text-2xl mb-3">3. Let the town talk</h3><GameplayImage kind="gossip" /></div>
+          <div><h3 className="font-serif text-2xl mb-3">4. Discover how the story spread</h3><GameplayImage kind="graph" /></div>
         </div>
       </section>
 
@@ -494,7 +382,7 @@ export default function LandingPage() {
             Step into <span className="italic text-signal">Hollowbrook</span>.
           </h2>
           <p className="mt-4 text-base text-text-secondary max-w-xl mx-auto">
-            Interact with the live 6-NPC graph, commit deeds, advance simulation ticks, and audit the Why? provenance card in real-time.
+            Interact with the live 13-villager town, commit deeds, advance simulation ticks, and audit the Why? provenance card in real-time.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">

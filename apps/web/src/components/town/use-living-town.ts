@@ -110,13 +110,14 @@ export function useLivingTown() {
   function select(id: string) { setSelected(id); setWhy(undefined); setDrawer("character"); }
   function focus(id: string) { setSelected(id); setWhy(undefined); }
   async function startScenario(id: ScenarioId) {
-    if (!canPlayLevel(readCampaign(), id) && scenarioFromPlayer(town?.playerId) !== id) { setError("Complete the demo and the preceding campaign levels first."); setDrawer("scenarios"); return; }
+    if (!canPlayLevel(readCampaign(), id) && scenarioFromPlayer(town?.playerId) !== id) { setError("Complete the demo and the preceding campaign levels first."); setDrawer("scenarios"); return false; }
     const playerId = `${isMissionId(id) ? "story" : "puzzle"}_${id}_${crypto.randomUUID().replaceAll("-", "").slice(0, 20)}`;
     const next = await run(() => runScenario({ playerId, action: "inspect" }), "Opening a new scenario…");
-    if (!next) return;
+    if (!next) return false;
     setSlot("scenario"); setChallenge(undefined); setTour(0); setDrawer(undefined); setSelected(isMissionId(id) ? missions[id].start : "rowan"); setEventId(next.puzzle?.caseEventId ?? ""); setLog([]); setLastBeats([]);
     localStorage.setItem("hearsay-scenario", playerId); localStorage.setItem("hearsay-active-slot", "scenario");
     tell(next.puzzle?.story ? `${next.puzzle.story.objective} Your ${next.puzzle.story.maxTurns}-minute clock has started.` : next.puzzle?.crossing ? "Get Lysa across before dusk. Your six-minute clock has started. Talk to Rowan, or choose another route." : "Two action points per turn. Question villagers, choose your moves, then let the town talk.");
+    return true;
   }
   async function scenarioCommand(action: PuzzleCommand["action"], choiceId?: string, position?: TownPosition, details: Pick<PuzzleCommand, "npcId" | "eventId" | "text" | "conversationId" | "answer"> = {}) {
     if (!town?.playerId) return false;
