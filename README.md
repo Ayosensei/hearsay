@@ -374,3 +374,66 @@ That is **1,280 measured operations**, with no reported operation or cleanup err
 Same-player gossip commands serialize within one service instance. Independent services do not share that queue; candidate read, selected write and clock update are not one transaction. Guarded writes help detect conflicts but do not establish distributed scheduling correctness. Scenario commands have a similar single-service limitation. This is a small-world memory engine and local demo, not a validated distributed MMO backend.
 
 The [Daggerfall Unity adapter](integrations/daggerfall-unity/README.md) has backend smoke and C# compile evidence. Its bundle/runtime work was blocked by Editor installation/licensing problems; an actual in-game NPC interaction is not claimed. No third-party game assets are redistributed here.
+
+## Track 02 coverage
+
+| Track focus | Concrete implementation |
+| --- | --- |
+| Episodic memory | Event/KNOWS with witnesses, source, confidence and learned tick. |
+| Semantic memory | Fact/BELIEVES, directed TRUSTS and faction membership/relations. |
+| Procedural memory | Policy/FOLLOWS updates after haggling outcomes. |
+| Persistent conversations | Conversation/Utterance nodes read before subsequent replies. |
+| Shared state and handoffs | Scribe → Gossip → NPC responsibilities exchange durable graph state. |
+| Concurrent reads/writes | Real-database benchmark with explicit concurrency and latency percentiles. |
+| Per-user memory | Separate player graphs copied from a configured template. |
+| Explainability | Event/root-constrained provenance paths and visible query traces. |
+
+## Repository guide
+
+| Location | What to read there |
+| --- | --- |
+| [packages/contract](packages/contract/src/schemas.ts) | Tool inputs/outputs, errors, IDs, graph snapshot types. |
+| [packages/hearsay](packages/hearsay/src/index.ts) | Public core exports and implementation. |
+| [packages/mcp](packages/mcp/README.md) | MCP stdio setup and transport smoke coverage. |
+| [packages/cli](packages/cli/README.md) | Project scaffolding, local tool runner and authenticated HTTP bridge. |
+| [apps/web](apps/web/src/app/page.tsx) | Next.js town, campaign and server routes. |
+| [seed](seed) | Three-person starter and thirteen-person expanded synthetic worlds. |
+| [queries](queries/README.md) | Exact executable-query mirrors and manifest. |
+| [loadtest](loadtest/README.md) | Reproduction commands, measurement code and published samples. |
+| [docs/shared](docs/shared) | Product rules, graph model, contract, formulas and submission plan. |
+| [docs/goodness](docs/goodness/README.md) | Engine decisions, query spikes and evidence. |
+| [docs/duro](docs/duro/README.md) | Town behavior, campaign, screenshots and integration notes. |
+| [DESIGN.md](DESIGN.md) | Visual tokens and design rules. |
+| [AGENTS.md](AGENTS.md) | Ownership boundaries, verification and commit discipline. |
+| [docs/requests.md](docs/requests.md) | Cross-owner decisions and unresolved requests. |
+
+For connection failures, check Docker's Linux engine and `docker compose ps`, then confirm the private environment settings. Port 3000 belongs to FalkorDB Browser; use 3001 for the web app. Missing Gemini configuration should yield labelled template replies, not prevent graph operations. If a save has older content, remember that template changes do not migrate existing player graphs. Restart the server after environment changes. Do not delete the Docker volume to troubleshoot a save you need to preserve.
+
+## Team and AI usage disclosure
+
+**Goodness** owns graph/core tooling, the contract, MCP and benchmark work. **DuroT** owns town content, UI, demo assets and deployment presentation. Their scope and explanation notes are recorded in their linked owner documents. [Source repository and contributors](https://github.com/Ayosensei/hearsay).
+
+AI assistance is part of this project's development workflow and is disclosed in agent-authored commit trailers. **Codex (GPT-6)** prepared this README from the checked-in implementation and recorded evidence. The expanded-world artwork documentation records use of the built-in **image_gen** tool for resident and district assets. Earlier tools/models should be attributed from their actual commit trailers and human records rather than guessed. The team must complete any remaining historical attribution before submission.
+
+Humans are responsible for the product direction, acceptance decisions, reviewing generated changes and explaining the submitted implementation. The evidence here distinguishes real database tests from injected model outputs, screenshots from recorded video, and compile checks from runtime integration. Each teammate should personally rehearse the graph/query explanation before submitting; this README does not certify that a human review already occurred.
+
+**Licensing:** the CLI package includes an [MIT licence](packages/cli/LICENSE). This checkout does not contain a root licence granting the same terms to the whole repository; repository-wide licensing should be confirmed by the owners. Third-party dependencies retain their own licences. External Daggerfall assets are not part of this submission.
+
+## Submission checklist
+
+The first four checks reflect the supplied organiser reminder. Pending boxes are deliberately left open where an external action or human confirmation is still needed.
+
+- [x] **Public repository:** visibility verified on GitHub during this update.
+- [ ] **Working-demo video:** upload a recording showing actual gameplay, graph queries and explanations; put its final URL near the top of this README.
+- [x] **Map the graph:** node/edge model, direction semantics, save isolation and example paths included above.
+- [x] **Show graph work:** query walkthrough, exact Cypher files, provenance, firewall scoping and PageRank identified.
+- [x] **Name the track:** Track 02 — Agent Memory and Coordination.
+- [x] **Provide local setup:** template mode works without model credentials; real FalkorDB remains required.
+- [ ] Verify a fresh clone using these instructions on a separate clean environment.
+- [ ] Add a public deployment URL only after testing it; otherwise submit the complete local setup with the video.
+- [ ] Complete team registration and confirm each participant belongs to one team.
+- [ ] Review AI attribution, repository-wide licensing and unresolved requests with both owners.
+- [ ] Both teammates rehearse the query, isolation, credibility and explain-path walkthrough.
+- [ ] Submit before **October 18, 2026, 11:59 PM IST / 7:29 PM WAT**; the project's earlier 3 PM WAT target was a safety buffer, not the supplied closing time.
+
+Optional blog publication is tracked separately in the [submission plan](docs/shared/09-demo-and-submission.md). Do not delay the required submission to finish optional material.
