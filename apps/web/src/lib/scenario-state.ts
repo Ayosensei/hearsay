@@ -33,7 +33,7 @@ export function scenarioState(town: TownState): ScenarioState | undefined {
     : id === "alliance" ? (["townsfolk", "guard", "merchants"] as const).map((faction) => {
       const members = town.npcs.filter((npc) => npc.faction === faction);
       return { text: `${faction} faction friendly`, complete: members.length > 0 && members.reduce((sum, npc) => sum + npc.attitudeScore, 0) / members.length >= .2 };
-    }) : [{ text: "Submit the eyewitness, route and account classification", complete: false }];
+    }) : [{ text: "Submit the eyewitness, route and account classification", complete: town.events.some((event) => event.subject?.startsWith("Detective score:")) }];
   const verdict = town.events.find((event) => event.actionType === "traded" && Object.values(VERDICT).some((subject) => event.subject === subject));
   const missing = !town.npcs.some((npc) => npc.id === "garrick") || !town.npcs.some((npc) => npc.id === spec.start);
   const collapsed = id !== "detective" && trust !== undefined && trust <= 20;

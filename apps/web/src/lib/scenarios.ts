@@ -6,7 +6,7 @@ export const scenarios = {
   feud: { title: "The Family Feud", deadline: 7, start: "rowan", brief: "Repair the disputed footbridge. Get Rowan and Marta to become friendly and both learn about your repair before the town meeting." },
   watch: { title: "The Night Watch", deadline: 7, start: "silas", brief: "Survey the floodgate, obtain tools, and repair it with Oren. Garrick must know the danger or repair and trust you at least 60 by nightfall." },
   coverup: { title: "The Cover-up", deadline: 8, start: "brom", brief: "Brom saw you steal the forge sword. Keep Garrick neutral or better until the inspector arrives at turn 8. If he becomes wary, your cover is blown." },
-  redemption: { title: "Redemption", deadline: 10, start: "ayla", brief: "Ayla remembers your broken promise. Earn her devotion before turn 10. Choose who sees your good deeds and let truthful news travel." },
+  redemption: { title: "Redemption", deadline: 10, start: "ayla", brief: "Ayla remembers your broken promise. Earn her devotion before turn 10. Position your good deeds near the right villagers and let truthful news travel." },
   alliance: { title: "Three Factions", deadline: 8, start: "mira", brief: "Make the townsfolk, guards and merchants friendly by the inspector’s arrival at turn 8. Each faction is judged by its members’ average attitude." },
   detective: { title: "Rumour Detective", deadline: 8, start: "garrick", brief: "Reconstruct the silver-seal accusation against your traveller. Identify the eyewitness, the exact route to Garrick, and whether his account is firsthand, secondhand or unheard. One answer before turn 8." },
 } as const;
@@ -18,7 +18,7 @@ export interface ScenarioChoice {
 export const scenarioChoices: ScenarioChoice[] = [
   { id: "redeem-aid", scenario: "redemption", npc: "ayla", label: "Prepare the soup kitchen", hint: "Ayla sees your work. A single kindness may not outweigh the broken promise.", type: "helped", subject: "preparing the chapel soup kitchen" },
   { id: "redeem-gift", scenario: "redemption", npc: "ayla", label: "Donate kitchen supplies", hint: "A separate act of generosity. It competes with the memory of your lie.", type: "donated", subject: "supplies for the chapel soup kitchen" },
-  { id: "med-work", scenario: "medicine", npc: "brom", label: "Earn medicine money", hint: "Work at the forge. Honest, but costs a turn.", type: "helped", subject: "repairing tools for medicine money" },
+  { id: "med-work", scenario: "medicine", npc: "brom", label: "Earn medicine money", hint: "Work at the forge. Honest, but costs an action.", type: "helped", subject: "repairing tools for medicine money" },
   { id: "med-buy", scenario: "medicine", npc: "marta", label: "Buy the medicine", hint: "Spend your forge earnings. No theft to explain.", type: "traded", subject: "medicine bought for Lysa", requires: ["med-work"] },
   { id: "med-clinic", scenario: "medicine", npc: "ayla", label: "Help prepare remedies", hint: "Earn Ayla’s trust so she will offer charity medicine.", type: "helped", subject: "preparing chapel remedies" },
   { id: "med-charity", scenario: "medicine", npc: "ayla", label: "Request charity medicine", hint: "Ayla must be friendly. Her opinion comes from what she knows.", type: "traded", subject: "charity medicine for Lysa" },

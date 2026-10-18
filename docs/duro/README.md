@@ -79,3 +79,7 @@ All UI components adhere strictly to `DESIGN.md`:
 - **Palette**: Obsidian canvas (`#05070B`), layered surfaces 1–3, Signal blue (`#8FA2FF` text/strokes, `#3150E9` fills), Gold (`#E8C46A`) strictly for provenance origins.
 - **Typography**: Instrument Serif for hero headlines, Geist Sans for interface copy, Geist Mono for query IDs, numbers, and code cards.
 - **Craft Checklist**: Concentric radii ($r_{outer} = r_{inner} + padding$), tabular figures for dynamic metrics, hit targets $\ge 44\text{px}$, and no arbitrary Tailwind brackets.
+
+## Rumour puzzle update
+
+New attempts have two AP, seven mission choices, dated source clues and private memories until the verdict. Rumour Detective grades a single reconstruction using the real graph explain path. See [puzzle rules](puzzle-pressure.md) for persistence, stakes, compatibility and limits. UI states are on /styleguide.

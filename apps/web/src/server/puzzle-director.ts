@@ -40,6 +40,7 @@ export class PuzzleDirector {
     try {
       if (!isPuzzle(playerId)) fail("Not a puzzle save.");
       let town = unwrap(await adapter.getTownState(playerId));
+      let dialogue: TownState["dialogueHistory"] | undefined;
       const refresh = async () => { town = unwrap(await adapter.getTownState(playerId)); };
       const record = async (subject: string, type: ToolInput<"recordEvent">["type"], npc: string, weight?: number, position?: TownPosition) => {
         const nearby = position ? observeAt(position, town) : undefined;
@@ -57,6 +58,8 @@ export class PuzzleDirector {
         if (id === "detective" && caseEvent) { await call("spread", { playerId, eventId: caseEvent.id, maxHops: 3 }); await refresh(); }
         await record("Case prepared", "traded", "garrick", 0);
       }
+      const savedScore = town.events.find((event) => event.subject?.startsWith("Detective score:"));
+      if (id === "detective" && savedScore && !town.events.some((event) => Object.values(VERDICT).some((value) => value === event.subject))) await record(savedScore.subject === "Detective score: 3/3" ? VERDICT.won : VERDICT.incorrect, "traded", "garrick", 0);
       let state = scenarioState(town);
       if (!state) fail("Unknown puzzle state.");
       if (command.action !== "inspect" && state.stage !== "playing") fail("This puzzle is finished. Reveal the graph or begin a fresh attempt.");
@@ -94,7 +97,7 @@ export class PuzzleDirector {
         const npc = local(command.npcId);
         const said = await call("say", { playerId, npcId: npc.id, text: command.text ?? "", conversationId: command.conversationId });
         await record(`Talk|${npc.id}|${town.tick}|${pointsLeft(town)}`, "traded", npc.id, 0, command.position);
-        town.dialogueHistory = { [npc.id]: [{ id: crypto.randomUUID(), sender: "player", text: command.text ?? "", timestamp: "Just now", groundedInKnowledge: false }, { id: crypto.randomUUID(), sender: "npc", npcId: npc.id, text: said.reply, timestamp: "Just now", groundedInKnowledge: true, source: said.source, firewall: said.firewall, conversationId: said.conversationId }] };
+        dialogue = { [npc.id]: [{ id: crypto.randomUUID(), sender: "player", text: command.text ?? "", timestamp: "Just now", groundedInKnowledge: false }, { id: crypto.randomUUID(), sender: "npc", npcId: npc.id, text: said.reply, timestamp: "Just now", groundedInKnowledge: true, source: said.source, firewall: said.firewall, conversationId: said.conversationId }] };
       }
       if (command.action === "accuse") {
         if (id !== "detective" || !command.answer) fail("Submit a detective reconstruction.");
@@ -122,7 +125,7 @@ export class PuzzleDirector {
         const target = town.events.find((event) => event.subject === CASE_SUBJECT);
         if (target) { const path = await call("explain", { playerId, npcId: "garrick", eventId: target.id }); truth = { witnessId: target.witnessId, route: path.chain.map((hop) => hop.npcId), account: path.status === "not_in_graph" ? "unaware" : path.chain.length === 1 ? "eyewitness" : "secondhand" }; }
       }
-      const result = puzzleView({ ...town, recentTraces: [...trace].reverse().slice(0, 250) }, truth);
+      const result = puzzleView({ ...town, dialogueHistory: dialogue ?? town.dialogueHistory, recentTraces: [...trace].reverse().slice(0, 250) }, truth);
       return { ok: true, data: result, trace: result.puzzle?.fog ? [] : trace };
     } catch (error) {
       return { ok: false, error: { code: error instanceof PuzzleFailure ? error.code : "INTERNAL", message: error instanceof PuzzleFailure ? error.message : "Could not confirm the puzzle. Inspect the saved story before retrying." }, trace: [] };

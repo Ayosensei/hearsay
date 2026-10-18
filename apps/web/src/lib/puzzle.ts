@@ -24,7 +24,7 @@ export function pointsLeft(town: TownState) {
   const id = scenarioFromPlayer(town.playerId);
   const choices = id ? choicesFor(id, town.npcs) : [];
   const used = town.events.filter((event) => event.tickOccurred === town.tick && (
-    /^(Note\||Talk\||Refused\|)/.test(event.subject ?? "") || choices.some((choice) => choice.subject === event.subject && choice.type === event.actionType)
+    /^(Note\||Talk\||Refused\||Detective score:)/.test(event.subject ?? "") || choices.some((choice) => choice.subject === event.subject && choice.type === event.actionType)
   )).length;
   return Math.max(0, 2 - used);
 }
@@ -48,9 +48,9 @@ export function puzzleView(town: TownState, truth?: DetectiveAnswer): TownState 
   const puzzle: PuzzleView = { fog, ap: pointsLeft(town), maxAp: 2, state: publicState, clues: puzzleClues(town), caseEventId: caseEvent?.id,
     feedback: refusal ? `A request was refused (${refusalChoice}) at turn ${refusal.tickOccurred}. The attempt spent 1 AP; build trust or bring the required knowledge before trying again next turn.` : undefined,
     detective: state.id === "detective" ? { score: score === undefined ? undefined : Number(score), truth: fog ? undefined : truth } : undefined };
-  if (!fog) return { ...town, puzzle };
+  if (!fog) return { ...town, events: gameplayEvents(town), puzzle };
   const events = gameplayEvents(town).map((event) => ({ ...event, witnessId: "", witnessName: "Hidden until the verdict" }));
-  return { ...town, puzzle, events, npcs: town.npcs.map((npc) => ({ ...npc, attitudeScore: 0, contributions: [], rumors: [], primaryRumor: undefined, knowledgeState: "none" })),
+  return { ...town, puzzle, events, npcs: town.npcs.map((npc) => ({ ...npc, knowledgeHidden: true, attitudeScore: 0, contributions: [], rumors: [], primaryRumor: undefined, knowledgeState: "none" })),
     graphNodes: town.graphNodes.filter((node) => node.type === "npc"), graphEdges: town.graphEdges.filter((edge) => edge.type === "TRUSTS"),
-    activeProvenance: undefined, activePathEdgeIds: [], recentTraces: [], gossipSteps: [], dialogueHistory: Object.fromEntries(Object.entries(town.dialogueHistory).map(([id, messages]) => [id, messages.map((message) => ({ ...message, provenance: undefined }))])) };
+    activeProvenance: undefined, activePathEdgeIds: [], recentTraces: [], gossipSteps: [], dialogueHistory: Object.fromEntries(Object.entries(town.dialogueHistory).map(([id, messages]) => [id, messages.map((message) => ({ ...message, provenance: undefined, firewall: message.firewall ? { passed: message.firewall.passed, violations: [] } : undefined }))])) };
 }

@@ -38,6 +38,7 @@ export interface RumorKnowledge {
 }
 
 export interface NPC {
+  knowledgeHidden?: boolean;
   contributions?: { eventId: string; type: string; effect: number; confidence: number; learnedFrom: string }[];
   id: string;
   name: string;

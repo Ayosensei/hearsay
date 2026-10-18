@@ -101,3 +101,21 @@ it("ends a detective case after one wrong reconstruction or an expired deadline"
   const expired = data(await director.execute({ playerId: player("detective"), action: "verdict" }));
   expect(expired.tick).toBe(8); expect(expired.puzzle?.state.stage).toBe("lost"); expect(expired.puzzle?.detective?.truth).toBeDefined();
 }, 30000);
+
+it("keeps a paid dialogue reply when the second AP advances gossip", async () => {
+  const id = player("medicine"); await inspect(id);
+  await choose(id, "med-clinic", "ayla");
+  const town = data(await director.execute({ playerId: id, action: "speak", npcId: "ayla", text: "What have you heard?", position: approach("ayla") }));
+  expect(town.tick).toBe(1); expect(town.puzzle?.ap).toBe(2);
+  expect(town.dialogueHistory.ayla).toHaveLength(2);
+  expect(town.dialogueHistory.ayla[1].text.length).toBeGreaterThan(0);
+  expect(town.dialogueHistory.ayla[1].provenance).toBeUndefined();
+}, 30000);
+
+it("can win a three-faction alliance through witnessed favours and real gossip", async () => {
+  const id = player("alliance"), first = await inspect(id);
+  for (const npc of first.npcs) await choose(id, `help-${npc.id}`, npc.id);
+  const town = data(await director.execute({ playerId: id, action: "verdict" }));
+  expect(town.tick).toBe(8); expect(town.puzzle?.state.stage).toBe("won");
+  expect(town.puzzle?.state.goals.every((goal) => goal.complete)).toBe(true);
+}, 30000);
