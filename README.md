@@ -6,6 +6,8 @@ Hearsay is a persistent, explainable memory engine for game NPCs, built around *
 
 Built for **Graph Hacks 2026 · Track 02: Agent Memory and Coordination**. The reusable engine ships as a TypeScript workspace library, MCP server and local developer CLI. **Hollowbrook**, the playable thirteen-resident town, demonstrates the consequences.
 
+**Hollowbrook is a demo of the technology, not the final destination.** We plan to connect future versions of Hearsay to real games through game-specific adapters. A game would send actual gameplay events and witnesses to Hearsay, then use the graph-backed memories, attitudes and dialogue in its own NPC interactions. This demo shows how that memory loop would work; a complete, working integration inside a real game is future work.
+
 ![Hollowbrook: the expanded town and its residents](docs/duro/screens/expanded-family-1440x900.png)
 
 > **Submission reminder supplied by the organisers:** make the repository public; demo the application working rather than slides; map the graph in the README; show the graph doing the work. The supplied deadline is **October 18, 2026, 11:59 PM IST = 7:29 PM WAT = 18:29 UTC**. [Organiser announcement](https://x.com/WeMakeDevs/status/2111740594485928411). The announcement could not be independently fetched during this README update; the time above matches the supplied notice and project brief.
