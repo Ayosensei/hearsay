@@ -11,6 +11,10 @@ import { scenarioFromPlayer } from "../../lib/scenarios";
 import type { ScenarioId } from "../../lib/scenarios";
 import type { TownPosition } from "../../lib/town-space";
 import { scenarioState } from "../../lib/scenario-state";
+import { isMissionId } from "../../lib/missions";
+import { missions } from "../../lib/mission-catalog";
+import { canPlayLevel, readCampaign } from "../../lib/campaign";
+import { useCampaign } from "./use-campaign";
 import { isPuzzle } from "../../lib/puzzle";
 import type { PuzzleCommand } from "../../server/puzzle-director";
 
@@ -18,6 +22,7 @@ export interface Beat { id: string; text: string; from?: string; to?: string; ev
 export type Drawer = "scenarios" | "objective" | "residents" | "ledger" | "character" | "evidence" | "attitude" | "engine" | "settings" | "reset" | "replay" | undefined;
 
 export function useLivingTown() {
+  const campaign = useCampaign();
   const [town, setTown] = useState<TownState>();
   const [slot, setSlot] = useState("a");
   const [challenge, setChallenge] = useState<ChallengeSave>();
@@ -40,6 +45,11 @@ export function useLivingTown() {
   const chats = useRef(new Map<string, TownState["dialogueHistory"]>());
   const active = Boolean(busy || beats.length);
   const tell = useCallback((text: string) => { setNarration(text); setLog((old) => [...old, text].slice(-100)); }, []);
+  useEffect(() => {
+    if (!town || !campaign.ready) return;
+    const result = scenarioState(town);
+    if (result?.stage === "won" && !campaign.progress.completed.includes(result.id)) campaign.completeLevel(result.id);
+  }, [town, campaign.ready, campaign.progress.completed]);
   useEffect(() => { setWhy(undefined); }, [eventId, slot]);
 
   useEffect(() => {
@@ -90,6 +100,7 @@ export function useLivingTown() {
       if (scenarioFromPlayer(next.playerId)) { setTour(0); tell(scenarioState(next)?.reason ?? "Scenario restored from the town’s graph. Choose your next location."); }
       else if (saved || next.events.length) { setTour(0); tell(saved ? "Earn Garrick’s trust before the theft reaches him." : "Hollowbrook remembers. Take an action, or speak to a villager."); }
       else { setTour(localStorage.getItem(`hearsay-tour-expanded-${nextSlot}`) === "done" ? 0 : -1); tell(`${next.npcs.length} villagers. A fresh story. Choose a deed, then follow who hears about it.`); }
+      if (!readCampaign().demo && !scenarioFromPlayer(next.playerId)) { setTour(0); setDrawer("scenarios"); }
     }
   }
   useEffect(() => { const saved = localStorage.getItem("hearsay-active-slot"); void load(saved === "scenario" || saved === "challenge" || saved === "b" ? saved : "a"); /* A single initial load; save switches are explicit. */
@@ -99,27 +110,33 @@ export function useLivingTown() {
   function select(id: string) { setSelected(id); setWhy(undefined); setDrawer("character"); }
   function focus(id: string) { setSelected(id); setWhy(undefined); }
   async function startScenario(id: ScenarioId) {
-    const playerId = `puzzle_${id}_${crypto.randomUUID().replaceAll("-", "").slice(0, 20)}`;
+    if (!canPlayLevel(readCampaign(), id) && scenarioFromPlayer(town?.playerId) !== id) { setError("Complete the demo and the preceding campaign levels first."); setDrawer("scenarios"); return false; }
+    const playerId = `${isMissionId(id) ? "story" : "puzzle"}_${id}_${crypto.randomUUID().replaceAll("-", "").slice(0, 20)}`;
     const next = await run(() => runScenario({ playerId, action: "inspect" }), "Opening a new scenario…");
-    if (!next) return;
-    setSlot("scenario"); setChallenge(undefined); setTour(0); setDrawer(undefined); setSelected("garrick"); setEventId(next.puzzle?.caseEventId ?? ""); setLog([]); setLastBeats([]);
+    if (!next) return false;
+    setSlot("scenario"); setChallenge(undefined); setTour(0); setDrawer(undefined); setSelected(isMissionId(id) ? missions[id].start : "rowan"); setEventId(next.puzzle?.caseEventId ?? ""); setLog([]); setLastBeats([]);
     localStorage.setItem("hearsay-scenario", playerId); localStorage.setItem("hearsay-active-slot", "scenario");
-    tell("Two action points per turn. Question villagers, choose your moves, then let the town talk.");
+    tell(next.puzzle?.story ? `${next.puzzle.story.objective} Your ${next.puzzle.story.maxTurns}-minute clock has started.` : next.puzzle?.crossing ? "Get Lysa across before dusk. Your six-minute clock has started. Talk to Rowan, or choose another route." : "Two action points per turn. Question villagers, choose your moves, then let the town talk.");
+    return true;
   }
   async function scenarioCommand(action: PuzzleCommand["action"], choiceId?: string, position?: TownPosition, details: Pick<PuzzleCommand, "npcId" | "eventId" | "text" | "conversationId" | "answer"> = {}) {
     if (!town?.playerId) return false;
     const next = await run(() => runScenario({ playerId: town.playerId ?? "", action, choiceId, position, ...details }), action === "inspect" ? "Checking the saved story…" : "Resolving your move…");
     if (!next) return false;
     next.dialogueHistory = { ...town.dialogueHistory, ...Object.fromEntries(Object.entries(next.dialogueHistory).map(([id, messages]) => [id, [...(town.dialogueHistory[id] ?? []), ...messages]])) };
-    setDrawer(undefined); setLastBeats([]);
+    if (!next.puzzle?.crossing && !next.puzzle?.story) setDrawer(undefined); setLastBeats([]);
     const event = next.events.find((event) => !town.events.some((old) => old.id === event.id) && !event.subject?.startsWith("Scenario verdict:"));
     if (event) setEventId(event.id);
     const steps = next.gossipSteps ?? [];
     setBeats(steps.map((step) => ({ id: crypto.randomUUID(), eventId: step.eventId, from: step.tellerId, to: step.listenerId, confidence: step.credibility,
       text: `${next.npcs.find((npc) => npc.id === step.tellerId)?.name} told ${next.npcs.find((npc) => npc.id === step.listenerId)?.name}. ${Math.round(step.credibility * 100)}% sure.` })));
     const resolved = scenarioState(next);
-    tell(resolved && resolved.stage !== "playing" ? resolved.reason : next.puzzle ? `${action === "ask" ? "Notebook updated." : action === "speak" ? "Conversation recorded." : "Move resolved."} ${next.puzzle.ap}/2 AP · Turn ${next.tick}. End a turn to spread the news.` : action === "inspect" ? "Saved story checked. No choice was repeated." : `Turn ${next.tick}. ${event?.title ?? "The town exchanged news."}`);
+    tell(resolved && resolved.stage !== "playing" ? resolved.reason : (next.puzzle?.story || next.puzzle?.crossing) ? (next.puzzle.story ?? next.puzzle.crossing)?.lines.filter((line) => line.npc !== "player").at(-1)?.text ?? "The town is talking." : next.puzzle ? `${action === "ask" ? "Notebook updated." : action === "speak" ? "Conversation recorded." : "Move resolved."} ${next.puzzle.ap}/2 AP · Turn ${next.tick}. End a turn to spread the news.` : action === "inspect" ? "Saved story checked. No choice was repeated." : `Turn ${next.tick}. ${event?.title ?? "The town exchanged news."}`);
     return true;
+  }
+  async function heartbeat() {
+    if ((!town?.puzzle?.crossing && !town?.puzzle?.story) || locked.current) return;
+    await run(() => runScenario({ playerId: town.playerId ?? "", action: "inspect" }), "");
   }
   async function startChallenge() {
     const playerId = `challenge_${crypto.randomUUID().replaceAll("-", "").slice(0, 20)}`;
@@ -212,6 +229,7 @@ export function useLivingTown() {
   }
   function switchSave(next: string) { if (town) chats.current.set(slot, town.dialogueHistory); void load(next); }
   return { town, slot, selected, eventId, drawer, busy, error, narration, log, beats, lastBeats, why, tour, reduced, textMode, largeText, offline, active, replayWhispers, challenge, startChallenge, startScenario, scenarioCommand, focus,
+    heartbeat,
     clearError: () => setError(""),
     setDrawer, setSelected, setEventId, setTour, setReduced, setTextMode, setLargeText, tell, load, select, record, advance, speak, explain, reset, switchSave, finishTour };
 }

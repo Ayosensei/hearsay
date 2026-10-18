@@ -80,6 +80,41 @@
     "sha256": "ac638d3445aa1056bbf34024b4c4e5aed77f682262cd6f10b105682372dcd45d"
   },
   {
+    "id": "Q110_feud_init",
+    "source": "packages/hearsay/src/queries/feud.ts",
+    "sha256": "64bac7a49223496e9d40c139d8f1a155ea775c08d7d63ee090d8dc135bb5d611"
+  },
+  {
+    "id": "Q111_feud_read",
+    "source": "packages/hearsay/src/queries/feud.ts",
+    "sha256": "02f907457d43cf4ce8780efac79c26bce1c9a44f120524de48c5005ce2b21837"
+  },
+  {
+    "id": "Q112_feud_save",
+    "source": "packages/hearsay/src/queries/feud.ts",
+    "sha256": "2621ac6de004f6af43b2b85c797f192b9613afa725dc75eb5c42911cf36180e6"
+  },
+  {
+    "id": "Q113_feud_claims",
+    "source": "packages/hearsay/src/queries/feud.ts",
+    "sha256": "03f280f505800781caf48390fc9abcf62e3552361aadcb205da1e9c537b0d496"
+  },
+  {
+    "id": "Q114_feud_claim",
+    "source": "packages/hearsay/src/queries/feud.ts",
+    "sha256": "1fb22defb974148ad4f5db15a50c3a3ed174c556c2701ae17cea2470d7e00171"
+  },
+  {
+    "id": "Q115_feud_candidates",
+    "source": "packages/hearsay/src/queries/feud.ts",
+    "sha256": "6413c9b5b06a024bf0266dc6db9f768504f927abde710c80bf7c772964939432"
+  },
+  {
+    "id": "Q116_feud_learn",
+    "source": "packages/hearsay/src/queries/feud.ts",
+    "sha256": "1e298d25bd0712065a6c9f5bec79dc124c126e70502392e68f61f2f3f6c9ceda"
+  },
+  {
     "id": "Q11_get_places",
     "source": "packages/hearsay/src/queries/world.ts",
     "sha256": "d87f3068236f3a4787851548f138e0a3f1776de2717fb734c2bfc6df16d6c25c"
@@ -192,12 +227,12 @@
   {
     "id": "Q90_snapshot_edges",
     "source": "packages/hearsay/src/queries/memory.ts",
-    "sha256": "6a25c55955610661d881ea30cb469edf245fbe57bcdf6940080f2d0a8060d7a2"
+    "sha256": "987a668b7acb5fa1f7fd8b44d844c64c780cfc07817c71eddc8ff5e285b9d033"
   },
   {
     "id": "Q90_snapshot_nodes",
     "source": "packages/hearsay/src/queries/memory.ts",
-    "sha256": "60e888443f211e433b3cd67dcadadebda24264264b79cf3ee7043fd022fd0d21"
+    "sha256": "65bcb8e574e6192a0012a9679b1e846cf8fcc15385bc669c3a5f3e8f8f8dfec1"
   },
   {
     "id": "Q92_dialogue_known",

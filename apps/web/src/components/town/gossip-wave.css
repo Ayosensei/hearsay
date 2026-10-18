@@ -1,0 +1,14 @@
+.gossip-wave { position: absolute; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; }
+.gossip-sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+.gossip-ribbon { fill: none; stroke: var(--color-gold); stroke-width: 2; stroke-dasharray: 6 12; opacity: .65; animation: gossip-drift 3s linear 2; }
+.gossip-spark { fill: var(--color-paperCream); stroke: var(--color-gold); stroke-width: 3; filter: drop-shadow(0 0 6px var(--color-gold)); }
+.gossip-notice { position: absolute; top: 96px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; align-items: center; padding: 12px 20px; max-width: min(440px, calc(100% - 32px)); width: max-content; border-radius: 20px; border: 1px solid var(--color-gold); background: var(--color-skyDeep); color: var(--color-paperCream); box-shadow: 0 8px 24px var(--color-inkBlack); }
+.gossip-icon { font-size: 28px; color: var(--color-gold); }
+.gossip-notice > div { display: grid; gap: 4px; }
+.gossip-notice strong { font-family: var(--font-serif); font-size: 22px; }
+.gossip-notice span, .gossip-notice small { font-size: 11px; }
+.gossip-notice small { max-width: 300px; color: var(--color-paperShade); }
+@keyframes gossip-drift { to { stroke-dashoffset: -120; } }
+.gossip-still .gossip-ribbon { animation: none; }
+@media (max-width: 700px) { .gossip-notice { top: auto; bottom: 104px; padding: 10px 16px; } .gossip-notice strong { font-size: 18px; } }
+@media (prefers-reduced-motion: reduce) { .gossip-ribbon { animation: none; } .gossip-spark { display: none; } }

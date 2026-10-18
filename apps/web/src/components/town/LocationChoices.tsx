@@ -1,4 +1,7 @@
 "use client";
+import { MissionChat } from "./MissionChat";
+import { missions } from "../../lib/mission-catalog";
+import { CrossingChat } from "./CrossingChat";
 import { Button } from "../ui/button";
 import { choicesFor, choiceBlocked, scenarioFromPlayer } from "../../lib/scenarios";
 import { observeAt } from "../../lib/town-space";
@@ -7,9 +10,10 @@ import type { TownPosition } from "../../lib/town-space";
 import type { TownState } from "../../lib/types";
 import type { ToolInput } from "@hearsay/contract";
 
-export function LocationChoices({ town, position, busy, error, onChoose, onFreeAction, onCustom, onInspect }: {
+export function LocationChoices({ town, position, busy, error, onChoose, onFreeAction, onCustom, onInspect, onAsk }: {
   town: TownState; position: TownPosition; busy: boolean; error: string;
   onChoose: (id: string) => void; onFreeAction: (input: ToolInput<"recordEvent">) => void;
+  onAsk?: (npcId: string) => void;
   onCustom: () => void; onInspect: () => void;
 }) {
   const nearby = observeAt(position, town), scenario = scenarioFromPlayer(town.playerId);
@@ -17,6 +21,12 @@ export function LocationChoices({ town, position, busy, error, onChoose, onFreeA
     const home = homes[choice.npc];
     return home?.district === position.district && nearby.witnesses.some((npc) => npc.id === choice.npc);
   }) : [];
+  if (town.puzzle?.story) {
+    const spec = missions[town.puzzle.story.mission];
+    const npcId = nearby.witnesses.find((n) => spec.choices.some((c) => c.npc === n.id))?.id ?? nearby.witnesses[0]?.id ?? spec.start;
+    return <><MissionChat town={town} npcId={npcId} busy={busy} onChoose={onChoose} onAsk={() => onAsk?.(npcId)} />{error && <p role="alert">{error}</p>}</>;
+  }
+  if (town.puzzle?.crossing) return <><CrossingChat town={town} npcId={locals[0]?.npc ?? nearby.witnesses[0]?.id ?? "rowan"} busy={busy} onChoose={onChoose} />{error && <p role="alert">{error}</p>}</>;
   return <section className="space-y-4" aria-label="Choices at your location"><p className="paper-eyebrow">{nearby.place?.name ?? "On the road"}</p><p>Within sight: <strong>{nearby.witnesses.map((npc) => npc.name).join(", ") || "nobody"}</strong>. Everyone nearby witnesses your choice.</p>
     {scenario && <p className="paper-caption">{town.puzzle ? `${town.puzzle.ap}/2 AP. A choice or refused request spends 1 AP. Two spent points end the turn and spread gossip. Social prerequisites must be discovered by asking.` : "Committing a choice spends one turn and spreads every eligible rumour one hop. You cannot repeat a completed choice."}</p>}
     {!nearby.witnesses.length && <p>Walk closer to a villager to find local choices.</p>}

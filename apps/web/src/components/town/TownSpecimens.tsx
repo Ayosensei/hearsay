@@ -23,6 +23,7 @@ import { MemorySpecimens } from "./MemorySpecimens";
 import { ChallengeSpecimens } from "./ChallengeSpecimens";
 import { ScenarioSpecimens } from "./ScenarioSpecimens";
 import { PuzzleSpecimens } from "./PuzzleSpecimens";
+import { CrossingSpecimens } from "./CrossingSpecimens";
 
 export function TownSpecimens() {
   const [lens, setLens] = useState<"none" | "bonds" | "whispers">("none");
@@ -43,6 +44,7 @@ export function TownSpecimens() {
     <ChallengeSpecimens />
     <ScenarioSpecimens town={town} />
     <PuzzleSpecimens town={town} />
+    <CrossingSpecimens town={town} />
     <h2 className="font-serif text-4xl">Cinematic town</h2>
     <p>Confirmed handoffs, static reduced-motion paths, and replay without advancing time.</p>
     <div className="flex flex-wrap gap-4">{[true, false].map((playing) => <WhisperFlow key={String(playing)} npcs={town.npcs} tick={2} busy={false} remaining={1} beat={playing ? { id: "specimen", from: "mira", to: "garrick", confidence: .63, text: "Mira told Garrick." } : undefined} lastBeats={[{ id: "specimen", from: "mira", to: "garrick", confidence: .63, text: "Mira told Garrick." }]} onReplay={() => {}} />)}<WhisperFlow npcs={town.npcs} tick={0} busy={false} remaining={1} lastBeats={[]} beat={{ id: "witness", to: "brom", confidence: 1, text: "Brom saw it happen." }} onReplay={() => {}} /></div>

@@ -29,9 +29,10 @@ RETURN e.id AS eventId, e.type AS type, e.weight AS weight, e.tick AS tick, pl.i
 ORDER BY e.tick DESC LIMIT $limit`;
 // Return visible entities while keeping dialogue/type metadata out of snapshots.
 export const Q90_snapshot_nodes = `MATCH (n)
-WHERE NOT n:Utterance AND NOT n:Conversation AND NOT n:EventType RETURN n`;
+WHERE NOT n:Utterance AND NOT n:Conversation AND NOT n:EventType AND NOT n:FeudState AND NOT n:FeudClaim RETURN n`;
 // Return only edges between visible endpoints, with application IDs and labels.
 export const Q90_snapshot_edges = `MATCH (a)-[r]->(b)
 WHERE NOT a:Utterance AND NOT b:Utterance AND NOT a:Conversation AND NOT b:Conversation
   AND NOT a:EventType AND NOT b:EventType
+  AND NOT a:FeudState AND NOT b:FeudState AND NOT a:FeudClaim AND NOT b:FeudClaim
 RETURN a.id AS fromId, labels(a) AS fromLabels, r, b.id AS toId, labels(b) AS toLabels`;

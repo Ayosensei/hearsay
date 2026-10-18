@@ -34,3 +34,10 @@ export async function reconnectHearsay() {
   const runtime = await previous?.catch(() => undefined);
   if (runtime?.connection.ok) await runtime.connection.data.close();
 }
+
+export async function getGameDatabase() {
+  await getHearsay();
+  const runtime = await shared.hearsayWeb;
+  if (!runtime?.connection.ok) throw new Error("DB_UNAVAILABLE");
+  return runtime.connection.data;
+}
