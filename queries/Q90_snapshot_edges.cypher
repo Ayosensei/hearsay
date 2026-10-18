@@ -3,4 +3,5 @@
 MATCH (a)-[r]->(b)
 WHERE NOT a:Utterance AND NOT b:Utterance AND NOT a:Conversation AND NOT b:Conversation
   AND NOT a:EventType AND NOT b:EventType
+  AND NOT a:FeudState AND NOT b:FeudState AND NOT a:FeudClaim AND NOT b:FeudClaim
 RETURN a.id AS fromId, labels(a) AS fromLabels, r, b.id AS toId, labels(b) AS toLabels

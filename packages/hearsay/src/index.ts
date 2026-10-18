@@ -14,3 +14,4 @@ export { createLlm } from "./llm";
 export type { Llm, LlmOptions, LlmInput, LlmResult } from "./llm";
 export { createPolicy } from "./policy";
 export { createHearsay } from "./client";
+export * as feudQueries from "./queries/feud";

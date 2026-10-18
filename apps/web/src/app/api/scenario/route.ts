@@ -1,4 +1,8 @@
 import { getHearsay } from "../../../server/hearsay";
+import { getGameDatabase } from "../../../server/hearsay";
+import { CrossingDirector } from "../../../server/crossing-director";
+import { MissionDirector } from "../../../server/mission-director";
+import { missionFromPlayer } from "../../../lib/missions";
 import { ScenarioDirector } from "../../../server/scenario-director";
 import type { ScenarioCommand } from "../../../server/scenario-director";
 import type { HearsayClient } from "@hearsay/contract";
@@ -17,6 +21,7 @@ function valid(value: unknown): value is PuzzleCommand {
   if ("answer" in value) {
     const answer = value.answer;
     if (!answer || typeof answer !== "object" || !("witnessId" in answer) || typeof answer.witnessId !== "string" || answer.witnessId.length > 40 || !("account" in answer) || !["eyewitness", "secondhand", "unaware"].includes(String(answer.account)) || !("route" in answer) || !Array.isArray(answer.route) || answer.route.length > 13 || !answer.route.every((id: unknown) => typeof id === "string" && id.length <= 40)) return false;
+    if ("liarId" in answer && (typeof answer.liarId !== "string" || answer.liarId.length > 40)) return false;
   }
   if ("choiceId" in value && (typeof value.choiceId !== "string" || value.choiceId.length > 60)) return false;
   if ("position" in value) {
@@ -29,12 +34,24 @@ function valid(value: unknown): value is PuzzleCommand {
 }
 const directors = new WeakMap<HearsayClient, ScenarioDirector>();
 const puzzles = new WeakMap<HearsayClient, PuzzleDirector>();
+const crossings = new WeakMap<HearsayClient, CrossingDirector>();
+const stories = new WeakMap<HearsayClient, MissionDirector>();
 export async function POST(request: Request) {
   const reply = (value: unknown) => Response.json(value, { headers: { "Cache-Control": "no-store" } });
   try {
     const command: unknown = await request.json();
     if (!valid(command)) return reply({ ok: false, error: { code: "BAD_ARGS", message: "Invalid scenario command." }, trace: [] });
     const client = await getHearsay();
+    if (missionFromPlayer(command.playerId)) {
+      let director = stories.get(client);
+      if (!director) { director = new MissionDirector(client, await getGameDatabase()); stories.set(client, director); }
+      return reply(await director.execute(command));
+    }
+    if (command.playerId.startsWith("puzzle_crossing_")) {
+      let director = crossings.get(client);
+      if (!director) { director = new CrossingDirector(client, await getGameDatabase()); crossings.set(client, director); }
+      return reply(await director.execute(command));
+    }
     if (isPuzzle(command.playerId)) {
       let puzzle = puzzles.get(client);
       if (!puzzle) { puzzle = new PuzzleDirector(client); puzzles.set(client, puzzle); }

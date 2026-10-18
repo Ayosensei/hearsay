@@ -36,7 +36,7 @@ export function MinimalChrome(props: Props) {
     {props.tour === -1 ? <section className="minimal-welcome" aria-label="Begin your story">
       <h1>A town that <em>remembers.</em></h1>
       <p>Choose a dilemma. Decide who to help, what to risk, and who needs to hear your story.</p>
-      <Button disabled={props.busy} onClick={props.onBegin}>Choose a scenario <ArrowRight size={16} /></Button>
+      <Button disabled={props.busy} onClick={props.onBegin}>Open campaign <ArrowRight size={16} /></Button>
       <Button variant="ghost" onClick={props.onSkip}>Explore on your own</Button>
     </section> : <footer className="minimal-footer">
       {props.cue ? <section className="minimal-guide" aria-label="Your next step">
@@ -46,10 +46,12 @@ export function MinimalChrome(props: Props) {
       </section> : <>
         <p className="minimal-narration">{props.narration}</p>
         <div className="minimal-actions" aria-label="Story actions">
+          {props.actionDisabled && props.secondaryDisabled ? <Button onClick={props.onBegin}>Back to campaign <ArrowRight size={18} /></Button> : <>
           <Button disabled={props.busy || props.actionDisabled} onClick={props.onAction}>{props.actionLabel ?? "Take an action"}</Button>
-          <Button variant="ghost" disabled={props.secondaryDisabled || (props.clock ? false : props.busy)} onClick={props.clock?.onToggle ?? props.onAdvance}>{props.secondaryLabel ?? (props.clock ? props.clock.paused ? "Resume town" : "Pause town" : "Let the town talk")}</Button>
+          <Button variant="secondary" disabled={props.secondaryDisabled || (props.clock ? false : props.busy)} onClick={props.clock?.onToggle ?? props.onAdvance}>{props.secondaryLabel ?? (props.clock ? props.clock.paused ? "Resume town" : "Pause town" : "Let the town talk")}</Button>
+          </>}
         </div>
-        <p className="minimal-hint">{props.location ?? "Select a villager to talk or follow a memory."}{props.clock && <> · {props.clock.label}</>}</p>
+        <p className="minimal-hint" title={props.location}>{props.actionDisabled && props.secondaryDisabled ? "Choose your next step on the campaign map." : props.location?.split(" · ")[0] ?? "Select a villager to talk."}{props.clock && <> · {props.clock.label}</>}</p>
       </>}
     </footer>}
   </>;

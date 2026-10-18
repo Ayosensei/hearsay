@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
 
-export function PaperDrawer({ title, onClose, children, dark = false }: { title: string; onClose: () => void; children: React.ReactNode; dark?: boolean }) {
+export function PaperDrawer({ title, onClose, children, dark = false, compact = false }: { title: string; onClose: () => void; children: React.ReactNode; dark?: boolean; compact?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   const close = useRef(onClose); close.current = onClose;
   useEffect(() => {
@@ -21,7 +21,7 @@ export function PaperDrawer({ title, onClose, children, dark = false }: { title:
     document.addEventListener("keydown", key);
     return () => { document.removeEventListener("keydown", key); previous?.focus(); };
   }, []);
-  return <aside ref={ref} tabIndex={-1} className={`paper-drawer ${dark ? "engine-drawer" : ""}`} role="dialog" aria-modal="true" aria-label={title}>
+  return <aside ref={ref} tabIndex={-1} className={`paper-drawer ${dark ? "engine-drawer" : ""} ${compact ? "chat-drawer" : ""}`} role="dialog" aria-modal="true" aria-label={title}>
     <header className="drawer-heading"><h2>{title}</h2><Button variant="ghost" size="icon" onClick={onClose} aria-label="Close drawer"><X size={20} /></Button></header>
     <div className="drawer-body">{children}</div>
   </aside>;

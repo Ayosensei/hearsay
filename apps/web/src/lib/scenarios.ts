@@ -1,7 +1,9 @@
 import type { EventType } from "@hearsay/contract";
 import type { TownState } from "./types";
+import { crossingChoices } from "./crossing";
 
 export const scenarios = {
+  crossing: { title: "Family Feud · Before Dusk", deadline: 6, start: "rowan", brief: "Marta has barred the bridge. Get Rowan's daughter Lysa to the chapel before dusk. Pay, build a secret crossing, or uncover the missing toll. Choose what you are willing to sacrifice. Six minutes; two AP per turn. The clock keeps running during chats." },
   medicine: { title: "The Missing Medicine", deadline: 6, start: "lysa", brief: "Lysa is ill. Obtain medicine from Marta or the chapel, deliver it, and keep Garrick’s trust at least 40 at nightfall." },
   feud: { title: "The Family Feud", deadline: 7, start: "rowan", brief: "Repair the disputed footbridge. Get Rowan and Marta to become friendly and both learn about your repair before the town meeting." },
   watch: { title: "The Night Watch", deadline: 7, start: "silas", brief: "Survey the floodgate, obtain tools, and repair it with Oren. Garrick must know the danger or repair and trust you at least 60 by nightfall." },
@@ -37,6 +39,7 @@ export const scenarioChoices: ScenarioChoice[] = [
 ];
 
 export function choicesFor(scenario: ScenarioId, npcs: TownState["npcs"]): ScenarioChoice[] {
+  if (scenario === "crossing") return crossingChoices;
   return [...scenarioChoices.filter((choice) => choice.scenario === scenario), ...npcs.map((npc): ScenarioChoice => ({
     id: `help-${npc.id}`, npc: npc.id, label: `Help ${npc.name}`, hint: "One local favour. No repeat farming; their opinion depends on their memories.",
     type: "helped", subject: `helping ${npc.name} with daily work`,
@@ -44,7 +47,7 @@ export function choicesFor(scenario: ScenarioId, npcs: TownState["npcs"]): Scena
 }
 
 export function scenarioFromPlayer(playerId?: string): ScenarioId | undefined {
-  const match = /^(?:quest|puzzle)_([a-z]+)_[a-z0-9]{20}$/.exec(playerId ?? "");
+  const match = /^(?:quest|puzzle|story)_([a-z]+)_[a-z0-9]{20}$/.exec(playerId ?? "");
   return match && Object.hasOwn(scenarios, match[1]) ? match[1] as ScenarioId : undefined;
 }
 export function choiceEvent(town: TownState, id: string) {

@@ -4,13 +4,15 @@ import type { ScenarioState } from "./scenario-state";
 import type { TownState } from "./types";
 
 export const CASE_SUBJECT = "Case: the missing silver seal";
-export interface DetectiveAnswer { witnessId: string; route: string[]; account: "eyewitness" | "secondhand" | "unaware" }
+export interface DetectiveAnswer { witnessId: string; route: string[]; account: "eyewitness" | "secondhand" | "unaware"; liarId?: string }
 export interface PuzzleClue { npcId: string; eventId: string; title: string; source: string; confidence: number; tick: number }
 export interface PuzzleView {
+  story?: import("./missions").MissionView;
+  crossing?: import("./crossing").CrossingView;
   fog: boolean; ap: number; maxAp: number; state: ScenarioState; clues: PuzzleClue[];
-  feedback?: string; caseEventId?: string; detective?: { score?: number; truth?: DetectiveAnswer };
+  feedback?: string; caseEventId?: string; detective?: { score?: number; truth?: DetectiveAnswer; maxScore?: number };
 }
-export const isPuzzle = (id?: string) => Boolean(id?.startsWith("puzzle_") && scenarioFromPlayer(id));
+export const isPuzzle = (id?: string) => Boolean((id?.startsWith("puzzle_") || id?.startsWith("story_")) && scenarioFromPlayer(id));
 export function gameplayEvents(town: TownState) {
   return town.events.filter((event) => !/^(Note\||Talk\||Refused\||Case prepared|Detective score:|Scenario verdict:)/.test(event.subject ?? ""));
 }

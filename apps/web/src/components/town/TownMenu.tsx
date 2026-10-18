@@ -14,7 +14,7 @@ export function TownMenu({ game, lens, onLens }: {
       <p className="paper-caption">Expanded town · separate histories. Your earlier town saves are kept separately.</p>
     </section>
     <section><h3>Explore your story</h3>
-      <Button variant="ghost" onClick={() => game.setDrawer("scenarios")}>Choose a scenario</Button>
+      <Button variant="ghost" onClick={() => game.setDrawer("scenarios")}>Open campaign</Button>
       <Button variant="ghost" onClick={() => game.setDrawer("objective")}>Current objective</Button>
       <Button variant="ghost" onClick={() => game.setDrawer("residents")}>Meet the villagers ({game.town?.npcs.length ?? 0})</Button>
       <Button variant="ghost" onClick={() => game.setDrawer("ledger")}>Your deeds</Button>
@@ -31,6 +31,8 @@ export function TownMenu({ game, lens, onLens }: {
       <Button variant="secondary" aria-pressed={game.largeText} onClick={() => game.setLargeText(!game.largeText)}>Larger text: {game.largeText ? "on" : "off"}</Button>
     </section></details>
     <details><summary>Start over</summary><section>
+      <Button variant="secondary" disabled={disabled} onClick={() => { localStorage.clear(); window.location.reload(); }}>Clear browser progress · start from demo</Button>
+      <p className="paper-caption">Clears this site's local saves and preferences. Existing town graphs remain in the database.</p>
       <Button variant="secondary" disabled={disabled} onClick={() => game.setDrawer("replay")}>Replay the sword story</Button>
       <Button variant="ghost" disabled={disabled} onClick={() => game.setDrawer("reset")}>Reset story {game.slot.toUpperCase()}</Button>
       <p className="paper-caption">You’ll confirm before anything is cleared.</p>

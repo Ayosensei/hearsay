@@ -1,4 +1,14 @@
 "use client";
+import { useState } from "react";
+import { nextCampaignLevel } from "../../lib/campaign";
+import { useCampaign } from "./use-campaign";
+import { CampaignDemo } from "./CampaignDemo";
+import { CampaignMap } from "./CampaignMap";
+import { CampaignAdvance } from "./CampaignAdvance";
+import { MissionBrief } from "./MissionBrief";
+import { missions } from "../../lib/mission-catalog";
+import { isMissionId } from "../../lib/missions";
+import { CrossingBrief } from "./CrossingBrief";
 import { Button } from "../ui/button";
 import { scenarioChoices, scenarios } from "../../lib/scenarios";
 import type { ScenarioId } from "../../lib/scenarios";
@@ -8,8 +18,12 @@ import { PuzzleNotebook } from "./PuzzleNotebook";
 import type { DetectiveAnswer } from "../../lib/puzzle";
 
 export function ScenarioPicker({ busy, onStart }: { busy: boolean; onStart: (id: ScenarioId) => void }) {
-  return <section className="space-y-4" aria-label="Choose a scenario"><h2 className="font-serif text-3xl">Become a rumour architect.</h2><p>A mission, a deadline, and incomplete information. You have 2 AP per turn. Deeds, questions and conversations cost 1 AP; ending a turn spreads gossip. Walking and reading are free.</p>
-    {(Object.entries(scenarios) as [ScenarioId, (typeof scenarios)[ScenarioId]][]).map(([id, spec]) => <article className="memory-paper space-y-3" key={id}><h3 className="font-serif text-2xl">{spec.title}</h3><p>{spec.brief}</p><p className="paper-caption">{spec.deadline} turns · {id === "detective" ? "One answer, scored out of three. The investigator is not arrested for suspect attitudes." : id === "coverup" ? "A wary guard exposes your cover." : "Garrick’s trust at 20 or below means game over."}</p><Button disabled={busy} onClick={() => onStart(id)}>Play {spec.title}</Button></article>)}
+  const campaign = useCampaign(), [demo, setDemo] = useState(false);
+  if (demo) return <CampaignDemo onClose={() => setDemo(false)} onComplete={() => { campaign.completeDemo(); setDemo(false); }} />;
+  const next = nextCampaignLevel(campaign.progress);
+  return <section className="space-y-4" aria-label="Campaign levels"><h2 className="font-serif text-3xl">A town that remembers.</h2><p>Learn the rules, then play the stories in order. Complete each mission to unlock the next. You can replay completed levels; a loss keeps your current level open.</p>
+    <p className="paper-caption">{campaign.progress.demo && !next ? "Campaign complete. Every story is available to replay." : "Follow the path. Your next available stop is marked Ready."}</p>
+    <CampaignMap progress={campaign.progress} busy={busy || !campaign.ready} onDemo={() => setDemo(true)} onStart={onStart} />
   </section>;
 }
 export function ScenarioPanel({ town, busy, onWalk, onVerdict, onGraph, onRestart, onExit, onChoose, onAccuse }: {
@@ -18,6 +32,8 @@ export function ScenarioPanel({ town, busy, onWalk, onVerdict, onGraph, onRestar
   onChoose?: () => void;
   onAccuse?: (answer: DetectiveAnswer) => void;
 }) {
+  if (town.puzzle?.story) return <><CampaignAdvance town={town} busy={busy} onStart={onRestart} /><MissionBrief town={town} busy={busy} onWalk={onWalk} onGraph={onGraph} onRestart={() => onRestart(town.puzzle?.story?.mission ?? "medicine")} onChoose={onChoose} onAccuse={onAccuse} /></>;
+  if (town.puzzle?.crossing) return <><CampaignAdvance town={town} busy={busy} onStart={onRestart} /><CrossingBrief town={town} busy={busy} onWalk={onWalk} onGraph={onGraph} onRestart={() => onRestart("crossing")} onChoose={onChoose} /></>;
   const state = scenarioState(town);
   if (!state) return <p>No scenario selected.</p>;
   const playing = state.stage === "playing";
@@ -30,7 +46,7 @@ export function ScenarioPanel({ town, busy, onWalk, onVerdict, onGraph, onRestar
     {playing && <><h3>Where will you go?</h3><div className="flex flex-wrap gap-2">{stops.map((id) => <Button key={id} variant="secondary" disabled={busy} onClick={() => onWalk(id)}>Visit {town.npcs.find((npc) => npc.id === id)?.name ?? id}</Button>)}</div><p className="paper-caption">Walk there, then open the location’s choices. Read the risks before committing.</p><Button variant="secondary" disabled={busy} onClick={onVerdict}>Wait until the verdict ({state.remaining} turns)</Button><p className="paper-caption">This commits the remaining turns. Gossip keeps spreading and unfinished objectives fail.</p></>}
     <Button variant="secondary" disabled={busy} onClick={onGraph}>{town.puzzle?.fog ? "View public trust network" : "Reveal the memory graph"}</Button>
     {!playing && <Button disabled={busy} onClick={() => onRestart(state.id)}>Retry this scenario</Button>}
-    {onChoose && <Button variant="secondary" disabled={busy} onClick={onChoose}>Choose another scenario</Button>}
+    {onChoose && <Button variant="secondary" disabled={busy} onClick={onChoose}>Campaign levels</Button>}
     <Button variant="ghost" disabled={busy} onClick={onExit}>Return to free play</Button>
   </section>;
 }
