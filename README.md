@@ -270,3 +270,107 @@ try {
   await connection.data.close();
 }
 ```
+
+### HTTP, MCP and CLI
+
+The web uses `POST /api/tool/{name}` with the contract input as JSON. Valid tool calls return the shared envelope; malformed requests receive HTTP 400. The server keeps database credentials private and reconnects for a later request after a DB failure rather than blindly replaying a potentially completed write.
+
+Run `pnpm mcp` for the official SDK's **stdio** server. Configure your MCP host using the absolute-path example in [the MCP guide](packages/mcp/README.md). Stdout carries protocol messages; diagnostics use stderr. This repository does not claim an implemented MCP HTTP transport.
+
+For another game project, the CLI can scaffold a seed/configuration, diagnose connectivity, call tools and serve a bearer-authenticated loopback API on port 8787. Follow [the CLI guide](packages/cli/README.md) for repository execution or installation of a locally packed archive. **The recorded npm publication attempt was blocked by 2FA**; do not rely on public `npx` installation without confirming a later successful release. Plain `npx hearsay` names an unrelated package. [Release evidence](docs/goodness/CLI-release.json).
+
+The CLI HTTP bridge binds `127.0.0.1`, checks bearer authorization, rejects browser Origin/unexpected Host headers and caps request bodies. It is a local native-client bridge. Player graph isolation is not player authentication, and the demo web endpoint is not a production multiplayer authorization layer.
+
+## Hollowbrook: play the memory consequences
+
+The expanded world has **13 residents, 12 places and 41 directed trust edges** across Old Town, Vale Lane and Riverside. Brom, Mira and Garrick anchor the original network. Rowan, Elin, Lysa and Oren form the Vale family; Ayla, Fenn, Julian, Marta, Silas and Tilda connect its wider social routes. All people, events and world facts are synthetic.
+
+The current campaign order is **Demo → Night Watch → Missing Medicine → Family Feud → Cover-up → Redemption → Three Factions → Rumour Detective**. The illustrated Demo teaches movement, nearby witnesses, action points, turns and trust-directed gossip. It does not issue backend gameplay actions. Actual missions use graph memories and authored decision rules. Campaign unlocks are browser-local; persistent engine memories live in FalkorDB.
+
+In town, choose a district and resident, perform a deed, observe witness reactions and follow confirmed whisper handoffs. Walking affects nearby witnesses. Autonomous time can advance gossip while exploring; pause controls and reading/reaction pauses are documented in [autonomous town](docs/duro/autonomous-town.md). Use Menu for traveller saves, graph inspection and technical evidence. Inspect knowledge separately from attitude.
+
+**Family Feud: Before Dusk** is an authored crossing dilemma: escort Lysa to the chapel before six turns or six elapsed minutes. Payment, an alternative crossing, testimony and ledger evidence lead to different consequences. Its deadline and state are saved in the player graph. Scenario-only FeudClaim/CLAIM_KNOWS data preserves distinct accounts and their sources; it does not turn the shared engine into a general-purpose lie generator. Q110–Q116 handle the scenario graph, and its authored dialogue is separate from Gemini replies. [Scenario implementation and limits](docs/duro/before-dusk.md).
+
+![A graph-backed dilemma in Hollowbrook](docs/duro/screens/before-dusk-chat.png)
+
+### Record a working demonstration
+
+Use a fresh save and keep the graph/trace visible. A useful three-minute recording sequence is:
+
+1. Show the live town and explain the current seed; record a theft witnessed by Brom.
+2. Ask Garrick before gossip reaches him. Show that recall/explain reports no knowledge.
+3. Advance two gossip rounds. Show Mira learning first and Garrick learning from Mira at 0.63.
+4. Ask again, then open the explanation and highlight Brom → Mira → Garrick.
+5. Show the longer expanded route, including a weak route that fails the threshold.
+6. Switch to a separate traveller and demonstrate absence of the first traveller's event.
+7. Demonstrate a clean database restart using the persistence procedure below.
+8. Show learned policy state, measured benchmark results and a library/MCP integration.
+
+If showing generated speech, configure and disclose live Gemini. Template mode still proves graph behavior, but should be labelled as template mode. The [demo script](docs/duro/DEMO_SCRIPT.md) and [shared submission guide](docs/shared/09-demo-and-submission.md) provide additional recording notes. Upload the working recording and add its final URL before submitting.
+
+## Queries, tests and evidence
+
+The implementation authority is [packages/hearsay/src/queries](packages/hearsay/src/queries). Judges can inspect exact generated `.cypher` files in [queries](queries/README.md), their [source/hash manifest](queries/manifest.json), and the detailed [query catalogue](docs/shared/05-queries.md). Check the mirror with `pnpm queries:check`; regenerate after a deliberate query change with `pnpm queries:generate`.
+
+| Query family | Work performed |
+| --- | --- |
+| Q00/Q01/Q02 | Graph listing, template copying and deliberate graph deletion through the client. |
+| Q03/Q04 | ID indexes and validated world-seed nodes/relationships. |
+| Q10–Q12 | World NPCs, places and event types. |
+| Q20–Q26 | Player/tick lifecycle and identity/conversation resolution. |
+| Q30 | Event, player/place links and witness knowledge. |
+| Q40/Q40b/Q41/Q42 | Graph-selected gossip, durable handoffs and awareness inspection. |
+| Q50/Q51 | Recall and graph-derived opinion inputs. |
+| Q60/Q61/Q62 | Knowledge receipt, bounded path traversal and verified fallback links. |
+| Q70 | `algo.pageRank('NPC', 'TRUSTS')` hub ranking. |
+| Q80/Q81 | Policy reads and guarded adaptations. |
+| Q90 | Visible snapshot nodes/edges; conversation and scenario-private metadata excluded. |
+| Q92–Q97b/Q99 | Scoped dialogue inputs, conversation persistence/counts and server-only unknown-event checking. |
+| Q98 | Full player event log for the deliberately naive comparison only. |
+| Q110–Q116 | Persisted crossing state, source accounts and trust-directed claim propagation. |
+
+FalkorDB compatibility was tested rather than inferred from Neo4j syntax. The [query spike](docs/goodness/spike-results.md) records index-copy behavior, parameter maps, path predicates and the path-alias sorting issue. [Judge notes](docs/goodness/G12-judge-notes.md) explain Q40/Q41/Q61 line by line. Some checkpoint documents describe earlier three-NPC/mock stages; current source and later integration evidence supersede those historical status notes.
+
+### Run the checks
+
+```powershell
+docker compose up -d falkordb
+pnpm typecheck
+pnpm test
+pnpm queries:check
+pnpm check:design
+```
+
+Database integration tests use **real FalkorDB**, with disposable graphs and cleanup. Pure scoring, selection, schema and lexical-firewall functions also have unit tests. Dialogue tests inject controlled model outputs; they do not establish live Gemini quality. The workspace suite covers graph isolation, recording, deterministic gossip, competing sources, thresholds, explanations, dialogue, policies, CLI/MCP transport and web mission rules.
+
+### Persistence and recovery
+
+Docker Compose mounts `falkordb_data` at `/var/lib/falkordb/data`. Reproduce the dedicated local clean-restart smoke with:
+
+```powershell
+pnpm exec tsx packages/hearsay/src/persistence-smoke.ts prepare
+docker compose restart falkordb
+pnpm exec tsx packages/hearsay/src/persistence-smoke.ts verify
+pnpm exec tsx packages/hearsay/src/persistence-smoke.ts recover
+pnpm exec tsx packages/hearsay/src/persistence-smoke.ts cleanup
+```
+
+The recorded run recovered the theft, Garrick's Mira/0.63 knowledge, tick 2 and saved utterances through a fresh connection. Template recovery and owned-graph cleanup also passed. This proves **clean restart**, not arbitrary crash durability or container recreation. [Local result](docs/goodness/G11-results.json). A separate configured Cloud core smoke passed initialization, recovery and reconnect recall, with `appValidated: false`; it does not prove browser-to-Cloud deployment. [Cloud result](docs/goodness/G11-cloud-results.json). A missing template can be re-seeded; re-seeding cannot restore lost player histories.
+
+### Measured performance
+
+The published October 17 benchmark used a **three-NPC seed**, **five concurrent players**, local Docker, templates and no LLM calls. Hardware: Intel i7-6600U, four logical CPUs, approximately 16 GiB host RAM, Windows 10.0.26100, Node 24.16.0; Docker allocated four CPUs and approximately 7.7 GiB RAM.
+
+| Total players | Read calls / errors | Read p50 / p95 ms | Write calls / errors | Write p50 / p95 ms |
+| --- | --- | --- | --- | --- |
+| 10 | 30 / 0 | 21.788 / 159.779 | 50 / 0 | 25.633 / 1004.051 |
+| 50 | 150 / 0 | 21.382 / 411.339 | 250 / 0 | 26.388 / 706.102 |
+| 100 | 300 / 0 | 20.017 / 461.494 | 500 / 0 | 25.496 / 682.460 |
+
+That is **1,280 measured operations**, with no reported operation or cleanup errors. It is not 100 simultaneous players or a capacity claim for the expanded town. Writes include graph copies, no separate warmup was used, and client/database share the host. Read [methodology and results](loadtest/results.md) and [raw machine/samples](loadtest/results.json). Re-run with `pnpm loadtest`; it writes benchmark artifacts, so preserve recorded submission evidence if comparing runs.
+
+### Limits worth understanding
+
+Same-player gossip commands serialize within one service instance. Independent services do not share that queue; candidate read, selected write and clock update are not one transaction. Guarded writes help detect conflicts but do not establish distributed scheduling correctness. Scenario commands have a similar single-service limitation. This is a small-world memory engine and local demo, not a validated distributed MMO backend.
+
+The [Daggerfall Unity adapter](integrations/daggerfall-unity/README.md) has backend smoke and C# compile evidence. Its bundle/runtime work was blocked by Editor installation/licensing problems; an actual in-game NPC interaction is not claimed. No third-party game assets are redistributed here.
