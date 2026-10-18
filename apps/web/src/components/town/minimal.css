@@ -18,10 +18,10 @@
 .minimal-welcome p { color: var(--color-paperShade); font-size: 14px; margin: 12px 0 24px; }
 .minimal-welcome > button { margin: 0 4px; }
 .minimal-welcome > button[data-variant=ghost] { color: var(--color-paperCream); }
-.minimal-footer { position: absolute; bottom: 84px; left: 24px; right: 24px; z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
+.minimal-town .minimal-footer { position: absolute; bottom: 84px; left: 24px; right: 24px; z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
 .minimal-footer button { pointer-events: auto; }
 .minimal-narration { max-width: 520px; min-height: 24px; text-align: center; font: 17px/1.5 var(--font-serif); text-wrap: pretty; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-shadow: 0 2px 8px var(--color-inkBlack); }
-.minimal-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 12px; border: 1px solid var(--color-paperShade); border-radius: 20px; background: var(--color-skyDeep); box-shadow: 0 8px 28px color-mix(in srgb, var(--color-inkBlack) 45%, transparent); pointer-events: auto; }
+.minimal-town .minimal-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 12px; border: 1px solid var(--color-paperShade); border-radius: 20px; background: var(--color-skyDeep); box-shadow: 0 8px 28px color-mix(in srgb, var(--color-inkBlack) 45%, transparent); pointer-events: auto; }
 .minimal-actions > button { min-height: 48px; height: auto; padding: 12px 22px; font-size: 14px; font-weight: 600; border-radius: 12px; }
 .minimal-actions > button:first-child { background: var(--color-gold); color: var(--color-inkBlack); border: 1px solid var(--color-gold); }
 .minimal-actions > button[data-variant=secondary] { background: transparent; color: var(--color-paperCream); border: 1px solid var(--color-paperShade); }
@@ -48,8 +48,8 @@
   .minimal-location { display: none; }
   .minimal-welcome { top: 100px; }
   .minimal-welcome > button { margin-bottom: 8px; }
-  .minimal-footer { bottom: 96px; left: 16px; right: 16px; }
-  .minimal-actions { width: min(100%, 440px); gap: 8px; padding: 10px; }
+  .minimal-town .minimal-footer { bottom: 104px; left: 16px; right: 16px; }
+  .minimal-town .minimal-actions { width: min(100%, 440px); gap: 8px; padding: 10px; }
   .minimal-actions > button { flex: 1 1 140px; padding: 12px; }
   .minimal-narration { font-size: 15px; }
   .minimal-guide h2 { font-size: 24px; }
