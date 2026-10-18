@@ -309,7 +309,7 @@ Offer readable text mode, larger text and reduced motion. No unrequested audio.
 
 Use semantic tokens, existing Tailwind scale, named exports and small components.
 All new states appear on /styleguide. Run design lint and check:design, and save
-1440x900 screenshots. Never imply stealth, calendar, arrest, cloud accounts or
+1440x900 screenshots. Never imply stealth, calendar, cloud accounts or
 unverified live dialogue. The user-requested scenarios display Garrick’s trust
 as the actual attitude score mapped from -1..1 to 0..100; this is not confidence.
 Trust at 20 or below ends play. Scenario medicine/tools derive from recorded events;
@@ -318,3 +318,14 @@ gossip turn; walking and reading are free. The objective badge opens the brief,
 progress, relevant destinations, verdict and retry. Nearby villagers witness actions within
 240 world units, in the same district. Time pauses for drawers, hidden tabs,
 offline state, errors and confirmed reaction playback; no background catch-up.
+
+New puzzle attempts use two action points per turn. Deeds, questions, messages
+and refused social requests cost one AP; exhausting AP or ending a turn runs gossip.
+Legacy quest saves retain one action per turn. Walking and reading remain free.
+Show body language and public directed TRUSTS links during play; hide exact scores,
+private memories, witness identities, query traces and rumour paths until the verdict.
+Questions create dated source notes, never a live omniscient feed. Detective offers
+one reconstruction, scored against the graph's explain path, followed by a reveal.
+User-requested stakes include arrest when a hostile Garrick knows a serious crime.
+Each mission states its own objective and deadline; the brief carries the notebook
+and final reveal, keeping the town's main dock minimal.

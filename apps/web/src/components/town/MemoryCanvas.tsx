@@ -24,9 +24,9 @@ export function MemoryCanvas({ town, eventId, selected, trust, highlighted, onSe
       const boundary = to.type === "event" ? Math.min(110 / Math.max(Math.abs(dx / length), .001), 32 / Math.max(Math.abs(dy / length), .001)) : 32;
       const path = `M${from.x} ${from.y} L${to.x - dx / length * boundary} ${to.y - dy / length * boundary}`;
       return <g key={edge.id} className={`memory-link link-${edge.type.toLowerCase()} ${witnessed ? "direct-witness" : ""} ${active ? "active" : ""} ${highlighted.length && !active ? "dimmed" : ""}`}>
-        <title>{from.label} {edge.type === "TOLD" ? "told" : edge.type === "TRUSTS" ? "trusts" : "remembers"} {to.label}{edge.confidence !== undefined ? ` · ${Math.round(edge.confidence * 100)}% confidence` : ""}</title>
+        <title>{from.label} {edge.type === "TOLD" ? "told" : edge.type === "TRUSTS" ? "trusts" : "remembers"} {to.label}{edge.type === "TRUSTS" ? ` · ${Math.round((edge.weight ?? 0) * 100)}% trust` : edge.confidence !== undefined ? ` · ${Math.round(edge.confidence * 100)}% confidence` : ""}</title>
         <path d={path} markerEnd={`url(#${marker})`} />
-        {edge.type === "TOLD" && <text x={(from.x + to.x) / 2 + 10} y={(from.y + to.y) / 2 - 20}>{Math.round((edge.confidence ?? 0) * 100)}%</text>}
+        {(edge.type === "TOLD" || (edge.type === "TRUSTS" && town.puzzle?.fog && [edge.source, edge.target].includes(`NPC:${selected}`))) && <text x={(from.x + to.x) / 2 + 10} y={(from.y + to.y) / 2 - 20}>{Math.round((edge.type === "TRUSTS" ? edge.weight ?? 0 : edge.confidence ?? 0) * 100)}%</text>}
       </g>;
     })}
     {graph.nodes.map((node) => {
@@ -38,7 +38,7 @@ export function MemoryCanvas({ town, eventId, selected, trust, highlighted, onSe
       const known = npc?.rumors.find((memory) => memory.eventId === eventId);
       return <g key={node.id} transform={`translate(${node.x},${node.y})`} className={`memory-person attitude-${npc?.attitude ?? "neutral"} ${selected === npc?.id ? "selected" : ""} ${known?.hops === 0 ? "origin" : ""}`}
         role="button" tabIndex={0} aria-label={`Inspect ${node.label}`} aria-pressed={selected === npc?.id} onClick={() => npc && onSelect(npc.id)} onKeyDown={(event) => { if (npc && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onSelect(npc.id); } }}>
-        <title>{node.label} · {npc?.attitude} · {known ? known.hops === 0 ? "Witness" : `${Math.round(known.confidence * 100)}% sure` : "Unaware of this deed"}</title>
+        <title>{node.label} · {npc?.attitude} · {npc?.knowledgeHidden ? "Private memory" : known ? known.hops === 0 ? "Witness" : `${Math.round(known.confidence * 100)}% sure` : "Unaware of this deed"}</title>
         <circle r="28" /><text className="memory-initials" y="5">{node.avatarInitials}</text><text className="memory-name" y="48">{node.label}</text>
       </g>;
     })}

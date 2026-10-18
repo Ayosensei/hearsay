@@ -7,7 +7,7 @@ export function LedgerSheet({ town, eventId, onSelect }: { town: TownState; even
   return <div className="space-y-4"><p>Every deed leaves a page. Choose one to see who knows about that story.</p>
     {!town.events.length && <div className="memory-paper"><h3>A blank page</h3><p>Your story has not started. Take an action to give the town something to remember.</p></div>}
     {town.events.map((event) => <Button className={`ledger-deed ${event.type}`} variant="secondary" key={event.id} aria-pressed={event.id === eventId} onClick={() => onSelect(event.id)}>
-      <strong>{event.title}</strong><span>{event.placeName} · Turn {event.tickOccurred}</span><span>{town.npcs.filter((n) => n.rumors.some((r) => r.eventId === event.id)).length} villagers know</span>
+      <strong>{event.title}</strong><span>{event.placeName} · Turn {event.tickOccurred}</span><span>{town.puzzle?.fog ? "Knowledge hidden · collect dated clues" : `${town.npcs.filter((n) => n.rumors.some((r) => r.eventId === event.id)).length} villagers know`}</span>
     </Button>)}
     <p className="paper-caption">Selecting a deed changes the knowledge shown. Overall attitude still reflects all known deeds.</p>
   </div>;

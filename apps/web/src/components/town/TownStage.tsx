@@ -12,6 +12,7 @@ import "./expanded.css";
 
 export { homes } from "../../lib/town-residents";
 export function memoryText(person: NPC, eventId: string) {
+  if (person.knowledgeHidden) return "Memory unknown · ask for a source";
   const memory = person.rumors.find((r) => r.eventId === eventId);
   return !memory ? "Has not heard about this deed" : memory.hops === 0 ? "Saw it happen · 100% sure"
     : `Heard from ${memory.heardFromName ?? memory.heardFromId} · ${Math.round(memory.confidence * 100)}% sure`;

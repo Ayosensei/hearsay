@@ -38,6 +38,7 @@ export interface RumorKnowledge {
 }
 
 export interface NPC {
+  knowledgeHidden?: boolean;
   contributions?: { eventId: string; type: string; effect: number; confidence: number; learnedFrom: string }[];
   id: string;
   name: string;
@@ -126,6 +127,7 @@ export interface TownEvent {
 }
 
 export interface TownState {
+  puzzle?: import("./puzzle").PuzzleView;
   gossipSteps?: { eventId: string; tellerId: string; listenerId: string; credibility: number; hop: number }[];
   playerId?: string;
   places?: { id: string; name: string }[];

@@ -5,6 +5,10 @@ export const scenarios = {
   medicine: { title: "The Missing Medicine", deadline: 6, start: "lysa", brief: "Lysa is ill. Obtain medicine from Marta or the chapel, deliver it, and keep Garrick’s trust at least 40 at nightfall." },
   feud: { title: "The Family Feud", deadline: 7, start: "rowan", brief: "Repair the disputed footbridge. Get Rowan and Marta to become friendly and both learn about your repair before the town meeting." },
   watch: { title: "The Night Watch", deadline: 7, start: "silas", brief: "Survey the floodgate, obtain tools, and repair it with Oren. Garrick must know the danger or repair and trust you at least 60 by nightfall." },
+  coverup: { title: "The Cover-up", deadline: 8, start: "brom", brief: "Brom saw you steal the forge sword. Keep Garrick neutral or better until the inspector arrives at turn 8. If he becomes wary, your cover is blown." },
+  redemption: { title: "Redemption", deadline: 10, start: "ayla", brief: "Ayla remembers your broken promise. Earn her devotion before turn 10. Position your good deeds near the right villagers and let truthful news travel." },
+  alliance: { title: "Three Factions", deadline: 8, start: "mira", brief: "Make the townsfolk, guards and merchants friendly by the inspector’s arrival at turn 8. Each faction is judged by its members’ average attitude." },
+  detective: { title: "Rumour Detective", deadline: 8, start: "garrick", brief: "Reconstruct the silver-seal accusation against your traveller. Identify the eyewitness, the exact route to Garrick, and whether his account is firsthand, secondhand or unheard. One answer before turn 8." },
 } as const;
 export type ScenarioId = keyof typeof scenarios;
 export interface ScenarioChoice {
@@ -12,7 +16,9 @@ export interface ScenarioChoice {
   type: EventType; scenario?: ScenarioId; requires?: string[];
 }
 export const scenarioChoices: ScenarioChoice[] = [
-  { id: "med-work", scenario: "medicine", npc: "brom", label: "Earn medicine money", hint: "Work at the forge. Honest, but costs a turn.", type: "helped", subject: "repairing tools for medicine money" },
+  { id: "redeem-aid", scenario: "redemption", npc: "ayla", label: "Prepare the soup kitchen", hint: "Ayla sees your work. A single kindness may not outweigh the broken promise.", type: "helped", subject: "preparing the chapel soup kitchen" },
+  { id: "redeem-gift", scenario: "redemption", npc: "ayla", label: "Donate kitchen supplies", hint: "A separate act of generosity. It competes with the memory of your lie.", type: "donated", subject: "supplies for the chapel soup kitchen" },
+  { id: "med-work", scenario: "medicine", npc: "brom", label: "Earn medicine money", hint: "Work at the forge. Honest, but costs an action.", type: "helped", subject: "repairing tools for medicine money" },
   { id: "med-buy", scenario: "medicine", npc: "marta", label: "Buy the medicine", hint: "Spend your forge earnings. No theft to explain.", type: "traded", subject: "medicine bought for Lysa", requires: ["med-work"] },
   { id: "med-clinic", scenario: "medicine", npc: "ayla", label: "Help prepare remedies", hint: "Earn Ayla’s trust so she will offer charity medicine.", type: "helped", subject: "preparing chapel remedies" },
   { id: "med-charity", scenario: "medicine", npc: "ayla", label: "Request charity medicine", hint: "Ayla must be friendly. Her opinion comes from what she knows.", type: "traded", subject: "charity medicine for Lysa" },
@@ -38,8 +44,8 @@ export function choicesFor(scenario: ScenarioId, npcs: TownState["npcs"]): Scena
 }
 
 export function scenarioFromPlayer(playerId?: string): ScenarioId | undefined {
-  const match = /^quest_(medicine|feud|watch)_[a-z0-9]{20}$/.exec(playerId ?? "");
-  return match?.[1] as ScenarioId | undefined;
+  const match = /^(?:quest|puzzle)_([a-z]+)_[a-z0-9]{20}$/.exec(playerId ?? "");
+  return match && Object.hasOwn(scenarios, match[1]) ? match[1] as ScenarioId : undefined;
 }
 export function choiceEvent(town: TownState, id: string) {
   const scenario = scenarioFromPlayer(town.playerId);
@@ -60,10 +66,10 @@ export function choiceBlocked(town: TownState, choice: ScenarioChoice): string |
   const medicine = ["med-buy", "med-charity", "med-steal"].some((id) => choiceEvent(town, id));
   if (["med-buy", "med-charity", "med-steal"].includes(choice.id) && medicine) return "You already have medicine";
   if (choice.id === "med-deliver" && !medicine) return "Obtain medicine first";
-  if (["med-charity", "watch-borrow"].includes(choice.id) && (town.npcs.find((npc) => npc.id === choice.npc)?.attitudeScore ?? -1) < .2) return `${choice.npc === "ayla" ? "Ayla" : "Brom"} must be friendly first`;
+  if (!town.puzzle?.fog && ["med-charity", "watch-borrow"].includes(choice.id) && (town.npcs.find((npc) => npc.id === choice.npc)?.attitudeScore ?? -1) < .2) return `${choice.npc === "ayla" ? "Ayla" : "Brom"} must be friendly first`;
   if (["watch-borrow", "watch-steal"].includes(choice.id) && ["watch-borrow", "watch-steal"].some((id) => choiceEvent(town, id))) return "You already have tools";
   if (choice.id === "watch-repair") {
     if (!["watch-borrow", "watch-steal"].some((id) => choiceEvent(town, id))) return "Obtain repair tools first";
-    if (!knowsChoice(town, "oren", "watch-survey") && !knowsChoice(town, "oren", "watch-brief")) return "Oren needs the survey news or a direct briefing";
+    if (!town.puzzle?.fog && !knowsChoice(town, "oren", "watch-survey") && !knowsChoice(town, "oren", "watch-brief")) return "Oren needs the survey news or a direct briefing";
   }
 }
