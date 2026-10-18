@@ -139,3 +139,134 @@ flowchart TD
 ```
 
 The **Scribe** records an action, **Gossip** discovers and stores social handoffs, and the **NPC** reads its updated memories before replying. These are logical responsibilities inside the application, rather than independent autonomous processes. Their shared state is the graph. Every database operation returns a trace containing agent, tool, query ID, sanitized arguments, row count and elapsed milliseconds.
+
+## Gossip and provenance
+
+The actual candidate query, [Q40](queries/Q40_gossip_candidates_all.cypher), answers: **which unaware listeners trust someone who knows a sufficiently important, believable event?**
+
+```cypher
+MATCH (a:NPC)-[k:KNOWS]->(e:Event)
+MATCH (b:NPC)-[t:TRUSTS]->(a)
+WHERE NOT (b)-[:KNOWS]->(e)
+  AND abs(e.weight) >= $minWeight
+  AND k.confidence * t.weight >= $minCred
+RETURN e.id AS eventId, a.id AS teller, b.id AS listener,
+       k.confidence * t.weight AS cred, k.root AS root, k.hop AS hop
+```
+
+Default thresholds are `abs(event.weight) >= 0.3` and credibility `>= 0.25`. TypeScript selects the strongest candidate for each event/listener pair; equal confidence is resolved by teller ID ascending. The whole round is read before Q41 writes its chosen KNOWS/TOLD edges, so newly informed NPCs wait until the next round to tell anyone else. The write checks again that the listener is unaware and returns only actual additions.
+
+`advanceTime` runs one round for all eligible events and advances the player's tick. `spread` explores one event up to its configured hop limit without advancing the clock. Existing knowledge is not upgraded by a later stronger route. This is deterministic rumor delivery, not a global search for the most credible possible future path.
+
+### Follow a real expanded-town rumor
+
+With Brom witnessing a sword theft, the thirteen-resident seed yields:
+
+| Round | New listeners and cumulative confidence |
+| --- | --- |
+| 1 | Mira 90%; Rowan 85%; Ayla 50%. |
+| 2 | Elin 80.75%; Lysa 68%; Oren 63.75%; Fenn 72%; Garrick 63%. |
+| 3 | Marta 64.6%; Tilda 52.4875% through Elin. |
+| 4 | Silas 54.91% through Marta. |
+| 5 | Julian 43.928% through Silas. |
+| 6 | Nobody new. |
+
+```mermaid
+flowchart LR
+  Brom -->|0.85| Rowan
+  Rowan -->|0.8075| Elin
+  Elin -->|0.646| Marta
+  Marta -->|0.5491| Silas
+  Silas -->|0.43928| Julian
+  Brom -->|0.90| Mira
+  Mira -->|0.63| Garrick
+```
+
+These arrows represent **TOLD**, labelled with cumulative confidence. Julian's five-hop route is verified through the core's source-pointer walk and actual-link checks because the initial Q61 path query is bounded to four hops. See [expanded-world evidence](docs/duro/expanded-town.md).
+
+The separate six-NPC **golden test fixture** has no Vale-family detour: tick 1 Mira 0.90/Ayla 0.50; tick 2 Fenn 0.72/Garrick 0.63; tick 3 Tilda 0.36 through Fenn; tick 4 no additions. Tilda's competing Garrick route is 0.315, so Fenn wins that round. Do not expect this six-person table from the expanded web seed or three-person CLI starter.
+
+### An explanation is a stored path
+
+[Q61](queries/Q61_explain_chain.cypher) traverses actual `TOLD*1..4` edges, requiring **every edge** to match the event and original witness. Q60 checks the NPC's memory first; Q62 validates individual telling links during the longer-path fallback. Missing or inconsistent provenance returns an error rather than an invented chain. A direct witness gets a one-person chain; an unaware NPC gets `status: "not_in_graph"` and an empty chain.
+
+Returned edge IDs match `snapshot` edge IDs, allowing the UI to highlight the same evidence. A model is never asked to invent a reason for the answer.
+
+![An expanded rumor chain shown in the town inspector](docs/duro/screens/expanded-chain-1440x900.png)
+
+## Attitudes, dialogue and learned behavior
+
+Attitude is computed from graph-derived memories with a transparent formula:
+
+```text
+recency = max(0.3, 1 - 0.05 × (currentTick - eventTick))
+traitFactor = weight < 0 ? 0.7 + 0.6 × loyalty : 0.7 + 0.6 × (1 - greed)
+effect = weight × confidence × recency × traitFactor
+score = clamp(sum(effect), -1, 1)
+```
+
+Labels are hostile at `<= -0.6`, wary at `<= -0.2`, neutral below `0.2`, friendly below `0.6`, and devoted otherwise. At tick 2, Garrick's theft memory at 0.63 confidence contributes **-0.562464 (wary)**; Brom's firsthand memory contributes **-0.7632 (hostile)**. Each contribution is returned for inspection. Confidence in a report and attitude toward the player are different values.
+
+For `say`, the engine resolves identities, reads the NPC's known events, beliefs, attitude and recent conversation, persists the player's line, then generates or selects a reply and persists the NPC's line. Unknown events are read only for server-side checking; they are not added to the model's known-event prompt. Player speech/history is treated as unverified speech, not proof that an NPC witnessed something.
+
+The firewall checks declared/embedded event IDs and unknown-event keywords/subject words. A violating generated response is retried once, then replaced by an event-safe template if still invalid. Model failures also use templates. Results expose source, permitted event IDs and firewall metadata. **This lexical guard is not a semantic proof against every paraphrase or prompt attack.** The graph-derived prompt boundary is the first protection; validation and fallback add another layer.
+
+`sayNaive` deliberately gives the same dialogue model the full player event log and measures leakage without blocking. It is a demonstration control, excluded from MCP and from persistent conversation history. Template-mode comparison does not prove live-model behavior.
+
+Procedural memory lives in Policy/FOLLOWS. Tilda's lowball outcomes increase markup by 0.05 up to 0.30; a fair outcome decreases it by 0.02 down to 0.05. Three lowballs move 0.10 → 0.25. Tries/wins persist, and updates detect intervening changes. See [behavior specification](docs/shared/06-behaviour-specs.md) and [policy evidence](docs/goodness/G8-policy.md).
+
+## Tool catalogue
+
+The [Zod contract](packages/contract/src/schemas.ts), version **1.0.0**, defines 15 tools. MCP exposes 14, excluding the naive control. Successful and failed calls both include a trace:
+
+```typescript
+{ ok: true, data, trace }
+{ ok: false, error: { code, message, hint? }, trace }
+```
+
+| Tool | Responsibility |
+| --- | --- |
+| getWorld | List the configured world's NPCs, places and event types. |
+| newPlayer | Copy the template into an isolated save; report whether newly created. |
+| resetPlayer | Discard one player's current memory and restore template state. |
+| recordEvent | Validate identities, then persist an action and 1–6 witnesses. |
+| advanceTime | Spread all eligible rumors one round; increment tick. |
+| spread | Spread one event within configured hop/credibility limits. |
+| recall | Return an NPC's known events with source, confidence and hop. |
+| attitude | Return score, label and contributing memories. |
+| explain | Return the actual event-specific witness-to-listener chain. |
+| whoKnows | Separate witnesses, secondhand listeners and unaware residents. |
+| gossipHubs | Compute PageRank over NPC/TRUSTS. |
+| adaptPolicy | Persist learned haggling markup and outcome counters. |
+| say | Produce a knowledge-scoped reply with generation/firewall metadata. |
+| sayNaive | Demo-only omniscient baseline with leakage measurement. |
+| snapshot | Return visible nodes/edges using stable application IDs. |
+
+Invalid input returns `BAD_ARGS`. Graph resolution distinguishes unknown players, NPCs, places, events and policies. `not_in_graph` is a successful absence of NPC knowledge, not evidence that the event never occurred. Reads use `roQuery`; intentional writes use fixed parameterized queries. The model neither writes nor receives Cypher.
+
+### TypeScript integration
+
+Run within this workspace or a project configured to resolve its packages. `@hearsay/core` is a private workspace package; this example is not a claim that it is separately published on npm.
+
+```typescript
+import { connectDatabase, createHearsay } from "@hearsay/core";
+
+const connection = await connectDatabase();
+if (!connection.ok) throw new Error(connection.error.message);
+const hearsay = createHearsay(connection.data);
+try {
+  await hearsay.call("newPlayer", { playerId: "demo" });
+  const event = await hearsay.call("recordEvent", {
+    playerId: "demo", type: "stole", placeId: "forge",
+    witnesses: ["brom"], subject: "iron sword",
+  });
+  if (!event.ok) throw new Error(event.error.message);
+  await hearsay.call("advanceTime", { playerId: "demo" });
+  await hearsay.call("advanceTime", { playerId: "demo" });
+  console.log(await hearsay.call("explain", {
+    playerId: "demo", npcId: "garrick", eventId: event.data.eventId,
+  }));
+} finally {
+  await connection.data.close();
+}
+```
