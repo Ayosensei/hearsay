@@ -24,3 +24,5 @@ Thumbs.db
 /packages/cli/dist/
 /packages/cli/*.tgz
 /*.png
+.vercel
+.env*
